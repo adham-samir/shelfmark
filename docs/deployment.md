@@ -16,7 +16,7 @@ environment. Nothing in this document claims a cloud deployment has happened.
 | `catalog-init` | `mongo:8.0.34` | One-shot: `setup.js` + `seed.synthetic.js`. |
 | `api` | `services/api/Dockerfile` | FastAPI + uvicorn on port 8000, runs as UID 65532. |
 | `storefront` | `apps/storefront` | Run `next build` then `next start`; deployed separately or as a second container. |
-| Jobs | same API image | `inventory-job`, `pricing-job`, `segmentation-job` under the `jobs` profile. |
+| Jobs | same API image | `inventory-job`, `pricing-job`, `segmentation-job`, and `session-reaper` under the `jobs` profile. |
 | Artifacts | `services/api/artifacts/*` | Recommendation, image-search, forecast, and fraud models are baked into the image. |
 
 ## 2. Local run
@@ -97,6 +97,16 @@ uv run --project services/api python services/api/ml/fraud/train.py
 Model and evaluation rows are registered on first use (`model_versions`,
 `evaluation_runs`). Fraud evidence registers once per process.
 
+## 5b. Response security headers
+
+The API sets `x-content-type-options: nosniff`, `referrer-policy: no-referrer`,
+`x-frame-options: DENY`, `permissions-policy`, and a strict JSON-only
+`content-security-policy` on every path except `/docs`, `/redoc`, and
+`/openapi.json`. The storefront sets the same header family in `next.config.ts`
+and a **report-only** CSP: an enforcing policy would break Next.js inline styles,
+so enforcement is deliberately not claimed. A production deployment should add
+HSTS once TLS terminates in front of both services.
+
 ## 6. Scheduled jobs
 
 Run each job once per day from a scheduler (EventBridge Scheduler → ECS task, or
@@ -106,10 +116,12 @@ cron in a container):
 docker compose -f infra/compose.yaml --profile jobs run --rm inventory-job
 docker compose -f infra/compose.yaml --profile jobs run --rm pricing-job
 docker compose -f infra/compose.yaml --profile jobs run --rm segmentation-job
+docker compose -f infra/compose.yaml --profile jobs run --rm session-reaper
 ```
 
 Each is retry-safe: reorders, price changes, and RFM snapshots are idempotent per
-reference key.
+reference key. The session reaper is a delete: it removes expired sessions and
+revoked sessions older than 30 days, so it is safe to run on any schedule.
 
 ## 7. AWS placement (planned, not executed)
 

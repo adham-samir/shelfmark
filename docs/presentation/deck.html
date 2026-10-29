@@ -572,7 +572,7 @@
       <div>
         <ul>
           <li><strong>Accessibility is automated only.</strong> axe-core and a keyboard smoke test pass; no manual screen-reader session was run.</li>
-          <li><strong>Authentication is a labelled demo harness.</strong> Local <code>.invalid</code> accounts, argon2id hashes, and revocable database sessions; there is no OAuth/OIDC, email verification, password reset, or MFA, and no production identity-provider claim.</li>
+          <li><strong>Authentication is a labelled demo harness.</strong> Local <code>.invalid</code> accounts, argon2id hashes, and revocable database sessions; there is no OAuth/OIDC, email verification, email-based password reset, or MFA, and no production identity-provider claim.</li>
           <li><strong>The storefront is deliberately Arabic-first RTL.</strong> It recorded 58.53% against the approved LTR reference instead of the 72% target; that mismatch is documented rather than restated as a pass.</li>
           <li><strong>The recommendation artifact covers four products</strong>, so the seeded customer has nothing unseen left to rank — the rail says so instead of faking a result.</li>
         </ul>
@@ -656,7 +656,7 @@
     12: "The commerce spine. Exact decimals, current-price checks, idempotent checkout, immutable snapshots, ownership-scoped reads. This is the part that makes the modules trustworthy.",
     13: "Four decisions worth defending: DEC-007 keeps the literal competitors'-cost wording and labels the synthetic values, DEC-009 and DEC-011 fixed the policies before code, idempotency is enforced at every write, and every failure path fails closed or states its limit.",
     14: "Quality. Give the suite counts and the p95 numbers. Then mention the rehearsal finding: the demo script caught a production-build defect that the unit tests could not see, and it was fixed and re-verified.",
-    15: "Limitations, in order of honesty. The identity harness is next: it is real password verification and revocation, but it is explicitly not OAuth, email verification, password reset, or MFA. Do not soften any of these. The committee will find them anyway, and stating them first is what makes the rest of the evidence credible.",
+    15: "Limitations, in order of honesty. The identity harness is next: it is real password verification and revocation, but it is explicitly not OAuth, email verification, or email-based password reset, and MFA is absent. Self-service password change with the current password does exist. Do not soften any of these. The committee will find them anyway, and stating them first is what makes the rest of the evidence credible.",
     16: "Demo. Start with the two sign-ins so the customer and operator surfaces are visibly separate, then the short path: discovery, checkout with risk review, the operator order queue and a shipment transition, inventory run, pricing run, segmentation, analytics filter. Every step was rehearsed against a freshly seeded stack.",
     17: "Close. All seven modules and BI are implemented and evidenced; what is missing is external access, not functionality. Point at the repository, the test report, and the rehearsal log. Invite questions about the limitations rather than waiting for them."
   };

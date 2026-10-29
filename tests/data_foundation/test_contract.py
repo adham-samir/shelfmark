@@ -62,6 +62,7 @@ class CatalogContractTests(unittest.TestCase):
             "/v1/auth/logout",
             "/v1/auth/me",
             "/v1/account",
+            "/v1/account/password",
             "/v1/orders",
         }
         self.assertEqual(set(paths), expected)
@@ -69,6 +70,7 @@ class CatalogContractTests(unittest.TestCase):
             "/v1/auth/logout",
             "/v1/auth/me",
             "/v1/account",
+            "/v1/account/password",
             "/v1/orders",
         ):
             for operation in paths[path].values():

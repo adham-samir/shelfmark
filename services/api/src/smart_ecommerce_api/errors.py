@@ -23,6 +23,14 @@ class Unauthorized(ApplicationError):
     def __init__(self) -> None:
         super().__init__(401, "unauthorized", "Authentication is required.")
 
+class IncorrectPassword(ApplicationError):
+    """A valid session presented the wrong current password for rotation."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            400, "incorrect_password", "The current password is incorrect."
+        )
+
 
 class TooManyRequests(ApplicationError):
     def __init__(self) -> None:

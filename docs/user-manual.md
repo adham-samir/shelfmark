@@ -65,6 +65,17 @@ inventing an answer.
 4. `/orders/{id}` shows items, the price you paid, risk handling status, and the
    shipment timeline. Prices on past orders never change when prices are updated.
 
+### Manage your account
+`/account` holds your profile (display name and preferred locale) and a
+**Security** panel:
+
+- **Change password** needs your current password. The new one must be at least
+  eight characters and different from the current one.
+- Every *other* session of your account ends; the browser you changed it from
+  stays signed in.
+- There is no email-based reset. If you lose the password of a demo account, the
+  seeded value is printed in this manual.
+
 ## Back-office guide
 
 Sign in at `/backoffice/login` with the operator demo account

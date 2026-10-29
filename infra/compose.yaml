@@ -103,3 +103,14 @@ services:
       postgres:
         condition: service_healthy
 
+  session-reaper:
+    build:
+      context: ../services/api
+    profiles: ["jobs"]
+    command: ["python", "-m", "smart_ecommerce_api.session_reaper"]
+    environment:
+      SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
+    depends_on:
+      postgres:
+        condition: service_healthy
+

@@ -27,6 +27,7 @@ from .auth import Principal
 from .errors import (
     Conflict,
     DependencyUnavailable,
+    IncorrectPassword,
     InvalidInput,
     TooManyRequests,
     Unauthorized,
@@ -56,6 +57,12 @@ class AccountUpdate(StrictModel):
     display_name: Annotated[str | None, Field(min_length=2, max_length=120)] = None
     preferred_locale: Literal["ar", "en"] | None = None
 
+class PasswordChange(StrictModel):
+    """Self-service password rotation. The current password is required."""
+
+    current_password: Annotated[str, Field(min_length=1, max_length=128)]
+    new_password: Annotated[str, Field(min_length=8, max_length=128)]
+
 
 class AccountProfile(StrictModel):
     customer_id: UUID
@@ -64,6 +71,9 @@ class AccountProfile(StrictModel):
     preferred_locale: Literal["ar", "en"]
     member_since: datetime
     order_count: int
+
+class PasswordChangeResult(StrictModel):
+    revoked_sessions: int
 
 
 class AccountView(StrictModel):
@@ -87,6 +97,16 @@ def hash_token(token: str) -> str:
 
 def _utcnow() -> datetime:
     return datetime.now(UTC)
+
+
+_WEAK_PASSWORDS = frozenset(
+    {"password", "password1", "12345678", "qwertyui", "letmein1", "welcome1"}
+)
+
+
+def _reject_weak_password(password: str) -> None:
+    if password.strip().lower() in _WEAK_PASSWORDS:
+        raise InvalidInput("Choose a less common demonstration password.")
 
 
 def _profile_row(row: dict) -> AccountProfile:
@@ -276,13 +296,7 @@ class IdentityStore:
         display_name = registration.display_name.strip()
         if not display_name:
             raise InvalidInput("A display name is required.")
-        if registration.password.strip().lower() in {
-            "password",
-            "password1",
-            "12345678",
-            "qwertyui",
-        }:
-            raise InvalidInput("Choose a less common demonstration password.")
+        _reject_weak_password(registration.password)
 
         customer_id = uuid4()
         principal_id = uuid4()
@@ -378,6 +392,59 @@ class IdentityStore:
             raise DependencyUnavailable("The identity store is unavailable.") from error
         return _profile_row(profile)
 
+    def change_password(
+        self,
+        principal: Principal,
+        presented_token: str,
+        change: PasswordChange,
+    ) -> PasswordChangeResult:
+        """Rotate the password and end every session except the presented one.
+
+        A session that is not the caller's own is revoked; a legacy bearer caller
+        holds no session row, so every session ends.
+        """
+        if change.new_password == change.current_password:
+            raise InvalidInput("Choose a password different from the current one.")
+        _reject_weak_password(change.new_password)
+        new_hash = PASSWORD_HASH.hash(change.new_password)
+        try:
+            with db.connection(self._dsn, row_factory=dict_row) as connection:
+                credential = connection.execute(
+                    "SELECT password_hash FROM account_credentials WHERE principal_id = %s FOR UPDATE",
+                    (principal.principal_id,),
+                ).fetchone()
+                if credential is None:
+                    raise Unauthorized()
+                if not PASSWORD_HASH.verify(
+                    change.current_password, credential["password_hash"]
+                ):
+                    raise IncorrectPassword()
+                if PASSWORD_HASH.verify(change.new_password, credential["password_hash"]):
+                    raise InvalidInput(
+                        "Choose a password different from the current one."
+                    )
+                connection.execute(
+                    """
+                    UPDATE account_credentials
+                    SET password_hash = %s, changed_at = CURRENT_TIMESTAMP
+                    WHERE principal_id = %s
+                    """,
+                    (new_hash, principal.principal_id),
+                )
+                revoked = connection.execute(
+                    """
+                    UPDATE sessions
+                    SET revoked_at = CURRENT_TIMESTAMP
+                    WHERE principal_id = %s AND revoked_at IS NULL
+                      AND token_hash <> %s
+                    RETURNING session_id
+                    """,
+                    (principal.principal_id, hash_token(presented_token)),
+                ).fetchall()
+        except psycopg.Error as error:
+            raise DependencyUnavailable("The identity store is unavailable.") from error
+        return PasswordChangeResult(revoked_sessions=len(revoked))
+
     def view(self, principal: Principal) -> AccountView:
         profile = (
             self.profile(principal.customer_id)
@@ -391,6 +458,26 @@ class IdentityStore:
             scopes=sorted(principal.scopes),
             profile=profile,
         )
+
+
+class SessionReaper:
+    """Delete session rows that can no longer authenticate anyone."""
+
+    def __init__(self, dsn: str) -> None:
+        self._dsn = dsn
+
+    def run(self) -> int:
+        with db.connection(self._dsn) as connection:
+            removed = connection.execute(
+                """
+                DELETE FROM sessions
+                WHERE expires_at <= CURRENT_TIMESTAMP
+                   OR (revoked_at IS NOT NULL
+                       AND revoked_at <= CURRENT_TIMESTAMP - interval '30 days')
+                RETURNING session_id
+                """
+            ).fetchall()
+        return len(removed)
 
 
 class LoginThrottle:

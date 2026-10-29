@@ -8,6 +8,7 @@ import { formatDate, formatDateTime, formatMoney } from "@/lib/format";
 import { requireCustomer } from "@/lib/session";
 import { signOut } from "@/lib/auth-actions";
 import { AccountForm } from "@/components/account-form";
+import { PasswordForm } from "@/components/password-form";
 import { EmptyState, Notice } from "@/components/states";
 
 export const metadata: Metadata = { title: "حسابي — Smart-eCommerce" };
@@ -113,6 +114,10 @@ export default async function AccountPage() {
             )}
           </section>
         </div>
+      </div>
+
+      <div className="split" style={{ marginBlockStart: 18 }}>
+        <PasswordForm locale={locale} />
       </div>
     </main>
   );

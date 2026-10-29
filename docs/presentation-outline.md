@@ -73,7 +73,7 @@ Walk the seven modules with one screenshot each and one measured number:
 4. Accessibility is automated plus a keyboard smoke test; no manual screen-reader
    pass has been run.
 5. Authentication is a labelled demo harness (argon2id credentials, revocable
-   sessions) with no OAuth/OIDC, email verification, password reset, or MFA.
+   sessions) with no OAuth/OIDC, email verification, email-based password reset, or MFA.
 6. Figma deliverable replaced by the implementable screen specification.
 
 ## 7. Demo (live, per `docs/demo-script.md`) (5 min)
@@ -96,4 +96,4 @@ Short path: customer + operator sign-in → discovery → checkout with risk rev
 | How do you prevent duplicate reorders? | Idempotency keys per policy/product/horizon, plus pending-replenishment accounting. |
 | What happens if a model file is missing? | Forecast/search/pricing surfaces return typed 503; fraud routes to review. |
 | Where is the Figma file? | Unavailable access; the screen/interaction specification is the approved substitute. |
-| Is the authentication production-ready? | No. It is a labelled demo harness (DEC-017): argon2id passwords and revocable database sessions on separate customer/operator surfaces, but no OAuth/OIDC, email verification, password reset, or MFA. |
+| Is the authentication production-ready? | No. It is a labelled demo harness (DEC-017): argon2id passwords and revocable database sessions on separate customer/operator surfaces, but no OAuth/OIDC, email verification, email-based password reset, or MFA. |

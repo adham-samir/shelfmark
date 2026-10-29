@@ -52,6 +52,7 @@ export type ApiErrorCode =
   | "not_found"
   | "conflict"
   | "invalid_input"
+  | "incorrect_password"
   | "network_error"
   | "unknown";
 
@@ -82,6 +83,7 @@ function errorCode(code: string | undefined, status: number): ApiErrorCode {
       return code === "product_not_found" ? "not_found" : code;
     case "conflict":
     case "invalid_input":
+    case "incorrect_password":
       return code;
     default:
       if (status === 401) return "unauthorized";
@@ -590,6 +592,17 @@ export const api = {
   }): Promise<AccountProfile> {
     return apiRequest<AccountProfile>("/v1/account", {
       method: "PATCH",
+      body: input,
+      auth: "customer",
+      noStore: true,
+    });
+  },
+  changePassword(input: {
+    current_password: string;
+    new_password: string;
+  }): Promise<{ revoked_sessions: number }> {
+    return apiRequest<{ revoked_sessions: number }>("/v1/account/password", {
+      method: "POST",
       body: input,
       auth: "customer",
       noStore: true,

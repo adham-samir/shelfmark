@@ -75,3 +75,13 @@ def connection(
         raise psycopg.OperationalError(
             "The database connection could not be acquired."
         ) from error
+
+
+def close_pools() -> None:
+    """Close every pool. One-shot jobs call this so they exit without a
+    finalization warning from the pool's worker threads."""
+    with _guard:
+        pools = list(_pools.values())
+        _pools.clear()
+    for pool in pools:
+        pool.close()

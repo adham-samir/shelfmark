@@ -2,11 +2,19 @@
 
 import json
 
+from . import db
 from .config import Settings
 from .segmentation import SegmentationService, SegmentationStore
 
 
 def main() -> None:
+    try:
+        _run()
+    finally:
+        db.close_pools()
+
+
+def _run() -> None:
     settings = Settings.from_environment()
     service = SegmentationService(SegmentationStore(settings.postgres_dsn))
     print(

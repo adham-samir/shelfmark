@@ -2,7 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { ApiError, api } from "@/lib/api";
-import type { AccountFormState, AuthFormState } from "@/lib/action-states";
+import type {
+  AccountFormState,
+  AuthFormState,
+  PasswordFormState,
+} from "@/lib/action-states";
 import {
   clearSession,
   safeNext,
@@ -112,4 +116,37 @@ export async function saveAccount(
     return { kind: "error", code: "unknown" };
   }
   return { kind: "success" };
+}
+
+export async function changePassword(
+  _previous: PasswordFormState,
+  formData: FormData,
+): Promise<PasswordFormState> {
+  const currentPassword = String(formData.get("current_password") ?? "");
+  const newPassword = String(formData.get("new_password") ?? "");
+  const confirm = String(formData.get("confirm_password") ?? "");
+  if (newPassword.length < 8 || newPassword !== confirm) {
+    return { kind: "error", code: "invalid_input" };
+  }
+  if (newPassword === currentPassword) {
+    return { kind: "error", code: "invalid_input" };
+  }
+  try {
+    const result = await api.changePassword({
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+    return { kind: "success", revoked: result.revoked_sessions };
+  } catch (error) {
+    if (error instanceof ApiError && error.code === "incorrect_password") {
+      return { kind: "error", code: "wrong_password" };
+    }
+    if (error instanceof ApiError && error.status === 401) {
+      return { kind: "error", code: "unauthorized" };
+    }
+    if (error instanceof ApiError && error.code === "invalid_input") {
+      return { kind: "error", code: "invalid_input" };
+    }
+    return { kind: "error", code: "unknown" };
+  }
 }

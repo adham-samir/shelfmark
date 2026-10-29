@@ -12,6 +12,8 @@ from smart_ecommerce_api.catalog import (
 )
 from smart_ecommerce_api.errors import (
     DependencyUnavailable,
+    IncorrectPassword,
+    InvalidInput,
     ProductNotFound,
     Unauthorized,
 )
@@ -47,6 +49,7 @@ from smart_ecommerce_api.identity import (
     AccountView,
     AuthSession,
     LoginInput,
+    PasswordChangeResult,
     RegisterInput,
 )
 from smart_ecommerce_api.main import create_app
@@ -624,6 +627,22 @@ class FakeIdentity:
             payload["preferred_locale"] = update.preferred_locale
         self.current_profile = AccountProfile(**payload)
         return self.current_profile
+
+    def change_password(self, principal: Principal, presented_token: str, change):
+        if change.current_password != "demo-customer-1":
+            raise IncorrectPassword()
+        if change.new_password == change.current_password:
+            raise InvalidInput("Choose a password different from the current one.")
+        self.password_changes = getattr(self, "password_changes", 0) + 1
+        revoked = [
+            token
+            for token, owner in self.tokens.items()
+            if token != presented_token
+            and owner.principal_id == principal.principal_id
+        ]
+        for token in revoked:
+            self.tokens.pop(token)
+        return PasswordChangeResult(revoked_sessions=len(revoked))
 
 
 def client(
@@ -1346,3 +1365,69 @@ def test_account_update_and_logout_revoke_the_session() -> None:
     assert api.post("/v1/auth/logout", headers=headers).status_code == 204
     assert api.get("/v1/auth/me", headers=headers).status_code == 401
     assert api.get("/v1/account", headers=headers).status_code == 401
+
+
+def test_password_change_keeps_the_calling_session_and_ends_the_others() -> None:
+    identity = FakeIdentity()
+    api = client(identity=identity)
+    credentials = {
+        "email": "customer@example.invalid",
+        "password": "demo-customer-1",
+        "surface": "customer",
+    }
+    first = api.post("/v1/auth/login", json=credentials).json()["token"]
+    second = api.post("/v1/auth/login", json=credentials).json()["token"]
+    first_headers = {"authorization": f"Bearer {first}"}
+    second_headers = {"authorization": f"Bearer {second}"}
+
+    assert api.post("/v1/account/password").status_code == 401
+    operator = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "operator@example.invalid",
+            "password": "demo-operator-1",
+            "surface": "operator",
+        },
+    ).json()["token"]
+    assert (
+        api.post(
+            "/v1/account/password",
+            headers={"authorization": f"Bearer {operator}"},
+            json={"current_password": "demo-customer-1", "new_password": "demo-customer-9"},
+        ).status_code
+        == 403
+    )
+
+    wrong = api.post(
+        "/v1/account/password",
+        headers=first_headers,
+        json={"current_password": "not-the-password", "new_password": "demo-customer-9"},
+    )
+    assert wrong.status_code == 400
+    assert wrong.json()["error"]["code"] == "incorrect_password"
+
+    unchanged = api.post(
+        "/v1/account/password",
+        headers=first_headers,
+        json={"current_password": "demo-customer-1", "new_password": "demo-customer-1"},
+    )
+    assert unchanged.status_code == 422
+
+    short = api.post(
+        "/v1/account/password",
+        headers=first_headers,
+        json={"current_password": "demo-customer-1", "new_password": "short"},
+    )
+    assert short.status_code == 422
+
+    changed = api.post(
+        "/v1/account/password",
+        headers=first_headers,
+        json={"current_password": "demo-customer-1", "new_password": "demo-customer-9"},
+    )
+    assert changed.status_code == 200, changed.text
+    assert changed.json()["revoked_sessions"] == 1
+
+    # The caller keeps working; the other device is signed out.
+    assert api.get("/v1/auth/me", headers=first_headers).status_code == 200
+    assert api.get("/v1/auth/me", headers=second_headers).status_code == 401

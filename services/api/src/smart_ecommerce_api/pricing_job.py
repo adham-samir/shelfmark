@@ -2,11 +2,19 @@
 
 import json
 
+from . import db
 from .config import Settings
 from .pricing import PricingService, PricingStore, SeasonCalendar
 
 
 def main() -> None:
+    try:
+        _run()
+    finally:
+        db.close_pools()
+
+
+def _run() -> None:
     settings = Settings.from_environment()
     service = PricingService(
         PricingStore(settings.postgres_dsn),

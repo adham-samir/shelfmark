@@ -70,6 +70,8 @@ from .identity import (
     IdentityStore,
     LoginInput,
     LoginThrottle,
+    PasswordChange,
+    PasswordChangeResult,
     RegisterInput,
 )
 from .models import CatalogFacets, Health, Product, ProductPage
@@ -296,6 +298,14 @@ def create_app(
             raise Unauthorized()
         return app.state.authenticator.authenticate(credentials.credentials)
 
+    def presented_token(
+        credentials: HTTPAuthorizationCredentials | None = Depends(bearer),
+    ) -> str:
+        """The raw bearer value, needed only where a route must spare its own session."""
+        if credentials is None or credentials.scheme.lower() != "bearer":
+            raise Unauthorized()
+        return credentials.credentials
+
     def current_customer(
         principal: Principal = Depends(current_principal),
     ) -> Principal:
@@ -320,6 +330,21 @@ def create_app(
         )
         response = await call_next(request)
         response.headers["x-request-id"] = request.state.request_id
+        # The API serves JSON only, so it can afford a policy stricter than the
+        # storefront's. Nothing here is meant to be framed or sniffed.
+        response.headers.setdefault("x-content-type-options", "nosniff")
+        response.headers.setdefault("referrer-policy", "no-referrer")
+        response.headers.setdefault("x-frame-options", "DENY")
+        response.headers.setdefault(
+            "permissions-policy", "geolocation=(), microphone=(), camera=()"
+        )
+        # The interactive docs page loads its assets from a CDN, so the strict
+        # JSON-only policy is applied everywhere except the docs surface.
+        if not request.url.path.startswith(("/docs", "/redoc", "/openapi.json")):
+            response.headers.setdefault(
+                "content-security-policy",
+                "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+            )
         return response
 
     @app.exception_handler(ApplicationError)
@@ -444,6 +469,19 @@ def create_app(
         principal: Principal = Depends(current_customer),
     ) -> AccountProfile:
         return app.state.identity_store.update_profile(principal.customer_id, update)
+
+    @app.post(
+        "/v1/account/password",
+        response_model=PasswordChangeResult,
+        responses={401: {"description": "The current password is incorrect."}},
+        tags=["identity"],
+    )
+    def change_account_password(
+        change: PasswordChange,
+        principal: Principal = Depends(current_customer),
+        token: str = Depends(presented_token),
+    ) -> PasswordChangeResult:
+        return app.state.identity_store.change_password(principal, token, change)
 
     @app.get(
         "/v1/orders",

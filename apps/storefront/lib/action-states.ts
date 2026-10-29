@@ -128,3 +128,16 @@ export interface AccountFormState {
 }
 
 export const initialAccountFormState: AccountFormState = { kind: "idle" };
+
+export interface PasswordFormState {
+  kind: "idle" | "success" | "error";
+  revoked?: number;
+  code?:
+    | "invalid_input"
+    | "wrong_password"
+    | "unauthorized"
+    | "dependency_unavailable"
+    | "unknown";
+}
+
+export const initialPasswordFormState: PasswordFormState = { kind: "idle" };

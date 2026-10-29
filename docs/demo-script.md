@@ -37,7 +37,7 @@ These are local `.invalid` accounts from the seed under the demo identity harnes
    navigation, and sign-out.
 3. Say plainly that this is a labelled demo identity harness: argon2id credentials,
    revocable database sessions, and independent customer/operator cookies, with no
-   OAuth, email verification, password reset, or MFA claim.
+   OAuth, email verification, email-based password reset, or MFA claim.
 
 **Expected:** customer and operator sessions coexist without mixing; signing out
 of one leaves the other intact.
@@ -144,7 +144,8 @@ numbers, and AI evaluation. Then state the declared limits plainly:
 - AWS deployment blocked (no credentials);
 - no concurrency soak test;
 - authentication is a labelled demo harness (DEC-017), not a production identity
-  provider: no OAuth/OIDC, email verification, password reset, or MFA.
+  provider: no OAuth/OIDC, email verification, email-based password reset, or MFA.
+   Self-service password change with the current password does exist.
 
 ## Fallback if the stack is unavailable
 

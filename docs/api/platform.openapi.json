@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Smart-eCommerce Platform API",
-    "version": "0.11.0",
-    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions, account/order history, owned order/shipment reads, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
+    "version": "0.12.0",
+    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, owned order/shipment reads, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
   },
   "security": [
     {
@@ -1800,6 +1800,61 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/v1/account/password": {
+      "post": {
+        "operationId": "changeAccountPassword",
+        "tags": [
+          "identity"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Rotate the password and end every other session of the principal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordChangeResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The current password is incorrect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -5486,6 +5541,43 @@
           "occurred_at"
         ],
         "title": "InventoryAdjustmentResult"
+      },
+      "PasswordChange": {
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "title": "Current Password"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128,
+            "title": "New Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "current_password",
+          "new_password"
+        ],
+        "title": "PasswordChange"
+      },
+      "PasswordChangeResult": {
+        "properties": {
+          "revoked_sessions": {
+            "type": "integer",
+            "title": "Revoked Sessions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "revoked_sessions"
+        ],
+        "title": "PasswordChangeResult"
       }
     },
     "responses": {
