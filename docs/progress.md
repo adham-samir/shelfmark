@@ -79,6 +79,7 @@ Stage 1 satisfies its repository completion evidence. Functional implementation 
 | Visual direction | Implemented | Approved storefront composition `.impeccable/mocks/comp-a.png`, with two comparison studies. These are design artifacts, not a working UI. |
 | Figma deliverable | Pending external access | The plan explicitly permits an implementable screen/interaction specification when Figma is unavailable; no unrelated screenshot is called a Figma prototype. |
 | Stable identity and field ownership | Verified | One canonical UUID across stores; PostgreSQL owns operational data and MongoDB owns descriptive catalog content. |
+| Migration runner | Verified | `python -m smart_ecommerce_api.migrate` applies the twelve migrations once each, in filename order, in one transaction per file, recording a checksum in `schema_migrations`. Verified on a fresh database (12 applied, 30 tables plus the tracking table, 13 seeded products), on a second run (0 applied), on an upgrade from a database stopped at 0011 (only 0012 applied), on checksum drift (run aborts with the file name), on a failing migration (no partial state), and through compose (`migrate` service, API waits, second `up` is a no-op). The dev volume was baselined, not reset: 521 orders intact. |
 | Relational design | Verified | 30 tables across migrations 0001–0012; 0008 adds the credential/session tables, `login_email`, and the surface-mapping trigger; 0009 adds `orders:read`; 0010 adds `orders:write`, `order_adjustments`, and the shipment-event actor; 0011 adds the optional cancellation reason code; 0012 adds `customer_addresses` with a one-default partial unique index. |
 | MongoDB design | Verified | Validator, indexes, repeatable setup, identity/authority rejection tests, and idempotent synthetic seed. |
 | API contracts | Verified | Catalog plus full-platform OpenAPI 3.1 contracts validate structurally and cover every planned boundary. |
@@ -98,12 +99,14 @@ All Stage 2 work possible in the repository is complete. The only declared exter
 
 ## Next smallest useful increment
 
-The operator order queue and its audited lifecycle are in place. The next
-repository-side gaps are on the customer side (saved addresses, cancelling an own
-order, changing a password, buy-again) and in hardening (CI, an Alembic runner,
-session reaping, CSRF/Origin checks, security headers, structured logging,
-compose hardening). The remaining increments below still require inputs the
-environment does not have:
+The customer loop (password change, saved addresses, own-order cancellation,
+buy-again), the operator order lifecycle, the migration runner, session reaping,
+and response security headers are all in place. What remains is hardening the
+repository rather than the product: CI, structured request logging, an
+Origin/CSRF check on cookie-authenticated mutations, and compose hardening. There
+is no git remote, so the history lives only on this machine.
+
+The increments below still require inputs the environment does not have:
 
 1. **Live provider proof** — set `OPENAI_API_KEY` and re-run the assistant and voice checks, including a prompt-injection attempt, then replace the injected-provider exception with live evidence.
 2. **Cloud placement** — supply an AWS account, region, domain, and budget, then apply the planned ECS/RDS/Atlas/S3/Secrets Manager placement and run the documented cloud smoke test.
@@ -133,7 +136,7 @@ Until those exist, keep the final demo on the local Docker stack and state the e
 | Source requirement and decision-reference coverage | Passed. |
 | OpenAPI 3.1 catalog/platform validation and JSON Schema examples | Passed — 6 contract tests against the v0.11.0 platform contract. |
 | PostgreSQL/MongoDB physical data suite | Passed — 11 database tests plus the pricing/RFM seed assertions on PostgreSQL 18.6 and MongoDB 8.0.34. |
-| FastAPI route/service suite | Passed — 113 tests including identity registration/login/throttle/session-revocation/isolation/account/orders checks, buy-again skip handling, saved-address CRUD with default rules, customer-initiated cancellation and adjustment history, self-service password rotation with session survival and revocation, the session reaper, operator order list/detail capability and surface isolation, order-lifecycle transitions/cancellation/refund/inventory-adjustment authorization and validation, plus BI-01 metric/filter/reconciliation/validation checks, BO-04 feature/forced-token/fail-closed/evidence checks, BO-03 quintile/matrix/exclusion/idempotency/export checks, BO-02 factor/constraint/freshness/idempotency/audit checks, BO-01 chronology/leakage, deterministic inference, 14-day horizon, policy negatives, retry/idempotency, model unavailability, supplier failure/recovery, typed authorization, and all prior storefront services. |
+| FastAPI route/service suite | Passed — 121 tests (5 database-backed migration tests skip without a DSN) including migration-runner parsing and apply rules, identity registration/login/throttle/session-revocation/isolation/account/orders checks, buy-again skip handling, saved-address CRUD with default rules, customer-initiated cancellation and adjustment history, self-service password rotation with session survival and revocation, the session reaper, operator order list/detail capability and surface isolation, order-lifecycle transitions/cancellation/refund/inventory-adjustment authorization and validation, plus BI-01 metric/filter/reconciliation/validation checks, BO-04 feature/forced-token/fail-closed/evidence checks, BO-03 quintile/matrix/exclusion/idempotency/export checks, BO-02 factor/constraint/freshness/idempotency/audit checks, BO-01 chronology/leakage, deterministic inference, 14-day horizon, policy negatives, retry/idempotency, model unavailability, supplier failure/recovery, typed authorization, and all prior storefront services. |
 | Black-box commerce/recommendation/risk/search integration | Passed — 9 flows including commerce/risk cases with required shipping address, live history-based hybrid recommendation, dynamic facets, filtered image retrieval, missing-key assistant/voice behavior, persisted evidence, the BO-02 pricing flow with order-snapshot preservation, the operator lifecycle (illegal-transition 409, `ready`/`in_transit` shipment walk, partial refund with immutable subtotal, over-refund and post-shipment cancellation refusals, customer 403, stock restore on cancellation, and an audited +2 adjustment), customer-initiated cancellation with its ownership and reason-code rules, address-book CRUD with the one-default rule, and buy-again at current prices with ownership isolation. |
 | Storefront production build | Passed — `next build` with clean TypeScript and the address book route and the lifecycle controls compiled into the order detail and inventory pages. |
 | Storefront route matrix | Passed — catalog, filtered catalog, product, compare, cart, checkout, assistant, image search, voice search, order, sign-in, registration, account, account orders, back-office sign-in, back-office overview, the order queue and detail, and all five smart back-office modules return 200 with the matching session; guest access to gated pages redirects to the correct sign-in page; missing product and missing order return 404. |

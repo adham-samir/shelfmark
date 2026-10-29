@@ -32,6 +32,8 @@ exception**, **Simulated**, **Blocked**.
 | COM-12 | A customer can save addresses and reuse the default at checkout. | **Passed** | The isolated schema rejects a second default and accepts one per customer; the black-box flow creates, promotes, refuses to clear, and deletes addresses, and checks that order detail still returns its own shipping snapshot. |
 | COM-13 | A customer can repeat a past order into the cart. | **Passed** | The black-box flow reorders into an empty cart, asserts the cart line uses the current product price rather than the checkout snapshot, confirms a second call accumulates, and checks that another customer receives 404. |
 
+| Migration runner | **Passed** | Twelve migrations apply once each on a fresh database (30 tables plus `schema_migrations`, 13 seeded products); a second run applies nothing; a database stopped at 0011 upgrades by applying only 0012; an edited migration aborts with its filename; a failing migration leaves neither schema nor version row. Compose runs it as the `migrate` service and the API waits for it. |
+
 ## 2. Security testing
 
 | Check | Result | Evidence |
@@ -158,10 +160,17 @@ testing; no screen-reader pass has been run.
 ## Reproducing the evidence
 
 ```bash
+# Schema (idempotent, checksummed)
+python -m smart_ecommerce_api.migrate --status
+
 # Unit, route, and contract suites
 uv run --project services/api --extra test pytest services/api/tests
 uv run --with-requirements tests/data_foundation/requirements.txt \
   python -m unittest discover -s tests/data_foundation -v
+
+# Migration runner against a disposable PostgreSQL
+SMART_ECOMMERCE_TEST_POSTGRES_DSN=postgresql://postgres:ephemeral@127.0.0.1:15501/postgres \
+  uv run --project services/api --extra test pytest services/api/tests/test_migrations.py -v
 
 # Black-box functional, security, latency, and workload checks (API must be running)
 # The integration flows assume a freshly seeded stack; reset the volumes between runs.

@@ -12,20 +12,6 @@ services:
       interval: 2s
       timeout: 3s
       retries: 20
-    volumes:
-      - ../database/relational/migrations/0001_product_foundation.sql:/docker-entrypoint-initdb.d/001-product.sql:ro
-      - ../database/relational/migrations/0002_commerce_foundation.sql:/docker-entrypoint-initdb.d/002-commerce.sql:ro
-      - ../database/relational/migrations/0003_checkout_controls.sql:/docker-entrypoint-initdb.d/003-checkout.sql:ro
-      - ../database/relational/migrations/0004_recommendation_evidence.sql:/docker-entrypoint-initdb.d/004-recommendation.sql:ro
-      - ../database/relational/migrations/0005_shipping_contact.sql:/docker-entrypoint-initdb.d/005-shipping.sql:ro
-      - ../database/relational/migrations/0006_inventory_automation.sql:/docker-entrypoint-initdb.d/006-inventory-automation.sql:ro
-      - ../database/relational/migrations/0007_analytics_indexes.sql:/docker-entrypoint-initdb.d/007-analytics.sql:ro
-      - ../database/relational/migrations/0008_identity_sessions.sql:/docker-entrypoint-initdb.d/008-identity.sql:ro
-      - ../database/relational/migrations/0009_operator_order_access.sql:/docker-entrypoint-initdb.d/009-operator-orders.sql:ro
-      - ../database/relational/migrations/0010_order_lifecycle.sql:/docker-entrypoint-initdb.d/010-order-lifecycle.sql:ro
-      - ../database/relational/migrations/0011_order_adjustment_reason_code.sql:/docker-entrypoint-initdb.d/011-adjustment-reason.sql:ro
-      - ../database/relational/migrations/0012_customer_addresses.sql:/docker-entrypoint-initdb.d/012-addresses.sql:ro
-      - ../database/relational/seeds/0001_synthetic_demo.sql:/docker-entrypoint-initdb.d/013-seed.sql:ro
 
   mongo:
     image: mongo:8.0.34
@@ -46,6 +32,22 @@ services:
     command: ["--eval", "load('/database/catalog/setup.js'); load('/database/catalog/seed.synthetic.js');"]
     restart: "no"
 
+  migrate:
+    build:
+      context: ../services/api
+    command:
+      ["python", "-m", "smart_ecommerce_api.migrate", "--seed"]
+    environment:
+      SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
+      SMART_ECOMMERCE_MIGRATIONS_DIR: /sql/migrations
+      SMART_ECOMMERCE_SEEDS_DIR: /sql/seeds
+    volumes:
+      - ../database/relational:/sql:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   api:
     build:
       context: ../services/api
@@ -62,8 +64,8 @@ services:
       SMART_ECOMMERCE_ASSISTANT_MODEL: gpt-6-luna
       SMART_ECOMMERCE_TRANSCRIPTION_MODEL: gpt-transcribe
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       catalog-init:
         condition: service_completed_successfully
     ports:

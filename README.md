@@ -27,10 +27,17 @@ Selections are recorded in [the decision register](docs/decisions.md). Developme
 Prerequisites: Docker with its daemon running, and `uv`. The data checks start isolated PostgreSQL and MongoDB containers, publish no host ports, and stop only those containers afterward. No existing database is used.
 
 ```bash
+# Schema: one command, tracked by checksum, safe to re-run.
+uv run --project services/api python -m smart_ecommerce_api.migrate --status
+
 uv run --with-requirements tests/data_foundation/requirements.txt python -m unittest discover -s tests/data_foundation -v
 uv run --project services/api --extra test pytest services/api/tests
 uv run --project services/api --extra test pytest tests/integration/test_commerce_api.py -v
 uv run --project services/api --extra test pytest tests/security tests/load -v
+
+# The migration runner's database behaviour, against a disposable PostgreSQL.
+SMART_ECOMMERCE_TEST_POSTGRES_DSN=postgresql://postgres:ephemeral@127.0.0.1:15501/postgres \
+  uv run --project services/api --extra test pytest services/api/tests/test_migrations.py -v
 ```
 
 The integration test is black-box and expects a reachable API at `SMART_ECOMMERCE_TEST_BASE_URL` (default `http://127.0.0.1:8000`). Build the storefront separately:

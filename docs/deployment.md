@@ -11,7 +11,8 @@ environment. Nothing in this document claims a cloud deployment has happened.
 
 | Component | Image / artifact | Notes |
 |---|---|---|
-| `postgres` | `postgres:18.6` | Migrations 0001–0012 and the synthetic seed mount into `/docker-entrypoint-initdb.d` (identity is `008-identity.sql`, operator order access is `009-operator-orders.sql`, the order lifecycle is `010-order-lifecycle.sql`, cancellation reason codes are `011-adjustment-reason.sql`, the address book is `012-addresses.sql`, and the seed is `013-seed.sql`). |
+| `postgres` | `postgres:18.6` | Holds the schema only; nothing is mounted into `docker-entrypoint-initdb.d`. |
+| `migrate` | same API image | One-shot: `python -m smart_ecommerce_api.migrate --seed`. Applies every numbered migration once, then the synthetic seed. The API waits for it to complete. |
 | `mongo` | `mongo:8.0.34` | Validator and indexes applied by `catalog-init`. |
 | `catalog-init` | `mongo:8.0.34` | One-shot: `setup.js` + `seed.synthetic.js`. |
 | `api` | `services/api/Dockerfile` | FastAPI + uvicorn on port 8000, runs as UID 65532. |
@@ -68,19 +69,44 @@ rotation.
 
 ## 4. Database setup and upgrades
 
-1. Empty database: apply `database/relational/migrations/*.sql` in filename order.
-   Migration `0008_identity_sessions.sql` creates the credential/session tables,
-   the `login_email` column, and the surface-mapping trigger;
-   `0009_operator_order_access.sql` adds the `orders:read` capability to the scope
-   constraint, and `0010_order_lifecycle.sql` adds `orders:write`, the
-   `order_adjustments` audit table, and the acting operator on shipment events.
-   The seed grants both order capabilities to the demo operator.
-2. Apply `database/relational/seeds/0001_synthetic_demo.sql` only for
-   demonstrations. It is idempotent-free by design; run it on an empty schema.
-   The seed creates the demo principals and their argon2id credentials; migrations
-   run before seeds, so credentials must stay in the seed.
-3. MongoDB: run `database/catalog/setup.js`, then `seed.synthetic.js` for demos.
-4. New migrations are additive and numbered; never edit an applied migration.
+One command owns the schema, for a fresh database and an existing one alike:
+
+```bash
+python -m smart_ecommerce_api.migrate            # apply every pending migration
+python -m smart_ecommerce_api.migrate --status   # what is applied, pending, or changed
+python -m smart_ecommerce_api.migrate --seed     # also apply the synthetic seed
+python -m smart_ecommerce_api.migrate --baseline # adopt a pre-runner database
+```
+
+How it behaves:
+
+- `schema_migrations` records each version, its checksum, and how long it took.
+  Every file is applied at most once, in filename order.
+- Each migration runs in **its own transaction**. A failure leaves neither a
+  schema change nor a version row. (This also fixes `0005_shipping_contact.sql`,
+  which has no `BEGIN`/`COMMIT` of its own.)
+- An applied file is **immutable**. Editing one aborts the run with the file name
+  instead of leaving two databases that claim the same version with different
+  schemas. Add a new numbered file instead.
+- Concurrent runs serialise on a PostgreSQL advisory lock, so several API
+  replicas can start at once.
+- `--seed` is explicit and refuses a database that already holds products.
+  Compose passes it because it is the demo stack; a production deployment runs
+  plain `migrate`. Seeding a real database with synthetic orders is never
+  automatic.
+
+`docker compose up` runs this as the `migrate` service, and the API waits for it
+to complete. A second `up` applies nothing and skips the seed, so restarting the
+stack is safe.
+
+**Adopting a database built before the runner existed.** Such a database has the
+tables but no `schema_migrations`. Run `--baseline` once: it records the current
+files as applied *without running them*, refuses if the database is empty, and
+refuses if it is already tracked. Never baseline a database whose actual state
+you have not checked.
+
+MongoDB is unchanged: run `database/catalog/setup.js`, then `seed.synthetic.js`
+for demos.
 
 ## 5. Model artifacts and retraining
 
