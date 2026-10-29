@@ -597,6 +597,17 @@ export const api = {
       noStore: true,
     });
   },
+  cancelOwnOrder(
+    orderId: string,
+    input: { reason_code: string; reason?: string },
+  ): Promise<OrderAdjustmentResult> {
+    return apiRequest<OrderAdjustmentResult>(`/v1/orders/${orderId}/cancel`, {
+      method: "POST",
+      body: input,
+      auth: "customer",
+      noStore: true,
+    });
+  },
   changePassword(input: {
     current_password: string;
     new_password: string;

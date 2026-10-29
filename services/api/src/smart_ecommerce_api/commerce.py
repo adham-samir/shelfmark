@@ -21,6 +21,7 @@ from .commerce_models import (
     OperatorOrderSummary,
     OperatorShipping,
     Order,
+    OrderAdjustment,
     OrderAdjustmentResult,
     OrderItem,
     OrderList,
@@ -33,7 +34,12 @@ from .commerce_models import (
     ShipmentEvent,
     ShippingAddress,
 )
-from .errors import Conflict, DependencyUnavailable, ResourceNotFound
+from .errors import (
+    Conflict,
+    DependencyUnavailable,
+    InvalidInput,
+    ResourceNotFound,
+)
 from .fraud import RiskAssessor, RiskContext, RiskResult
 
 
@@ -58,6 +64,16 @@ _SHIPMENT_DESCRIPTIONS: dict[str, tuple[str, str]] = {
 _ORDER_STATUS_FOR_SHIPMENT: dict[str, OrderState] = {
     "in_transit": "shipped",
     "delivered": "delivered",
+}
+
+# Canonical text for each fixed cancellation reason. The storefront shows the
+# same options; `other` keeps whatever the customer typed instead.
+_CANCELLATION_REASONS: dict[str, str] = {
+    "changed_mind": "Changed my mind",
+    "ordered_by_mistake": "Ordered by mistake",
+    "wrong_item": "Wrong item or variant",
+    "found_cheaper": "Found a better price",
+    "delivery_too_slow": "Delivery is taking too long",
 }
 
 
@@ -637,6 +653,37 @@ class PostgresCommerceStore:
         except psycopg.Error as error:
             raise DependencyUnavailable("The commerce store is unavailable.") from error
 
+    @staticmethod
+    def _adjustments_for_order(connection, order_id: UUID) -> list[OrderAdjustment]:
+        rows = connection.execute(
+            """
+            SELECT a.adjustment_id, a.kind, a.amount, a.reason, a.reason_code,
+                   a.created_at, p.account_type,
+                   COALESCE(c.display_name, p.login_email, 'Operator') AS actor_name
+            FROM order_adjustments a
+            JOIN account_principals p ON p.principal_id = a.actor_principal_id
+            LEFT JOIN customers c ON c.customer_id = p.customer_id
+            WHERE a.order_id = %s
+            ORDER BY a.created_at, a.adjustment_id
+            """,
+            (order_id,),
+        ).fetchall()
+        return [
+            OrderAdjustment(
+                adjustment_id=row["adjustment_id"],
+                kind=row["kind"],
+                amount=_decimal_text(row["amount"]),
+                reason=row["reason"],
+                reason_code=row["reason_code"],
+                actor_kind=(
+                    "operator" if row["account_type"] == "backoffice" else "customer"
+                ),
+                actor_name=row["actor_name"],
+                created_at=row["created_at"],
+            )
+            for row in rows
+        ]
+
     def operator_get_order(self, order_id: UUID) -> OperatorOrderDetail:
         try:
             with db.connection(self._dsn, row_factory=dict_row) as connection:
@@ -705,6 +752,7 @@ class PostgresCommerceStore:
                         for item in items
                     ],
                     shipment=self._shipment_for_order(connection, order_id),
+                    adjustments=self._adjustments_for_order(connection, order_id),
                 )
         except psycopg.Error as error:
             raise DependencyUnavailable("The commerce store is unavailable.") from error
@@ -918,6 +966,46 @@ class PostgresCommerceStore:
             amount="0",
             created_at=adjustment["created_at"],
         )
+
+    def customer_cancel_order(
+        self,
+        customer_id: UUID,
+        order_id: UUID,
+        reason_code: str,
+        reason: str | None,
+        actor_principal_id: UUID,
+    ) -> OrderAdjustmentResult:
+        """Cancel an own order before it ships.
+
+        The stored reason is always human-readable. A fixed code is expanded to
+        canonical text so reporting stays countable; `other` keeps the customer's
+        own words and requires them.
+        """
+        text = (
+            reason.strip()
+            if reason_code == "other" and reason and reason.strip()
+            else _CANCELLATION_REASONS.get(reason_code)
+        )
+        if text is None:
+            raise InvalidInput("Choose a cancellation reason and describe it.")
+        try:
+            with db.connection(self._dsn, row_factory=dict_row) as connection:
+                order = connection.execute(
+                    """
+                    SELECT order_id, status, subtotal, refund_total
+                    FROM orders
+                    WHERE order_id = %s AND customer_id = %s
+                    FOR UPDATE
+                    """,
+                    (order_id, customer_id),
+                ).fetchone()
+                if order is None:
+                    raise ResourceNotFound("Order not found.")
+                return self._cancel_order_locked(
+                    connection, order, text, actor_principal_id, reason_code
+                )
+        except psycopg.Error as error:
+            raise DependencyUnavailable("The commerce store is unavailable.") from error
 
     def operator_cancel_order(
         self,
@@ -1319,6 +1407,18 @@ class CommerceService:
     ) -> Shipment:
         return self._store.operator_transition_shipment(
             order_id, target, actor_principal_id
+        )
+
+    def customer_cancel_order(
+        self,
+        customer_id: UUID,
+        order_id: UUID,
+        reason_code: str,
+        reason: str | None,
+        actor_principal_id: UUID,
+    ) -> OrderAdjustmentResult:
+        return self._store.customer_cancel_order(
+            customer_id, order_id, reason_code, reason, actor_principal_id
         )
 
     def operator_cancel_order(

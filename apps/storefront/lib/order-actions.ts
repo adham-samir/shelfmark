@@ -130,3 +130,38 @@ export async function adjustInventory(
     return { kind: "error", ...failure(error) };
   }
 }
+
+export async function cancelOwnOrder(
+  _previous: OrderActionState,
+  formData: FormData,
+): Promise<OrderActionState> {
+  const orderId = String(formData.get("order_id") ?? "").trim();
+  const reasonCode = String(formData.get("reason_code") ?? "").trim();
+  const reason = String(formData.get("reason") ?? "").trim();
+  const codes = [
+    "changed_mind",
+    "ordered_by_mistake",
+    "wrong_item",
+    "found_cheaper",
+    "delivery_too_slow",
+    "other",
+  ];
+  if (
+    !orderId ||
+    !codes.includes(reasonCode) ||
+    (reasonCode === "other" && (reason.length < 3 || reason.length > 300))
+  ) {
+    return { kind: "error", code: "invalid_input" };
+  }
+  try {
+    const result = await api.cancelOwnOrder(orderId, {
+      reason_code: reasonCode,
+      ...(reasonCode === "other" ? { reason } : {}),
+    });
+    revalidatePath(`/orders/${orderId}`);
+    revalidatePath("/account/orders");
+    return { kind: "success", status: result.status };
+  } catch (error) {
+    return { kind: "error", ...failure(error) };
+  }
+}

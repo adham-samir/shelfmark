@@ -36,7 +36,7 @@ Every dataset snapshot must record: owner/source, class, acquisition date, licen
 ## 3. Collection and ownership rules
 
 1. MongoDB owns descriptive catalog content and image references; the first physical validator is `database/catalog/product.schema.json`.
-2. PostgreSQL is selected under **DEC-002**. Migrations 0001–0010 own operational commerce, interaction, audit, planning, model-evidence, checkout-idempotency, risk-review, recommendation evidence, shipment contact, BO-01 reorder-audit records, BI-01 aggregate indexes, the demo identity/session tables (DEC-017), the operator order read capability, and the audited order-lifecycle tables (`order_adjustments`, shipment-event actors); see [data architecture](architecture/data-foundation.md).
+2. PostgreSQL is selected under **DEC-002**. Migrations 0001–0011 own operational commerce, interaction, audit, planning, model-evidence, checkout-idempotency, risk-review, recommendation evidence, shipment contact, BO-01 reorder-audit records, BI-01 aggregate indexes, the demo identity/session tables (DEC-017), the operator order read capability, the audited order-lifecycle tables (`order_adjustments`, shipment-event actors), and their cancellation reason codes; see [data architecture](architecture/data-foundation.md).
 3. Browsing, shipment, inventory, pricing, and evaluation evidence uses append-oriented records. Order-item commercial snapshots are preserved independently from current prices; the application must prevent post-creation mutation.
 4. Cross-store data uses one canonical UUID: native `uuid` in PostgreSQL and lowercase UUID text in MongoDB `_id` and APIs; no name-based joins.
 5. Machine timestamps are UTC instants. The store displays them in `Africa/Cairo` under **DEC-005**.

@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Smart-eCommerce Platform API",
-    "version": "0.12.0",
-    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, owned order/shipment reads, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
+    "version": "0.13.0",
+    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, owned order/shipment reads, customer-initiated cancellation, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
   },
   "security": [
     {
@@ -1855,6 +1855,62 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_id}/cancel": {
+      "post": {
+        "operationId": "cancelOwnOrder",
+        "tags": [
+          "commerce"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Cancel an own order before it ships",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OrderId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCancelInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderAdjustmentResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
@@ -5336,6 +5392,13 @@
               }
             ],
             "title": "Shipment"
+          },
+          "adjustments": {
+            "items": {
+              "$ref": "#/components/schemas/OrderAdjustment"
+            },
+            "type": "array",
+            "title": "Adjustments"
           }
         },
         "additionalProperties": false,
@@ -5578,6 +5641,99 @@
           "revoked_sessions"
         ],
         "title": "PasswordChangeResult"
+      },
+      "CustomerCancelInput": {
+        "properties": {
+          "reason_code": {
+            "type": "string",
+            "enum": [
+              "changed_mind",
+              "ordered_by_mistake",
+              "wrong_item",
+              "found_cheaper",
+              "delivery_too_slow",
+              "other"
+            ],
+            "title": "Reason Code"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 3,
+            "maxLength": 300,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reason_code"
+        ],
+        "title": "CustomerCancelInput"
+      },
+      "OrderAdjustment": {
+        "properties": {
+          "adjustment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Adjustment Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "cancellation",
+              "refund"
+            ],
+            "title": "Kind"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,13})(\\.[0-9]{1,6})?$",
+            "title": "Amount"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "reason_code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Reason Code"
+          },
+          "actor_kind": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "operator"
+            ],
+            "title": "Actor Kind"
+          },
+          "actor_name": {
+            "type": "string",
+            "title": "Actor Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "adjustment_id",
+          "kind",
+          "amount",
+          "reason",
+          "actor_kind",
+          "actor_name",
+          "created_at"
+        ],
+        "title": "OrderAdjustment"
       }
     },
     "responses": {

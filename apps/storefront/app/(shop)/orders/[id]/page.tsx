@@ -9,6 +9,7 @@ import { statusLabel, translator } from "@/lib/i18n";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { ErrorState, Notice } from "@/components/states";
 import { requireCustomer } from "@/lib/session";
+import { CancelOrderControl } from "@/components/cancel-order-control";
 
 export async function generateMetadata({
   params,
@@ -58,6 +59,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   }
 
   const events = shipment ? [...shipment.events].reverse() : [];
+  const cancellable = order.status === "review" || order.status === "confirmed";
 
   return (
     <main className="page page-narrow" id="main">
@@ -139,6 +141,14 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           )}
         </section>
       </div>
+
+      {cancellable ? (
+        <section className="panel" aria-labelledby="order-cancel" style={{ marginBlockStart: 18 }}>
+          <h2 id="order-cancel">{t("cancel.section")}</h2>
+          <p className="field-hint">{t("cancel.sectionHint")}</p>
+          <CancelOrderControl locale={locale} orderId={order.order_id} />
+        </section>
+      ) : null}
 
       <div style={{ marginBlockStart: 18, display: "flex", gap: 8, flexWrap: "wrap" }}>
         <Link className="btn" href="/">

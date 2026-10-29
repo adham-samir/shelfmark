@@ -160,6 +160,17 @@ export interface OperatorOrderList {
   status: OrderState | null;
 }
 
+export interface OrderAdjustment {
+  adjustment_id: string;
+  kind: "cancellation" | "refund";
+  amount: string;
+  reason: string;
+  reason_code: string | null;
+  actor_kind: "customer" | "operator";
+  actor_name: string;
+  created_at: string;
+}
+
 export interface OperatorOrderDetail {
   order_id: string;
   status: OrderState;
@@ -172,6 +183,7 @@ export interface OperatorOrderDetail {
   shipping: OperatorShipping | null;
   items: OrderItem[];
   shipment: Shipment | null;
+  adjustments: OrderAdjustment[];
 }
 
 export interface AccountProfile {

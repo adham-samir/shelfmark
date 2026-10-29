@@ -37,6 +37,7 @@ SF-03 now composes these reads and facets with validated image upload/retrieval 
 | PATCH | `/v1/account` | Update display name and preferred locale | Customer |
 | POST | `/v1/account/password` | Rotate the password; ends every other session of the principal and keeps the caller signed in | Customer |
 | GET | `/v1/orders` | Paged order history for the signed-in customer | Customer |
+| POST | `/v1/orders/{order_id}/cancel` | Cancel an own order before it ships, from a fixed reason list plus free-text `other` | Customer |
 
 Credentials are argon2id hashes in `account_credentials`; session tokens are stored only as SHA-256 digests with a seven-day sliding expiry. A password change requires the current password, rejects reuse of it, and revokes every other session of the same principal (`400 incorrect_password` when the current value is wrong). `python -m smart_ecommerce_api.session_reaper` deletes expired rows and revoked rows older than 30 days; it runs as the `session-reaper` compose job. Responses carry `x-content-type-options`, `referrer-policy`, `x-frame-options`, `permissions-policy`, and a strict `content-security-policy` on every path except the interactive docs. Customer and operator sessions are independent, and the session-surface trigger rejects a mismatch. Ten failed logins per five minutes return `429 rate_limited`. Open registration is a demo choice; there is no email verification, password reset, MFA, or OAuth/OIDC claim.
 
@@ -50,6 +51,19 @@ Browsing-event capture, cart, checkout, owned order/shipment reads, trained pre-
 | GET | `/v1/backoffice/orders/{order_id}` | One order with customer, shipping contact, line items, and shipment events | `orders:read` |
 
 The queue exists so an operator can locate the order behind a risk-queue row or a customer question instead of seeing confirmed orders only as analytics aggregates. Customer-owned reads remain `/v1/orders` and `/v1/orders/{order_id}`; an operator token still receives `403` there, and a customer token receives `403` on the back-office routes.
+
+### Customer cancellation
+
+`POST /v1/orders/{order_id}/cancel` accepts one of `changed_mind`,
+`ordered_by_mistake`, `wrong_item`, `found_cheaper`, `delivery_too_slow`, or
+`other`. Fixed codes are expanded to canonical English text in
+`order_adjustments.reason` so reporting stays countable; `other` stores the
+customer's own words and is rejected when they are missing (`422 invalid_input`).
+The route is ownership-scoped, so another customer receives `404`, and it shares
+the operator cancellation path: stock is restored only from the order's own
+`sale` movements, the sandbox payment is voided, the shipment becomes
+`exception`, and the adjustment records the customer principal. An order that has
+shipped returns `409`.
 
 ### Operator order lifecycle
 

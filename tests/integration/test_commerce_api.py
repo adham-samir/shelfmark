@@ -699,3 +699,105 @@ def test_operator_order_lifecycle_advances_cancels_refunds_and_adjusts() -> None
         assert adjusted.json()["on_hand"] == after_cancel["on_hand"] + 2
         assert adjusted.json()["available"] == after_cancel["available"] + 2
         assert available_before >= 0
+
+def test_customer_cancels_own_order_with_a_listed_reason() -> None:
+    """COM-11: a customer can cancel before shipping, from a fixed reason list."""
+    customer = auth("synthetic-customer-subject")
+    other_customer = auth("synthetic-other-customer-subject")
+    operator = auth("synthetic-operator-subject")
+
+    with httpx.Client(base_url=BASE_URL, timeout=10) as api:
+        api.put(
+            "/v1/cart/items",
+            headers=customer,
+            json={"product_id": PRODUCT_TWO, "quantity": 1},
+        ).raise_for_status()
+        checkout = api.post(
+            "/v1/checkout",
+            headers=customer,
+            json={
+                "payment_token": "tok_sandbox_safe-own-cancel",
+                "idempotency_key": f"own-cancel-{uuid4()}",
+                "shipping": SHIPPING,
+            },
+        )
+        order_id = checkout.json()["order_id"]
+        if checkout.json()["status"] == "review":
+            queue = api.get("/v1/backoffice/risk", headers=operator).json()
+            assessment = next(item for item in queue if item["order_id"] == order_id)
+            api.post(
+                f"/v1/backoffice/risk/{assessment['assessment_id']}/decision",
+                headers=operator,
+                json={"decision": "allow"},
+            ).raise_for_status()
+
+        before = next(
+            row
+            for row in api.get("/v1/backoffice/inventory", headers=operator).json()["items"]
+            if row["product_id"] == PRODUCT_TWO
+        )
+
+        # A different customer cannot cancel it, and the id is not even disclosed.
+        assert_error(
+            api.post(
+                f"/v1/orders/{order_id}/cancel",
+                headers=other_customer,
+                json={"reason_code": "changed_mind"},
+            ),
+            404,
+            "not_found",
+        )
+        assert_error(
+            api.post(
+                f"/v1/orders/{order_id}/cancel",
+                headers=customer,
+                json={"reason_code": "because"},
+            ),
+            422,
+            "validation_error",
+        )
+        assert_error(
+            api.post(
+                f"/v1/orders/{order_id}/cancel",
+                headers=customer,
+                json={"reason_code": "other"},
+            ),
+            422,
+            "invalid_input",
+        )
+
+        cancelled = api.post(
+            f"/v1/orders/{order_id}/cancel",
+            headers=customer,
+            json={"reason_code": "found_cheaper"},
+        )
+        assert cancelled.status_code == 200, cancelled.text
+        assert cancelled.json()["status"] == "cancelled"
+        assert cancelled.json()["kind"] == "cancellation"
+        assert cancelled.json()["amount"] == "0"
+
+        after = next(
+            row
+            for row in api.get("/v1/backoffice/inventory", headers=operator).json()["items"]
+            if row["product_id"] == PRODUCT_TWO
+        )
+        assert after["on_hand"] == before["on_hand"] + 1
+
+        detail = api.get(f"/v1/backoffice/orders/{order_id}", headers=operator).json()
+        assert detail["status"] == "cancelled"
+        history = detail["adjustments"]
+        assert len(history) == 1
+        assert history[0]["actor_kind"] == "customer"
+        assert history[0]["reason_code"] == "found_cheaper"
+        assert history[0]["reason"] == "Found a better price"
+        assert history[0]["actor_name"] == "Synthetic Customer"
+
+        assert_error(
+            api.post(
+                f"/v1/orders/{order_id}/cancel",
+                headers=customer,
+                json={"reason_code": "changed_mind"},
+            ),
+            409,
+            "conflict",
+        )

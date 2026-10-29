@@ -25,6 +25,7 @@ from smart_ecommerce_api.commerce_models import (
     OperatorOrderList,
     OperatorOrderSummary,
     OperatorShipping,
+    OrderAdjustment,
     OrderAdjustmentResult,
     OrderItem,
     OrderList,
@@ -277,6 +278,18 @@ class FakeCommerce:
                 )
             ],
             shipment=None,
+            adjustments=[
+                OrderAdjustment(
+                    adjustment_id=UUID("90000000-0000-4000-8000-000000000005"),
+                    kind="refund",
+                    amount="100",
+                    reason="Damaged item",
+                    reason_code=None,
+                    actor_kind="operator",
+                    actor_name="Demo Operator",
+                    created_at=NOW,
+                )
+            ],
         )
 
     def operator_transition_shipment(self, order_id: UUID, target: str, actor_principal_id: UUID) -> Shipment:
@@ -292,6 +305,27 @@ class FakeCommerce:
                     occurred_at=NOW,
                 )
             ],
+        )
+
+    def customer_cancel_order(
+        self,
+        customer_id: UUID,
+        order_id: UUID,
+        reason_code: str,
+        reason,
+        actor_principal_id: UUID,
+    ) -> OrderAdjustmentResult:
+        if reason_code == "other" and not reason:
+            raise InvalidInput("Describe the reason for cancelling.")
+        self.last_cancellation = (reason_code, reason)
+        return OrderAdjustmentResult(
+            order_id=order_id,
+            status="cancelled",
+            refund_total="0",
+            adjustment_id=UUID("90000000-0000-4000-8000-000000000004"),
+            kind="cancellation",
+            amount="0",
+            created_at=NOW,
         )
 
     def operator_cancel_order(self, order_id: UUID, reason: str, actor_principal_id: UUID) -> OrderAdjustmentResult:
@@ -1206,6 +1240,88 @@ def test_operator_order_lifecycle_routes_require_write_capability() -> None:
         json={"quantity_delta": 0, "reason": "Stock count correction"},
     )
     assert zero.status_code == 422
+
+def test_customer_cancels_own_order_from_the_fixed_reason_list() -> None:
+    commerce = FakeCommerce()
+    api = client(commerce=commerce, identity=FakeIdentity())
+    token = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "customer@example.invalid",
+            "password": "demo-customer-1",
+            "surface": "customer",
+        },
+    ).json()["token"]
+    customer = {"authorization": f"Bearer {token}"}
+    order_id = "70000000-0000-4000-8000-000000000001"
+
+    assert api.post(f"/v1/orders/{order_id}/cancel").status_code == 401
+    operator = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "operator@example.invalid",
+            "password": "demo-operator-1",
+            "surface": "operator",
+        },
+    ).json()["token"]
+    assert (
+        api.post(
+            f"/v1/orders/{order_id}/cancel",
+            headers={"authorization": f"Bearer {operator}"},
+            json={"reason_code": "changed_mind"},
+        ).status_code
+        == 403
+    )
+
+    invalid_code = api.post(
+        f"/v1/orders/{order_id}/cancel",
+        headers=customer,
+        json={"reason_code": "because"},
+    )
+    assert invalid_code.status_code == 422
+
+    fixed = api.post(
+        f"/v1/orders/{order_id}/cancel",
+        headers=customer,
+        json={"reason_code": "found_cheaper"},
+    )
+    assert fixed.status_code == 200, fixed.text
+    assert fixed.json()["status"] == "cancelled"
+    assert fixed.json()["kind"] == "cancellation"
+    assert commerce.last_cancellation == ("found_cheaper", None)
+
+    # "other" keeps the customer's own words and requires them.
+    missing_text = api.post(
+        f"/v1/orders/{order_id}/cancel",
+        headers=customer,
+        json={"reason_code": "other"},
+    )
+    assert missing_text.status_code == 422
+
+    other = api.post(
+        f"/v1/orders/{order_id}/cancel",
+        headers=customer,
+        json={"reason_code": "other", "reason": "  Moved to another city  "},
+    )
+    assert other.status_code == 200, other.text
+    assert commerce.last_cancellation == ("other", "Moved to another city")
+
+
+def test_operator_order_detail_exposes_the_adjustment_history() -> None:
+    api = client()
+    headers = {"authorization": "Bearer operator-token"}
+    detail = api.get(
+        "/v1/backoffice/orders/70000000-0000-4000-8000-000000000001",
+        headers=headers,
+    )
+    assert detail.status_code == 200
+    adjustments = detail.json()["adjustments"]
+    assert len(adjustments) == 1
+    assert adjustments[0]["kind"] == "refund"
+    assert adjustments[0]["actor_kind"] == "operator"
+    assert adjustments[0]["actor_name"] == "Demo Operator"
+    assert adjustments[0]["reason"] == "Damaged item"
+
 
 def test_analytics_route_requires_capability_and_validates_range() -> None:
     api = client()

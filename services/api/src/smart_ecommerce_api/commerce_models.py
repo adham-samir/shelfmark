@@ -179,6 +179,44 @@ class OrderAdjustmentResult(StrictModel):
     created_at: datetime
 
 
+class OrderAdjustment(StrictModel):
+    """One audited operator or customer action on an order."""
+
+    adjustment_id: UUID
+    kind: Literal["cancellation", "refund"]
+    amount: MoneyText
+    reason: str
+    reason_code: str | None = None
+    actor_kind: Literal["customer", "operator"]
+    actor_name: str
+    created_at: datetime
+
+
+CancellationReason = Literal[
+    "changed_mind",
+    "ordered_by_mistake",
+    "wrong_item",
+    "found_cheaper",
+    "delivery_too_slow",
+    "other",
+]
+
+
+class CustomerCancelInput(StrictModel):
+    """A customer cancellation. The free-text reason is required only for `other`."""
+
+    reason_code: CancellationReason
+    reason: Annotated[str, Field(min_length=3, max_length=300)] | None = None
+
+    @field_validator("reason")
+    @classmethod
+    def _strip(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        text = value.strip()
+        return text or None
+
+
 class InventoryAdjustmentInput(StrictModel):
     quantity_delta: Annotated[int, Field(ge=-10_000, le=10_000)]
     reason: Annotated[str, Field(min_length=3, max_length=300)]
@@ -202,9 +240,10 @@ class InventoryAdjustmentResult(StrictModel):
 
 
 class OperatorOrderDetail(OperatorOrder):
-    """Full operator view: additive `shipment` over the summary fields."""
+    """Full operator view: additive `shipment` and `adjustments`."""
 
     shipment: Shipment | None = None
+    adjustments: list["OrderAdjustment"] = Field(default_factory=list)
 
 
 class BrowsingEventInput(StrictModel):

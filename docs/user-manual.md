@@ -65,6 +65,20 @@ inventing an answer.
 4. `/orders/{id}` shows items, the price you paid, risk handling status, and the
    shipment timeline. Prices on past orders never change when prices are updated.
 
+### Cancel your own order
+Before an order ships you can cancel it from `/orders/{id}`:
+
+1. Choose a reason from the list — changed my mind, ordered by mistake, wrong
+   item, found a better price, delivery is taking too long, or **other** (which
+   asks you to type it).
+2. Confirm. The order becomes **cancelled**, the stock returns to the shelf, and
+   the sandbox payment is voided.
+3. The operator sees the cancellation and your chosen reason in the order's
+   adjustment history.
+
+Once the shipment is in transit the cancel control disappears; ask an operator
+about a refund instead.
+
 ### Manage your account
 `/account` holds your profile (display name and preferred locale) and a
 **Security** panel:

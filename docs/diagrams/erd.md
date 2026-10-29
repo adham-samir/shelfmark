@@ -170,4 +170,4 @@ erDiagram
     }
 ```
 
-This is the whole-system conceptual ERD. Migrations 0001–0010 implement its operational baseline in PostgreSQL, including customer/access, browsing, cart/order snapshots, payment/risk review, shipment events/contact, inventory movement, forecasting/reorder audit evidence, pricing observations/history, RFM, model/evaluation records, recommendation runs/items, demo credentials/sessions, and the audited order-lifecycle records. Descriptive products remain in MongoDB. See [data foundation](../architecture/data-foundation.md).
+This is the whole-system conceptual ERD. Migrations 0001–0011 implement its operational baseline in PostgreSQL, including customer/access, browsing, cart/order snapshots, payment/risk review, shipment events/contact, inventory movement, forecasting/reorder audit evidence, pricing observations/history, RFM, model/evaluation records, recommendation runs/items, demo credentials/sessions, and the audited order-lifecycle records. Descriptive products remain in MongoDB. See [data foundation](../architecture/data-foundation.md).

@@ -215,6 +215,61 @@ export default async function BackofficeOrderPage({
 
       <section
         className="panel"
+        aria-labelledby="operator-adjustments"
+        style={{ marginBlockStart: 18 }}
+      >
+        <h2 id="operator-adjustments">{t("adminOrders.adjustments")}</h2>
+        {order.adjustments.length === 0 ? (
+          <p className="field-hint">{t("adminOrders.noAdjustments")}</p>
+        ) : (
+          <div className="inventory-table-wrap">
+            <table className="inventory-table orders-table">
+              <thead>
+                <tr>
+                  <th scope="col">{t("adminOrders.adjustmentKind")}</th>
+                  <th scope="col">{t("adminOrders.adjustmentAmount")}</th>
+                  <th scope="col">{t("adminOrders.adjustmentReason")}</th>
+                  <th scope="col">{t("adminOrders.adjustmentActor")}</th>
+                  <th scope="col">{t("adminOrders.adjustmentTime")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {order.adjustments.map((adjustment) => (
+                  <tr key={adjustment.adjustment_id}>
+                    <th scope="row">
+                      {adjustment.kind === "refund"
+                        ? t("orderLifecycle.refund")
+                        : t("orderLifecycle.cancel")}
+                    </th>
+                    <td data-label={t("adminOrders.adjustmentAmount")}>
+                      <span className="metric-value" dir="ltr">
+                        {formatMoney(adjustment.amount, locale)} {order.currency}
+                      </span>
+                    </td>
+                    <td data-label={t("adminOrders.adjustmentReason")}>
+                      {adjustment.reason}
+                    </td>
+                    <td data-label={t("adminOrders.adjustmentActor")}>
+                      <span>
+                        {adjustment.actor_kind === "customer"
+                          ? t("adminOrders.actorCustomer")
+                          : t("adminOrders.actorOperator")}
+                      </span>
+                      <small>{adjustment.actor_name}</small>
+                    </td>
+                    <td data-label={t("adminOrders.adjustmentTime")}>
+                      {formatDateTime(adjustment.created_at, locale)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section
+        className="panel"
         aria-labelledby="operator-lifecycle"
         style={{ marginBlockStart: 18 }}
       >

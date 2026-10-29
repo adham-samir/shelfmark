@@ -31,6 +31,7 @@ from .commerce_models import (
     Cart,
     CartItemInput,
     CheckoutInput,
+    CustomerCancelInput,
     InventoryAdjustmentInput,
     InventoryAdjustmentResult,
     OperatorOrderDetail,
@@ -635,6 +636,28 @@ def create_app(
         principal: Principal = Depends(current_customer),
     ) -> Order:
         return app.state.commerce_service.get_order(principal.customer_id, order_id)
+
+    @app.post(
+        "/v1/orders/{order_id}/cancel",
+        response_model=OrderAdjustmentResult,
+        responses={
+            404: {"description": "Order not found for this customer."},
+            409: {"description": "The order can no longer be cancelled."},
+        },
+        tags=["commerce"],
+    )
+    def cancel_own_order(
+        order_id: UUID,
+        cancellation: CustomerCancelInput,
+        principal: Principal = Depends(current_customer),
+    ) -> OrderAdjustmentResult:
+        return app.state.commerce_service.customer_cancel_order(
+            principal.customer_id,
+            order_id,
+            cancellation.reason_code,
+            cancellation.reason,
+            principal.principal_id,
+        )
 
     @app.get(
         "/v1/orders/{order_id}/shipment",
