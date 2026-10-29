@@ -1,0 +1,96 @@
+{
+  "dataset_snapshot_id": "fraud-synthetic-2026-10-27-v1",
+  "seed": 42,
+  "transactions": 3000,
+  "positive_rate": 0.169667,
+  "split": {
+    "train": 1800,
+    "validation": 600,
+    "holdout": 600,
+    "strategy": "stratified 60/20/20"
+  },
+  "features": [
+    "amount_ratio",
+    "amount_ratio_high",
+    "amount_log",
+    "high_amount",
+    "item_count",
+    "order_hour_sin",
+    "order_hour_cos",
+    "overnight",
+    "is_weekend",
+    "customer_age_log",
+    "prior_orders_log",
+    "orders_last_24h",
+    "prior_failed_orders",
+    "new_address",
+    "token_reuse",
+    "first_order"
+  ],
+  "models": {
+    "logistic-regression": {
+      "validation": {
+        "threshold": 0.6985274317596127,
+        "recall": 0.8137254901960784,
+        "false_positive_rate": 0.07630522088353414,
+        "precision": 0.6859504132231405
+      },
+      "holdout": {
+        "threshold": 0.6985274317596127,
+        "recall": 0.8333333333333334,
+        "precision": 0.6854838709677419,
+        "f1": 0.7522123893805309,
+        "false_positive_rate": 0.0783132530120482,
+        "true_negatives": 459,
+        "false_positives": 39,
+        "false_negatives": 17,
+        "true_positives": 85,
+        "roc_auc": 0.9538743208126624,
+        "pr_auc": 0.853600572229338,
+        "positives": 102,
+        "negatives": 498
+      }
+    },
+    "hist-gradient-boosting": {
+      "validation": {
+        "threshold": 0.3381613610357301,
+        "recall": 0.7647058823529411,
+        "false_positive_rate": 0.0823293172690763,
+        "precision": 0.6554621848739496
+      },
+      "holdout": {
+        "threshold": 0.3381613610357301,
+        "recall": 0.7745098039215687,
+        "precision": 0.6370967741935484,
+        "f1": 0.6991150442477876,
+        "false_positive_rate": 0.09036144578313253,
+        "true_negatives": 453,
+        "false_positives": 45,
+        "false_negatives": 23,
+        "true_positives": 79,
+        "roc_auc": 0.9345224033388456,
+        "pr_auc": 0.7654082460446592,
+        "positives": 102,
+        "negatives": 498
+      }
+    }
+  },
+  "selected_model": "logistic-regression",
+  "selected_threshold": 0.6985274317596127,
+  "holdout": {
+    "threshold": 0.6985274317596127,
+    "recall": 0.8333333333333334,
+    "precision": 0.6854838709677419,
+    "f1": 0.7522123893805309,
+    "false_positive_rate": 0.0783132530120482,
+    "true_negatives": 459,
+    "false_positives": 39,
+    "false_negatives": 17,
+    "true_positives": 85,
+    "roc_auc": 0.9538743208126624,
+    "pr_auc": 0.853600572229338,
+    "positives": 102,
+    "negatives": 498
+  },
+  "limitations": "Synthetic seeded generator over checkout-observable signals. Labels come from a documented probabilistic process, not real payment data, so the evaluation proves pipeline, threshold, and policy behavior only. Device fingerprints and card-network signals are unavailable; the model must be retrained and re-evaluated before any production use."
+}

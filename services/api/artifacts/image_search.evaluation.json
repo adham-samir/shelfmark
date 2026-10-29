@@ -1,0 +1,12 @@
+{
+  "evaluation_id": "a4000000-0000-4000-8000-000000000001",
+  "model_version_id": "a3000000-0000-4000-8000-000000000001",
+  "dataset_snapshot_id": "stage3-image-search-synthetic-v1",
+  "split_strategy": "three deterministic color perturbations around each of four catalog prototypes",
+  "metrics": {
+    "top_1_accuracy": 1.0,
+    "recall_at_3": 1.0,
+    "evaluation_cases": 12
+  },
+  "limitations": "Synthetic color swatches validate pipeline behavior only; no production visual-relevance claim is made."
+}

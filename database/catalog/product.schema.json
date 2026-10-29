@@ -1,0 +1,44 @@
+{
+  "bsonType": "object",
+  "required": ["_id", "name", "description", "categories", "attributes", "images", "provenance", "created_at", "updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "_id": {
+      "bsonType": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Same canonical UUID as PostgreSQL product_registry.product_id."
+    },
+    "name": {"bsonType": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
+    "description": {"bsonType": "string", "maxLength": 10000},
+    "categories": {
+      "bsonType": "array", "uniqueItems": true,
+      "items": {"bsonType": "string", "minLength": 1, "maxLength": 100, "pattern": "\\S"}
+    },
+    "attributes": {
+      "bsonType": "object",
+      "additionalProperties": {"bsonType": "string", "maxLength": 500}
+    },
+    "images": {
+      "bsonType": "array",
+      "items": {
+        "bsonType": "object", "additionalProperties": false,
+        "required": ["uri", "alt"],
+        "properties": {
+          "uri": {"bsonType": "string", "pattern": "^https://[^\\s]+$"},
+          "alt": {"bsonType": "string", "maxLength": 500}
+        }
+      }
+    },
+    "provenance": {
+      "bsonType": "object", "additionalProperties": false,
+      "required": ["kind", "dataset_id"],
+      "properties": {
+        "kind": {"enum": ["real", "public", "synthetic", "sandbox"]},
+        "dataset_id": {"bsonType": "string", "minLength": 1},
+        "source_reference": {"bsonType": "string", "minLength": 1}
+      }
+    },
+    "created_at": {"bsonType": "date"},
+    "updated_at": {"bsonType": "date"}
+  }
+}

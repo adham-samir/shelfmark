@@ -1,0 +1,104 @@
+name: smart-ecommerce
+
+services:
+  postgres:
+    image: postgres:18.6
+    environment:
+      POSTGRES_DB: smart_ecommerce
+      POSTGRES_USER: smart_ecommerce
+      POSTGRES_PASSWORD: smart_ecommerce
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smart_ecommerce -d smart_ecommerce"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - ../database/relational/migrations/0001_product_foundation.sql:/docker-entrypoint-initdb.d/001-product.sql:ro
+      - ../database/relational/migrations/0002_commerce_foundation.sql:/docker-entrypoint-initdb.d/002-commerce.sql:ro
+      - ../database/relational/migrations/0003_checkout_controls.sql:/docker-entrypoint-initdb.d/003-checkout.sql:ro
+      - ../database/relational/migrations/0004_recommendation_evidence.sql:/docker-entrypoint-initdb.d/004-recommendation.sql:ro
+      - ../database/relational/migrations/0005_shipping_contact.sql:/docker-entrypoint-initdb.d/005-shipping.sql:ro
+      - ../database/relational/migrations/0006_inventory_automation.sql:/docker-entrypoint-initdb.d/006-inventory-automation.sql:ro
+      - ../database/relational/migrations/0007_analytics_indexes.sql:/docker-entrypoint-initdb.d/007-analytics.sql:ro
+      - ../database/relational/migrations/0008_identity_sessions.sql:/docker-entrypoint-initdb.d/008-identity.sql:ro
+      - ../database/relational/migrations/0009_operator_order_access.sql:/docker-entrypoint-initdb.d/009-operator-orders.sql:ro
+      - ../database/relational/migrations/0010_order_lifecycle.sql:/docker-entrypoint-initdb.d/010-order-lifecycle.sql:ro
+      - ../database/relational/seeds/0001_synthetic_demo.sql:/docker-entrypoint-initdb.d/011-seed.sql:ro
+
+  mongo:
+    image: mongo:8.0.34
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping: 1}).ok ? 0 : 1)"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  catalog-init:
+    image: mongo:8.0.34
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ../database/catalog:/database/catalog:ro
+    entrypoint: ["mongosh", "--quiet", "mongodb://mongo:27017/smart_ecommerce"]
+    command: ["--eval", "load('/database/catalog/setup.js'); load('/database/catalog/seed.synthetic.js');"]
+    restart: "no"
+
+  api:
+    build:
+      context: ../services/api
+    environment:
+      SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
+      SMART_ECOMMERCE_MONGO_URI: mongodb://mongo:27017/?directConnection=true
+      SMART_ECOMMERCE_MONGO_DATABASE: smart_ecommerce
+      SMART_ECOMMERCE_RECOMMENDATION_ARTIFACT: /app/artifacts/recommendation.joblib
+      SMART_ECOMMERCE_IMAGE_SEARCH_ARTIFACT: /app/artifacts/image_search.json
+      SMART_ECOMMERCE_FORECAST_ARTIFACT: /app/artifacts/forecast.joblib
+      SMART_ECOMMERCE_ASSISTANT_KNOWLEDGE: /app/data/assistant_faq.json
+      SMART_ECOMMERCE_PRICING_SEASONS: /app/data/pricing_seasons.json
+      SMART_ECOMMERCE_FRAUD_ARTIFACT: /app/artifacts/fraud.joblib
+      SMART_ECOMMERCE_ASSISTANT_MODEL: gpt-6-luna
+      SMART_ECOMMERCE_TRANSCRIPTION_MODEL: gpt-transcribe
+    depends_on:
+      postgres:
+        condition: service_healthy
+      catalog-init:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+
+  inventory-job:
+    build:
+      context: ../services/api
+    profiles: ["jobs"]
+    command: ["python", "-m", "smart_ecommerce_api.inventory_job"]
+    environment:
+      SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
+      SMART_ECOMMERCE_FORECAST_ARTIFACT: /app/artifacts/forecast.joblib
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  pricing-job:
+    build:
+      context: ../services/api
+    profiles: ["jobs"]
+    command: ["python", "-m", "smart_ecommerce_api.pricing_job"]
+    environment:
+      SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
+      SMART_ECOMMERCE_PRICING_SEASONS: /app/data/pricing_seasons.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  segmentation-job:
+    build:
+      context: ../services/api
+    profiles: ["jobs"]
+    command: ["python", "-m", "smart_ecommerce_api.segmentation_job"]
+    environment:
+      SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
+    depends_on:
+      postgres:
+        condition: service_healthy
+

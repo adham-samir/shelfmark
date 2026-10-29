@@ -1,0 +1,15 @@
+{
+  "model_version_id": "a0000000-0000-4000-8000-000000000001",
+  "evaluation_id": "a1000000-0000-4000-8000-000000000001",
+  "version_label": "random-forest-lag-calendar-v1",
+  "dataset_snapshot_id": "synthetic-demand-v1-210d",
+  "split_strategy": "final 28 calendar days held out; lag and rolling features use prior observations only",
+  "metrics": {
+    "mape_non_zero": 0.033513,
+    "mae": 0.257357,
+    "holdout_days": 28,
+    "holdout_rows": 364,
+    "training_rows": 2002
+  },
+  "limitations": "Synthetic demand verifies chronology, persistence, policy, and retry behavior only; it does not establish real-world forecast quality."
+}

@@ -1,0 +1,20 @@
+{
+  "model_version_id": "a3000000-0000-4000-8000-000000000001",
+  "evaluation_id": "a4000000-0000-4000-8000-000000000001",
+  "version_label": "pytorch-color-retrieval-v1",
+  "framework": "pytorch",
+  "dataset_snapshot_id": "stage3-image-search-synthetic-v1",
+  "feature": "normalized mean RGB plus complementary RGB",
+  "prototypes": [
+    {"product_id": "10000000-0000-4000-8000-000000000001", "rgb": [40, 100, 220]},
+    {"product_id": "10000000-0000-4000-8000-000000000002", "rgb": [220, 50, 60]},
+    {"product_id": "10000000-0000-4000-8000-000000000003", "rgb": [30, 30, 30]},
+    {"product_id": "10000000-0000-4000-8000-000000000004", "rgb": [180, 180, 190]}
+  ],
+  "metrics": {
+    "top_1_accuracy": 1.0,
+    "recall_at_3": 1.0,
+    "evaluation_cases": 12
+  },
+  "limitations": "Synthetic color swatches validate upload, PyTorch feature extraction, ranking, and catalog filtering only; they do not establish real-world visual similarity quality."
+}

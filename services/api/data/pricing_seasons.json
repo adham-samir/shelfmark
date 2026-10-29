@@ -1,0 +1,45 @@
+{
+  "calendar_version": "dec-005-v1",
+  "provenance": "synthetic",
+  "description": "Demonstration shopping-season calendar. Seasons are dated configuration records, not model knowledge. The standard season applies outside every window.",
+  "standard": {
+    "season_id": "standard",
+    "label_en": "Standard demand",
+    "label_ar": "طلب اعتيادي",
+    "price_multiplier": "1.00"
+  },
+  "seasons": [
+    {
+      "season_id": "ramadan-eid-2026",
+      "label_en": "Ramadan and Eid",
+      "label_ar": "رمضان والعيد",
+      "starts_on": "2026-02-18",
+      "ends_on": "2026-03-20",
+      "price_multiplier": "1.08"
+    },
+    {
+      "season_id": "year-end-2026",
+      "label_en": "Year-end shopping",
+      "label_ar": "موسم نهاية العام",
+      "starts_on": "2026-11-20",
+      "ends_on": "2026-12-31",
+      "price_multiplier": "0.97"
+    },
+    {
+      "season_id": "ramadan-eid-2027",
+      "label_en": "Ramadan and Eid",
+      "label_ar": "رمضان والعيد",
+      "starts_on": "2027-02-08",
+      "ends_on": "2027-03-10",
+      "price_multiplier": "1.08"
+    },
+    {
+      "season_id": "back-to-school-2027",
+      "label_en": "Back to school",
+      "label_ar": "العودة إلى المدرسة",
+      "starts_on": "2027-09-01",
+      "ends_on": "2027-09-20",
+      "price_multiplier": "1.05"
+    }
+  ]
+}

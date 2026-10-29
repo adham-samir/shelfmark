@@ -1,0 +1,23 @@
+{
+  "dataset_snapshot_id": "synthetic-demand-v1-210d",
+  "provenance_class": "synthetic",
+  "as_of_date": "2026-10-27",
+  "days": 210,
+  "products": [
+    {"product_id": "10000000-0000-4000-8000-000000000001", "base_demand": 8},
+    {"product_id": "10000000-0000-4000-8000-000000000002", "base_demand": 5},
+    {"product_id": "10000000-0000-4000-8000-000000000003", "base_demand": 3},
+    {"product_id": "10000000-0000-4000-8000-000000000004", "base_demand": 2},
+    {"product_id": "10000000-0000-4000-8000-000000000005", "base_demand": 4},
+    {"product_id": "10000000-0000-4000-8000-000000000006", "base_demand": 3},
+    {"product_id": "10000000-0000-4000-8000-000000000007", "base_demand": 2},
+    {"product_id": "10000000-0000-4000-8000-000000000008", "base_demand": 3},
+    {"product_id": "10000000-0000-4000-8000-000000000009", "base_demand": 1},
+    {"product_id": "10000000-0000-4000-8000-000000000010", "base_demand": 1},
+    {"product_id": "10000000-0000-4000-8000-000000000011", "base_demand": 2},
+    {"product_id": "10000000-0000-4000-8000-000000000012", "base_demand": 2},
+    {"product_id": "10000000-0000-4000-8000-000000000013", "base_demand": 2}
+  ],
+  "formula": "base + weekend uplift + sixty-day trend + deterministic three-day pulse",
+  "limitation": "Synthetic demand verifies chronology, persistence, policy, and retry behavior only; it does not establish real-world forecast quality."
+}

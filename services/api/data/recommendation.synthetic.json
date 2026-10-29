@@ -1,0 +1,26 @@
+{
+  "dataset_snapshot_id": "recommendation-synthetic-v1",
+  "provenance_class": "synthetic",
+  "products": [
+    {"product_id": "10000000-0000-4000-8000-000000000001", "text": "phones smartphone screen storage memory mobile"},
+    {"product_id": "10000000-0000-4000-8000-000000000002", "text": "phones smartphone screen storage memory mobile premium"},
+    {"product_id": "10000000-0000-4000-8000-000000000003", "text": "headphones audio wireless bluetooth battery noise cancelling"},
+    {"product_id": "10000000-0000-4000-8000-000000000004", "text": "laptops computer portable screen storage memory productivity"}
+  ],
+  "training_interactions": [
+    {"user_id": "train-a", "product_id": "10000000-0000-4000-8000-000000000001", "event_type": "view"},
+    {"user_id": "train-a", "product_id": "10000000-0000-4000-8000-000000000002", "event_type": "purchase"},
+    {"user_id": "train-b", "product_id": "10000000-0000-4000-8000-000000000001", "event_type": "purchase"},
+    {"user_id": "train-b", "product_id": "10000000-0000-4000-8000-000000000002", "event_type": "add_to_cart"},
+    {"user_id": "train-c", "product_id": "10000000-0000-4000-8000-000000000003", "event_type": "purchase"},
+    {"user_id": "train-c", "product_id": "10000000-0000-4000-8000-000000000004", "event_type": "view"},
+    {"user_id": "train-d", "product_id": "10000000-0000-4000-8000-000000000003", "event_type": "compare"},
+    {"user_id": "train-d", "product_id": "10000000-0000-4000-8000-000000000004", "event_type": "purchase"}
+  ],
+  "evaluation_cases": [
+    {"user_id": "eval-a", "history": [{"product_id": "10000000-0000-4000-8000-000000000001", "event_type": "view"}], "target_product_id": "10000000-0000-4000-8000-000000000002"},
+    {"user_id": "eval-b", "history": [{"product_id": "10000000-0000-4000-8000-000000000002", "event_type": "purchase"}], "target_product_id": "10000000-0000-4000-8000-000000000001"},
+    {"user_id": "eval-c", "history": [{"product_id": "10000000-0000-4000-8000-000000000003", "event_type": "add_to_cart"}], "target_product_id": "10000000-0000-4000-8000-000000000004"},
+    {"user_id": "eval-d", "history": [{"product_id": "10000000-0000-4000-8000-000000000004", "event_type": "view"}], "target_product_id": "10000000-0000-4000-8000-000000000003"}
+  ]
+}

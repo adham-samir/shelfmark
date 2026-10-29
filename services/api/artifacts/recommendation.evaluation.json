@@ -1,0 +1,13 @@
+{
+  "evaluation_id": "a2000000-0000-4000-8000-000000000001",
+  "model_version_id": "a1000000-0000-4000-8000-000000000001",
+  "dataset_snapshot_id": "recommendation-synthetic-v1",
+  "split_strategy": "fixed user holdout cases separate from collaborative-training users",
+  "metrics": {
+    "hybrid_ndcg_at_10": 1.0,
+    "popularity_ndcg_at_10": 0.690465,
+    "relative_lift": 0.4483,
+    "evaluation_cases": 4
+  },
+  "limitations": "Synthetic four-product fixture validates pipeline behavior only; it does not establish production ranking quality."
+}

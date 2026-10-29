@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+.next/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.coverage
+coverage/
+graphify-out/
+.impeccable/
+.opencode/
+# Segmentation exports are regenerated on demand by the back office.
+/rfm-*.csv

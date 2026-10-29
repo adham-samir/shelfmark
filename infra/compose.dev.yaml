@@ -1,0 +1,13 @@
+# Local development override: publishes the data stores on non-default host ports
+# so the API and future services can run as host processes instead of containers.
+# Usage: docker compose -f infra/compose.yaml -f infra/compose.dev.yaml up -d postgres mongo catalog-init
+name: smart-ecommerce-dev
+
+services:
+  postgres:
+    ports:
+      - "55432:5432"
+
+  mongo:
+    ports:
+      - "57017:27017"

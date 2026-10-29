@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart-eCommerce Management System — Final Presentation</title>
+<style>
+  :root {
+    --paper: #f7f6e8;
+    --paper-deep: #efece0;
+    --surface: #fbf8ee;
+    --surface-alt: #f4f1e4;
+    --ink: #101011;
+    --graphite: #3f3f3f;
+    --muted: #62625e;
+    --rule: #c2c1bb;
+    --rule-soft: #ddd9cd;
+    --amber: #b87820;
+    --amber-strong: #9c6114;
+    --amber-soft: #f1e2c2;
+    --green: #2c7a3f;
+    --green-soft: #dcecdd;
+    --red: #a13b2e;
+    --red-soft: #f4ddd8;
+    --slide-w: 1280px;
+    --slide-h: 720px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #23231f;
+    color: var(--ink);
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #stage {
+    position: fixed; inset: 0;
+    display: grid; place-items: center;
+    overflow: hidden;
+  }
+  .slide {
+    width: var(--slide-w); height: var(--slide-h);
+    background: var(--paper);
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    padding: 44px 56px 40px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  }
+  .slide.active { display: flex; }
+  .slide::after {
+    content: ""; position: absolute; inset-block-end: 0; inset-inline: 0;
+    height: 4px; background: var(--ink);
+  }
+  .eyebrow {
+    margin: 0 0 10px; font-size: 13px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--amber-strong); font-weight: 600;
+  }
+  h1 { margin: 0 0 6px; font-size: 40px; line-height: 1.1; font-weight: 600; }
+  h2 { margin: 0 0 4px; font-size: 30px; line-height: 1.15; font-weight: 600; }
+  h3 { margin: 0 0 6px; font-size: 17px; font-weight: 600; }
+  p { margin: 0 0 10px; font-size: 15px; line-height: 1.55; color: var(--graphite); }
+  .lede { font-size: 18px; color: var(--ink); }
+  .muted { color: var(--muted); }
+  .rule { height: 1px; background: var(--rule); margin: 14px 0 16px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; flex: 1; min-height: 0; }
+  .cols.wide-left { grid-template-columns: 1.25fr .75fr; }
+  .cols.wide-right { grid-template-columns: .8fr 1.2fr; }
+  .shot {
+    width: 100%; border: 1px solid var(--rule); background: var(--surface);
+    display: block; object-fit: contain; object-position: top center;
+  }
+  .shot-frame {
+    border: 1px solid var(--rule); background: var(--surface);
+    display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+  }
+  .shot-cap {
+    padding: 6px 10px; font-size: 11px; color: var(--muted);
+    border-block-end: 1px solid var(--rule-soft); background: var(--surface-alt);
+  }
+  ul { margin: 0 0 10px; padding-inline-start: 20px; }
+  li { font-size: 15px; line-height: 1.5; color: var(--graphite); margin-block-end: 6px; }
+  li strong { color: var(--ink); }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-block-end: 14px; }
+  .kpi { border: 1px solid var(--rule); background: var(--surface); padding: 12px 14px; }
+  .kpi b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -.01em; }
+  .kpi span { font-size: 12px; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: start; padding: 7px 9px; border-block-end: 1px solid var(--rule-soft); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  td strong { color: var(--ink); }
+  table.perf td:nth-child(2), table.perf th:nth-child(2) { white-space: nowrap; }
+  .tag {
+    display: inline-block; padding: 2px 8px; border: 1px solid var(--rule);
+    background: var(--surface-alt); font-size: 11.5px; font-weight: 600; color: var(--graphite);
+  }
+  .tag.ok { border-color: var(--green); background: var(--green-soft); color: #1f5a2b; }
+  .tag.warn { border-color: var(--amber); background: var(--amber-soft); color: #6d4409; }
+  .tag.bad { border-color: var(--red); background: var(--red-soft); color: #76291f; }
+  .callout {
+    border-inline-start: 3px solid var(--amber); background: var(--surface-alt);
+    padding: 10px 14px; font-size: 14px; color: var(--graphite); margin-block-start: 10px;
+  }
+  .callout.bad { border-inline-start-color: var(--red); }
+  .callout.ok { border-inline-start-color: var(--green); }
+  .slide-no {
+    position: absolute; inset-block-end: 14px; inset-inline-end: 20px;
+    font-size: 11px; color: var(--muted);
+  }
+  .brandmark {
+    position: absolute; inset-block-start: 20px; inset-inline-end: 56px;
+    font-size: 12px; color: var(--muted); text-align: end; line-height: 1.35;
+  }
+  .title-slide { justify-content: center; }
+  .title-slide h1 { font-size: 56px; }
+  .title-meta { display: flex; gap: 34px; margin-block-start: 22px; font-size: 14px; color: var(--muted); }
+  #hud {
+    position: fixed; inset-block-end: 0; inset-inline: 0; height: 34px;
+    display: flex; align-items: center; gap: 14px; padding: 0 16px;
+    background: rgba(16,16,17,.85); color: #e9e6d8; font-size: 12px;
+  }
+  #hud .bar { flex: 1; height: 3px; background: #3a3a36; }
+  #hud .bar i { display: block; height: 100%; background: var(--amber); }
+  #notes {
+    position: fixed; inset-block-end: 34px; inset-inline: 0; max-height: 34vh; overflow: auto;
+    background: #14140f; color: #e9e6d8; padding: 14px 20px; font-size: 14px; line-height: 1.6;
+    display: none; border-block-start: 2px solid var(--amber);
+  }
+  #notes.show { display: block; }
+  #notes b { color: var(--amber-soft); }
+  body.printing { background: #fff; }
+  body.printing #stage { position: static; display: block; }
+  body.printing #hud, body.printing #notes { display: none !important; }
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { background: #fff; height: auto; }
+    #stage { position: static; display: block; overflow: visible; }
+    .slide {
+      display: flex !important; position: relative; inset: auto;
+      width: var(--slide-w); height: var(--slide-h);
+      transform: none !important;
+      box-shadow: none; page-break-after: always; break-after: page;
+    }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <section class="slide title-slide">
+    <p class="eyebrow">Graduation project · final presentation</p>
+    <h1>Smart-eCommerce Management System</h1>
+    <p class="lede">An Arabic-first commerce platform with seven AI modules, back-office
+      automation, and interactive BI — implemented, measured, and honestly bounded.</p>
+    <div class="title-meta">
+      <span>Next.js · FastAPI · PostgreSQL · MongoDB</span>
+      <span>Scikit-learn · PyTorch · OpenAI</span>
+      <span>Docker</span>
+    </div>
+    <p class="muted" style="margin-block-start:26px;font-size:13px">
+      Every screen in this deck was captured from the running system. All data is
+      synthetic and labelled as such in the product.
+    </p>
+    <div class="slide-no">1</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">1 · Problem and objectives</p>
+    <h2>Three objectives, seven smart modules, one back office</h2>
+    <div class="rule"></div>
+    <div class="cols">
+      <div>
+        <ul>
+          <li><strong>OBJ-01</strong> — personalised recommendations and shopping assistance in the customer journey.</li>
+          <li><strong>OBJ-02</strong> — automate inventory, sales operations, and pricing from the same order records.</li>
+          <li><strong>OBJ-03</strong> — interactive BI over consumer behaviour and financial performance.</li>
+        </ul>
+        <div class="callout">Scope note: this is the specified commerce + AI scope — not a general ERP. The original seven modules are preserved, not narrowed.</div>
+      </div>
+      <div>
+        <table>
+          <thead><tr><th>Module</th><th>Capability</th></tr></thead>
+          <tbody>
+            <tr><td><strong>SF-01</strong></td><td>Hybrid collaborative + content recommendations</td></tr>
+            <tr><td><strong>SF-02</strong></td><td>Grounded assistant for inquiries, choice, shipments</td></tr>
+            <tr><td><strong>SF-03</strong></td><td>Image search, voice search, dynamic facets</td></tr>
+            <tr><td><strong>BO-01</strong></td><td>Demand forecast and automatic reordering</td></tr>
+            <tr><td><strong>BO-02</strong></td><td>Dynamic pricing from supply, demand, rivals, season</td></tr>
+            <tr><td><strong>BO-03</strong></td><td>RFM customer segmentation and campaign export</td></tr>
+            <tr><td><strong>BO-04</strong></td><td>Trained fraud detection before completion</td></tr>
+            <tr><td><strong>BI-01</strong></td><td>Consumer and financial dashboards with reconciliation</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="slide-no">2</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">2 · Architecture</p>
+    <h2>Two surfaces, two sessions, explicit ownership</h2>
+    <div class="rule"></div>
+    <div class="cols wide-left">
+      <div>
+        <pre style="margin:0;font-size:14px;line-height:1.7;color:var(--graphite)">browser ──► Next.js 16 (Arabic RTL storefront + back office)
+              │  server-only API credentials, no-store reads
+              ▼
+          FastAPI ──► PostgreSQL   price · stock · orders · RFM · risk
+              │      MongoDB      descriptive catalog content
+              │      model artifacts (joblib / json)
+              ▼
+          scheduled jobs: inventory · pricing · segmentation</pre>
+        <div class="callout ok" style="margin-block-start:14px">
+          PostgreSQL owns price, stock, and orders. MongoDB holds descriptive content only.
+          One canonical UUID links both stores, so a product can never have two prices.
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li><strong>34 API routes</strong> across catalog, commerce, identity, risk, and back office.</li>
+          <li><strong>28 PostgreSQL tables</strong> across eight migrations; MongoDB validator and indexes.</li>
+          <li><strong>Separate customer and operator sessions</strong>: argon2id demo credentials, revocable database sessions, and two independent <code>httpOnly</code> cookies; catalogue browsing stays public.</li>
+          <li><strong>Capability scopes</strong> (<code>risk:review</code>, <code>pricing:write</code>, …) instead of a role tree.</li>
+          <li><strong>Typed failures</strong>: 404 for unknown, 503 for an active record whose other side is missing.</li>
+          <li><strong>Docker</strong> packaging for API, stores, jobs, and artifacts.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-no">3</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">3 · What was built</p>
+    <h2>Every module carries a measured number</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th>Module</th><th>Evidence to show</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>SF-01</strong> recommendations</td><td>nDCG@10 <strong>1.0</strong> vs popularity 0.690 (+44.83%)</td><td><span class="tag ok">verified on synthetic</span></td></tr>
+        <tr><td><strong>SF-02</strong> assistant</td><td>Grounded FAQ + catalog + own shipments; cross-customer denial</td><td><span class="tag warn">provider pending</span></td></tr>
+        <tr><td><strong>SF-03</strong> search</td><td>Image top-1 <strong>1.0</strong>, recall@3 <strong>1.0</strong>; facets and combined filters</td><td><span class="tag ok">image verified</span></td></tr>
+        <tr><td><strong>BO-01</strong> inventory</td><td>Holdout MAPE <strong>3.35%</strong>; 13 forecasts, 12 reorders, 0 duplicates on rerun</td><td><span class="tag ok">verified on synthetic</span></td></tr>
+        <tr><td><strong>BO-02</strong> pricing</td><td>±20% cap, cost+5% floor, 24h freshness, immutable audit</td><td><span class="tag ok">verified on synthetic</span></td></tr>
+        <tr><td><strong>BO-03</strong> segmentation</td><td><strong>38</strong> classified, <strong>2</strong> without history, six segments, CSV export</td><td><span class="tag ok">verified on synthetic</span></td></tr>
+        <tr><td><strong>BO-04</strong> fraud</td><td>Recall <strong>83.3%</strong> at <strong>7.8%</strong> FPR, before order completion</td><td><span class="tag ok">verified on sandbox</span></td></tr>
+        <tr><td><strong>BI-01</strong> dashboards</td><td>Consumer + financial KPIs, filters recompute, sources reconcile</td><td><span class="tag ok">verified on synthetic</span></td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="font-size:13px;margin-block-start:12px">
+      "Verified on synthetic" means the pipeline, the policy, and the integration are proven —
+      not that commercial quality is claimed. Section 6 states each limit.
+    </p>
+    <div class="slide-no">4</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">4 · SF-01 recommendations</p>
+    <h2>Ranked from real browsing and purchase history — and honest when exhausted</h2>
+    <div class="rule"></div>
+    <div class="cols wide-right">
+      <div>
+        <div class="kpis">
+          <div class="kpi"><b>1.0</b><span>hybrid nDCG@10 (holdout)</span></div>
+          <div class="kpi"><b>0.690</b><span>popularity baseline</span></div>
+          <div class="kpi"><b>+44.8%</b><span>relative lift</span></div>
+        </div>
+        <ul>
+          <li>Collaborative similarity from item co-occurrence, content similarity from product text, combined 60/40 with a popularity tie-breaker.</li>
+          <li>Signals come from the application's own records: browsing events and confirmed purchases.</li>
+          <li>Seen items are excluded — the rail on the right shows what happens when the customer has seen everything.</li>
+        </ul>
+        <div class="callout">The seeded demonstration customer has already seen all four products covered by the trained artifact, so the rail states that instead of inventing a fallback. The API run and the recorded evaluation carry the ranking evidence.</div>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Product page · recommendation section with the exhausted state</div>
+        <img class="shot" src="assets/06-product-recommendations.png" alt="Recommendation section reporting an exhausted candidate set" />
+        <pre style="margin:0;padding:12px 14px;border-block-start:1px solid var(--rule-soft);background:var(--paper);font-size:12.5px;line-height:1.65;color:var(--graphite)">GET /v1/recommendations?limit=5
+{
+  "strategy": "hybrid",
+  "basis": { "browsing_events": 226, "purchased_items": 15 },
+  "items": []
+}</pre>
+        <p class="muted" style="padding:10px 14px 14px;font-size:12px;margin:0">
+          Seen items are absent from <code>items</code>; with no unseen candidate the
+          response is empty and the rail says so.
+        </p>
+      </div>
+    </div>
+    <div class="slide-no">5</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">5 · SF-02 / SF-03 assistant and search</p>
+    <h2>Grounded answers, image retrieval, and honest failure states</h2>
+    <div class="rule"></div>
+    <div class="cols">
+      <div>
+        <h3>SF-02 · Assistant</h3>
+        <ul>
+          <li>Grounded in project-authored bilingual FAQ, the live catalog, and the customer's own shipments.</li>
+          <li>Cross-customer shipment lookup is denied; other customers' records never appear.</li>
+          <li>Without a provider key the surface returns a typed <strong>503</strong> instead of inventing an answer.</li>
+        </ul>
+        <h3 style="margin-block-start:8px">SF-03 · Search</h3>
+        <ul>
+          <li>PyTorch colour-feature retrieval: top-1 <strong>1.0</strong>, recall@3 <strong>1.0</strong> on the synthetic set.</li>
+          <li>Dynamic facets combine with the image query and with catalog filters.</li>
+          <li>Voice transcription targets <code>gpt-transcribe</code>; the provider call is pending a key.</li>
+        </ul>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Image search · Phones filter applied, X1 ranked first</div>
+        <img class="shot" src="assets/03-image-search-results.png" alt="Image search results with the Phones filter applied" />
+      </div>
+    </div>
+    <div class="slide-no">6</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">6 · BO-01 predictive inventory</p>
+    <h2>Forecast → reorder → supplier acknowledgement, without duplicates</h2>
+    <div class="rule"></div>
+    <div class="cols wide-right">
+      <div>
+        <div class="kpis">
+          <div class="kpi"><b>3.35%</b><span>MAPE, non-zero demand, final 28-day holdout</span></div>
+          <div class="kpi"><b>12</b><span>reorders created on the first run</span></div>
+          <div class="kpi"><b>0</b><span>duplicates when the run is repeated</span></div>
+        </div>
+        <ul>
+          <li>Leakage-safe lag, rolling, and calendar features; a chronological holdout, never a random split.</li>
+          <li>DEC-008 policy: 14-day forecast, 7-day lead time, 7-day safety stock, reorder to 21-day cover.</li>
+          <li>Pending replenishment counts toward inventory position, so a live reorder is not re-ordered.</li>
+          <li>The supplier is a simulator: failures are preserved for retry and reruns are idempotent.</li>
+        </ul>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Back office · inventory run (12 new reorders, 0 reused)</div>
+        <img class="shot" src="assets/13-inventory-run.png" alt="Inventory planning page after a forecast and reorder run" />
+      </div>
+    </div>
+    <div class="slide-no">7</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">7 · BO-02 dynamic pricing</p>
+    <h2>Bounded, evidenced, and never retroactive</h2>
+    <div class="rule"></div>
+    <div class="cols wide-right">
+      <div>
+        <ul>
+          <li>DEC-009: demand relative to supply, competitor cost, and a dated season calendar.</li>
+          <li>At most <strong>±20%</strong> per run and never below recorded cost + 5%.</li>
+          <li>Inputs older than 24 hours block a change; one observation can never produce two changes.</li>
+          <li>Every change stores the full input snapshot as an immutable audit row.</li>
+        </ul>
+        <div class="callout ok">
+          Rehearsal run: X1 Phone <strong>8,900 → 10,039.93</strong> after the first run,
+          then <strong>→ 12,047.91</strong> after a new observation with a much higher competitor cost.
+          The second move is +19.98% — inside the 20% cap.
+        </div>
+        <div class="callout">
+          The order placed before the change still shows <strong>8,900</strong>.
+          Order prices are snapshots; repricing never rewrites history.
+        </div>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Back office · pricing run with inputs, proposals, and audit trail</div>
+        <img class="shot" src="assets/14-pricing-run.png" alt="Dynamic pricing page after a pricing run" />
+      </div>
+    </div>
+    <div class="slide-no">8</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">8 · BO-03 RFM segmentation</p>
+    <h2>Six documented segments from a reproducible window</h2>
+    <div class="rule"></div>
+    <div class="cols wide-right">
+      <div>
+        <div class="kpis">
+          <div class="kpi"><b>38</b><span>customers classified</span></div>
+          <div class="kpi"><b>2</b><span>counted as insufficient history, not scored zero</span></div>
+          <div class="kpi"><b>6</b><span>selectable segments with a CSV export</span></div>
+        </div>
+        <ul>
+          <li>DEC-011: rolling 365-day window, quintile scores on recency, frequency, and monetary value.</li>
+          <li>Eligible orders are paid or completed minus refunds; cancelled and failed orders are excluded.</li>
+          <li>Clicking a segment filters the members; the CSV row count matches the selected group exactly.</li>
+          <li>The policy matrix beside the table shows the rules, so a score is always explainable.</li>
+        </ul>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Back office · At Risk selected, 7 members in the group</div>
+        <img class="shot" src="assets/20-segments-filtered.png" alt="Customer segmentation page filtered to the At Risk segment" />
+      </div>
+    </div>
+    <div class="slide-no">9</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">9 · BO-04 fraud detection</p>
+    <h2>Risk is assessed before an order can complete</h2>
+    <div class="rule"></div>
+    <div class="cols wide-right">
+      <div>
+        <div class="kpis">
+          <div class="kpi"><b>83.3%</b><span>recall on a sealed holdout</span></div>
+          <div class="kpi"><b>7.8%</b><span>false-positive rate</span></div>
+          <div class="kpi"><b>0.699</b><span>review threshold</span></div>
+        </div>
+        <ul>
+          <li>Logistic baseline compared against histogram gradient boosting; the threshold is selected on validation and sealed before the holdout.</li>
+          <li>A flagged or failed assessment sends the order to review — <strong>no order completes first</strong>.</li>
+          <li>Allow and decline are operator decisions, recorded once, with score, model version, and reasons.</li>
+          <li>Missing model artefacts fail closed to review, never to approval.</li>
+        </ul>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Back office · review queue, model card, and audited decisions</div>
+        <img class="shot" src="assets/11-risk-queue.png" alt="Payment risk review queue with the model card" />
+      </div>
+    </div>
+    <div class="slide-no">10</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">10 · BI-01 dashboards</p>
+    <h2>Interactive analysis that reconciles against its own sources</h2>
+    <div class="rule"></div>
+    <div class="cols wide-right">
+      <div>
+        <ul>
+          <li>Consumer panel: views, sessions, add-to-carts, created orders, orders per session, unfulfilled orders.</li>
+          <li>Financial panel: order count, gross sales, refunds, net sales, average order value.</li>
+          <li>Date and category filters recompute every metric; the phones filter reduces views and revenue and still reconciles.</li>
+          <li>Reconciliation compares reported totals with values recomputed from order lines — a mismatch is shown, not hidden.</li>
+        </ul>
+        <div class="callout">
+          <strong>Profit is not displayed.</strong> There is no complete cost coverage, so a profit figure would be an invention.
+        </div>
+        <div class="callout" style="font-size:13px">
+          Rehearsal window (90 days): 5,405 views · 2,255 sessions · 94 orders · EGP 524,050 gross · EGP 466,800 net.
+        </div>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Back office · analytics, Arabic RTL</div>
+        <img class="shot" src="assets/21-analytics.png" alt="Analytics dashboard with consumer and financial panels" />
+      </div>
+    </div>
+    <div class="slide-no">11</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">11 · Commerce spine</p>
+    <h2>Checkout, risk, and history that cannot be rewritten</h2>
+    <div class="rule"></div>
+    <div class="cols">
+      <div>
+        <ul>
+          <li><strong>Exact EGP totals</strong> from decimal storage, never floats.</li>
+          <li><strong>Current stock and price</strong> are checked at checkout; a changed cart is refused.</li>
+          <li><strong>Idempotent checkout</strong>: ten simultaneous retries of one key created exactly one order.</li>
+          <li><strong>Immutable order snapshots</strong>: repricing never changes a placed order.</li>
+          <li><strong>Ownership-scoped reads</strong>: another customer's order returns 404 with no data.</li>
+        </ul>
+        <div class="callout ok">
+          A confirmed order creates a shipment with bilingual events, visible only to its owner.
+          The operator queue finds that order under <code>orders:read</code>, and the same
+          page advances its shipment, refunds, or cancels it under <code>orders:write</code>
+          — every action attributed to the operator.
+        </div>
+      </div>
+      <div class="shot-frame">
+        <div class="shot-cap">Customer order · confirmed, with its shipment timeline</div>
+        <img class="shot" src="assets/09-order-confirmed.png" alt="Confirmed order page with shipment timeline" />
+      </div>
+    </div>
+    <div class="slide-no">12</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">12 · Engineering decisions</p>
+    <h2>Four decisions worth defending</h2>
+    <div class="rule"></div>
+    <div class="cols">
+      <div>
+        <ul>
+          <li><strong>DEC-007 — competitors' costs.</strong> The source wording is preserved literally; with no real feed, the values are imported synthetically and labelled, not quietly reinterpreted.</li>
+          <li><strong>DEC-009 / DEC-011 — policies before code.</strong> Pricing bounds and the RFM window are fixed decisions, so the same input always produces the same output.</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li><strong>Idempotency everywhere.</strong> Checkout keys, reorder keys, one change per pricing observation, and one RFM snapshot per customer per date.</li>
+          <li><strong>Fail closed, state honestly.</strong> A missing artefact is a typed 503 or a review — never a silent pass. Stale inputs block a price change. Insufficient history is counted, not scored zero. Profit is omitted without cost coverage.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-no">13</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">13 · Testing and quality</p>
+    <h2>Stage 4 evidence, mapped requirement by requirement</h2>
+    <div class="rule"></div>
+    <div class="cols wide-left">
+      <div>
+        <table>
+          <thead><tr><th>Suite</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>API unit and route tests</td><td><strong>106 passed</strong></td></tr>
+            <tr><td>Contract and database tests</td><td><strong>17 passed</strong> (PostgreSQL 18.6, MongoDB 8.0.34)</td></tr>
+            <tr><td>Black-box integration flows</td><td><strong>6 passed</strong></td></tr>
+            <tr><td>Security and isolation checks</td><td><strong>7 passed</strong></td></tr>
+            <tr><td>Workload checks (10 req/s, 100 sessions)</td><td><strong>3 passed</strong></td></tr>
+            <tr><td>axe-core WCAG 2.2 AA (42 pages, AR + EN)</td><td><strong>0 violations</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="font-size:13px">
+          Rehearsing the demo script caught a production-build defect that unit tests could not see:
+          every back-office server action failed because a <code>"use server"</code> module exported a state
+          object. Fixed, rebuilt, re-rehearsed to zero drift.
+        </div>
+      </div>
+      <div>
+        <table class="perf">
+          <thead><tr><th>Path</th><th>Target</th><th>Measured p95</th></tr></thead>
+          <tbody>
+            <tr><td>Catalog list</td><td>≤500 ms</td><td><strong>8.0 ms</strong> sustained · 135.3 ms at 100 sessions</td></tr>
+            <tr><td>Recommendations</td><td>≤500 ms</td><td><strong>16.4 ms</strong> · 243.7 ms</td></tr>
+            <tr><td>Analytics (month)</td><td>≤2 s</td><td><strong>25.7 ms</strong></td></tr>
+            <tr><td>Checkout with risk</td><td>≤2 s</td><td><strong>≤330 ms</strong></td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="font-size:12.5px;margin-block-start:10px">
+          Full report: <code>docs/test-report.md</code>. Rehearsal log: <code>docs/presentation/rehearsal.md</code>.
+        </p>
+      </div>
+    </div>
+    <div class="slide-no">14</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">14 · Limitations</p>
+    <h2>What this system is not</h2>
+    <div class="rule"></div>
+    <div class="cols">
+      <div>
+        <ul>
+          <li><strong>No live AI provider proof.</strong> The assistant and voice surfaces are verified with an injected provider; no <code>OPENAI_API_KEY</code> was available, so both return a typed 503 by design.</li>
+          <li><strong>Synthetic data only.</strong> Every model, dashboard, and evaluation uses synthetic or sandbox records. Nothing here is a commercial claim.</li>
+          <li><strong>No cloud deployment.</strong> Docker packaging and the deployment runbook are verified; the AWS placement needs account access and has not been executed.</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li><strong>Accessibility is automated only.</strong> axe-core and a keyboard smoke test pass; no manual screen-reader session was run.</li>
+          <li><strong>Authentication is a labelled demo harness.</strong> Local <code>.invalid</code> accounts, argon2id hashes, and revocable database sessions; there is no OAuth/OIDC, email verification, password reset, or MFA, and no production identity-provider claim.</li>
+          <li><strong>The storefront is deliberately Arabic-first RTL.</strong> It recorded 58.53% against the approved LTR reference instead of the 72% target; that mismatch is documented rather than restated as a pass.</li>
+          <li><strong>The recommendation artifact covers four products</strong>, so the seeded customer has nothing unseen left to rank — the rail says so instead of faking a result.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-no">15</div>
+  </section>
+
+  <section class="slide">
+    <div class="brandmark">Smart-eCommerce<br/>Management System</div>
+    <p class="eyebrow">15 · Demo</p>
+    <h2>One flow, every capability</h2>
+    <div class="rule"></div>
+    <div class="cols">
+      <div>
+        <ol style="font-size:15px;line-height:1.7;color:var(--graphite);margin:0;padding-inline-start:20px">
+          <li><strong>Sign in</strong> — customer at <code>/login</code>, operator at <code>/backoffice/login</code>.</li>
+          <li><strong>Discovery</strong> — filter, image search, and an honest rejection message.</li>
+          <li><strong>Recommendations</strong> — the exhausted state, then the API evidence.</li>
+          <li><strong>Checkout</strong> — normal payment confirms; a high-risk token goes to review; the operator allows it, opens it in <code>/backoffice/orders</code>, and advances its shipment.</li>
+          <li><strong>Inventory</strong> — run the forecast twice; the second run creates nothing.</li>
+          <li><strong>Pricing</strong> — run it, show the audit, then show that a placed order keeps its price.</li>
+          <li><strong>Segmentation</strong> — run it, filter a segment, export the CSV.</li>
+          <li><strong>Analytics</strong> — apply a category filter and read the reconciliation.</li>
+        </ol>
+      </div>
+      <div>
+        <div class="callout">
+          The rehearsal script drives this exact sequence against a freshly seeded stack and finished with
+          <strong>zero drift</strong> across <strong>26 captured screens</strong>.
+        </div>
+        <div class="shot-frame" style="margin-block-start:14px">
+          <div class="shot-cap">Checkout · the risk assessment happens before completion</div>
+          <img class="shot" src="assets/08-checkout.png" alt="Checkout form with the sandbox payment options" />
+        </div>
+      </div>
+    </div>
+    <div class="slide-no">16</div>
+  </section>
+
+  <section class="slide title-slide">
+    <p class="eyebrow">Conclusion</p>
+    <h1>All seven modules and BI are implemented and evidenced</h1>
+    <p class="lede">What remains is access — a provider key, a cloud account, a manual accessibility pass —
+      not missing functionality.</p>
+    <div class="title-meta">
+      <span>Source: <code>README.md</code></span>
+      <span>Evidence: <code>docs/test-report.md</code></span>
+      <span>Rehearsal: <code>docs/presentation/rehearsal.md</code></span>
+    </div>
+    <p class="muted" style="margin-block-start:22px;font-size:13px">
+      Reproducible from the repository: Docker Compose for the stack, <code>uv</code> for the suites,
+      <code>npm</code> for the storefront and the accessibility gate.
+    </p>
+    <div class="slide-no">17</div>
+  </section>
+
+</div>
+
+<div id="notes"></div>
+<div id="hud">
+  <span id="counter">1 / 17</span>
+  <span class="bar"><i id="progress"></i></span>
+  <span>← → navigate · N notes · F fullscreen</span>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const notes = {
+    1: "Open with the scope sentence: this is the specified commerce and AI scope, all seven modules preserved. Say up front that the interface is Arabic-first RTL, so the committee is not surprised by the screenshots.",
+    2: "Three objectives, seven modules, BI. Point out that the module list is the source list, unchanged. Note the deliberate scope note so nobody assumes a general ERP.",
+    3: "Architecture in one diagram: browser to Next.js to FastAPI to PostgreSQL and MongoDB. The key sentence is the ownership rule — price and stock live in exactly one place. Mention the two session surfaces: customer and operator cookies are independent, and the capability scopes still gate each action.",
+    4: "The table is the whole project on one slide. Do not read it line by line: point at the evidence column and say each number is reproducible from the test report. Be explicit that 'verified on synthetic' is a scope claim, not a quality claim.",
+    5: "SF-01. Explain the hybrid ranking and the seen-item rule, then point at the screenshot: the rail says it has nothing to rank because this customer has seen everything. That is the rule working. The nDCG and lift are the ranking evidence.",
+    6: "SF-02 and SF-03. The assistant is grounded and isolated; the image pipeline is trained and measured. Be upfront that the live provider calls are the one thing I could not run without a key.",
+    7: "BO-01. The forecast is chronological and leakage-free; the reorder is idempotent, which the rerun proves. The supplier is a simulator — say so before anyone asks.",
+    8: "BO-02. Four inputs, hard bounds, an immutable audit trail. The rehearsal numbers are on the slide: 8,900 to 10,039.93, then a second move inside the cap. Then show that the earlier order still says 8,900.",
+    9: "BO-03. Six segments from a documented window, and the two customers without history are counted separately rather than scored as zero. The CSV row count matches the filter.",
+    10: "BO-04. The important claim is ordering: assessment happens before completion. Recall and FPR come from a sealed holdout with a validation-selected threshold.",
+    11: "BI-01. Filters recompute everything and the dashboard reconciles against its own order lines. Then say the quiet part out loud: no profit figure, because there is no complete cost coverage.",
+    12: "The commerce spine. Exact decimals, current-price checks, idempotent checkout, immutable snapshots, ownership-scoped reads. This is the part that makes the modules trustworthy.",
+    13: "Four decisions worth defending: DEC-007 keeps the literal competitors'-cost wording and labels the synthetic values, DEC-009 and DEC-011 fixed the policies before code, idempotency is enforced at every write, and every failure path fails closed or states its limit.",
+    14: "Quality. Give the suite counts and the p95 numbers. Then mention the rehearsal finding: the demo script caught a production-build defect that the unit tests could not see, and it was fixed and re-verified.",
+    15: "Limitations, in order of honesty. The identity harness is next: it is real password verification and revocation, but it is explicitly not OAuth, email verification, password reset, or MFA. Do not soften any of these. The committee will find them anyway, and stating them first is what makes the rest of the evidence credible.",
+    16: "Demo. Start with the two sign-ins so the customer and operator surfaces are visibly separate, then the short path: discovery, checkout with risk review, the operator order queue and a shipment transition, inventory run, pricing run, segmentation, analytics filter. Every step was rehearsed against a freshly seeded stack.",
+    17: "Close. All seven modules and BI are implemented and evidenced; what is missing is external access, not functionality. Point at the repository, the test report, and the rehearsal log. Invite questions about the limitations rather than waiting for them."
+  };
+  let index = 0;
+
+  function show(next) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+    document.getElementById("counter").textContent = `${index + 1} / ${slides.length}`;
+    document.getElementById("progress").style.width = `${((index + 1) / slides.length) * 100}%`;
+    document.getElementById("notes").innerHTML = `<b>Slide ${index + 1}</b> &nbsp;${notes[index + 1] ?? ""}`;
+    location.hash = `slide-${index + 1}`;
+  }
+
+  function fit() {
+    // Leave room for the navigation bar so it never covers the slide.
+    const scale = Math.min(window.innerWidth / 1280, (window.innerHeight - 46) / 720);
+    slides.forEach((slide) => {
+      slide.style.transform = `scale(${scale})`;
+      slide.style.transformOrigin = "center center";
+    });
+  }
+
+  window.addEventListener("resize", fit);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") { event.preventDefault(); show(index + 1); }
+    else if (event.key === "ArrowLeft" || event.key === "PageUp") { event.preventDefault(); show(index - 1); }
+    else if (event.key === "Home") { show(0); }
+    else if (event.key === "End") { show(slides.length - 1); }
+    else if (event.key.toLowerCase() === "n") { document.getElementById("notes").classList.toggle("show"); }
+    else if (event.key.toLowerCase() === "f") { document.documentElement.requestFullscreen?.(); }
+  });
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("a")) return;
+    show(index + (event.clientX > window.innerWidth / 2 ? 1 : -1));
+  });
+
+  const fromHash = Number((location.hash.match(/slide-(\d+)/) || [])[1]);
+  fit();
+  show(Number.isFinite(fromHash) && fromHash > 0 ? fromHash - 1 : 0);
+</script>
+</body>
+</html>

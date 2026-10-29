@@ -1,0 +1,618 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Smart-eCommerce Catalog API",
+    "version": "0.4.0",
+    "description": "Catalog reads and contextual dynamic facets implemented during Stage 3."
+  },
+  "security": [],
+  "paths": {
+    "/v1/products": {
+      "get": {
+        "operationId": "listProducts",
+        "summary": "List active products with authoritative price and availability",
+        "description": "Apply tokenized case-insensitive text, exact category, and exact dynamic attribute filters, then order by the requested sort and paginate. Default sort keeps product_id ascending. Missing required counterparts cause 503 rather than fabricated data.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "\\S"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Repeatable key:value attribute filter",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[^:]+:.+$"
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Ordering applied after filtering and before pagination.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "relevance",
+                "price_asc",
+                "price_desc",
+                "name_asc"
+              ],
+              "default": "relevance"
+            }
+          },
+          {
+            "name": "availability",
+            "in": "query",
+            "description": "Operational availability filter applied before pagination.",
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "in_stock",
+                "out_of_stock",
+                null
+              ]
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "description": "Inclusive price bound in EGP, applied after attribute filters.",
+            "schema": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "minimum": 0
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "description": "Inclusive price bound in EGP, applied after attribute filters.",
+            "schema": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of active, composed catalog products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductPage"
+                },
+                "examples": {
+                  "empty": {
+                    "value": {
+                      "items": [],
+                      "total": 0,
+                      "limit": 20,
+                      "offset": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/DependencyUnavailable"
+          }
+        }
+      }
+    },
+    "/v1/products/facets": {
+      "get": {
+        "operationId": "getProductFacets",
+        "summary": "Return category and attribute counts for the current result context",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "\\S"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Repeatable key:value attribute filter",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[^:]+:.+$"
+              }
+            }
+          },
+          {
+            "name": "availability",
+            "in": "query",
+            "description": "Operational availability filter applied before pagination.",
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "in_stock",
+                "out_of_stock",
+                null
+              ]
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "description": "Inclusive price bound in EGP, applied after attribute filters.",
+            "schema": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "minimum": 0
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "description": "Inclusive price bound in EGP, applied after attribute filters.",
+            "schema": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Facets recomputed from the filtered result context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogFacets"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "503": {
+            "$ref": "#/components/responses/DependencyUnavailable"
+          }
+        }
+      }
+    },
+    "/v1/products/{product_id}": {
+      "get": {
+        "operationId": "getProduct",
+        "summary": "Get one active catalog product",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ProductId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Composed product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/ProductNotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/DependencyUnavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProductId": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      "Price": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "amount",
+          "currency",
+          "updated_at"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,13})(\\.[0-9]{1,6})?$",
+            "description": "Exact nonnegative decimal; currency rounding policy is pending."
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Availability": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "updated_at"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_stock",
+              "out_of_stock"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Image": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "uri",
+          "alt"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^\\s]+$"
+          },
+          "alt": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "product_id",
+          "name",
+          "description",
+          "categories",
+          "attributes",
+          "images",
+          "price",
+          "availability"
+        ],
+        "properties": {
+          "product_id": {
+            "$ref": "#/components/schemas/ProductId"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "categories": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Image"
+            }
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          }
+        },
+        "example": {
+          "product_id": "10000000-0000-4000-8000-000000000001",
+          "name": "X1 Synthetic Phone",
+          "description": "Synthetic Egyptian consumer-electronics fixture.",
+          "categories": [
+            "phones"
+          ],
+          "attributes": {
+            "storage": "128 GB"
+          },
+          "images": [],
+          "price": {
+            "amount": "8900",
+            "currency": "EGP",
+            "updated_at": "2026-10-27T00:00:00Z"
+          },
+          "availability": {
+            "status": "in_stock",
+            "updated_at": "2026-10-27T00:00:00Z"
+          }
+        }
+      },
+      "ProductPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "FacetOption": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "count"
+        ],
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "Facet": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "options"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetOption"
+            }
+          }
+        }
+      },
+      "CatalogFacets": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "total",
+          "facets"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "facets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Facet"
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message",
+              "request_id"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "validation_error",
+                  "product_not_found",
+                  "dependency_unavailable",
+                  "internal_error"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "request_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "ValidationError": {
+        "description": "Invalid request; code validation_error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ProductNotFound": {
+        "description": "Unknown, draft, or archived product; code product_not_found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "DependencyUnavailable": {
+        "description": "Required data store or counterpart unavailable; code dependency_unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Unexpected failure; code internal_error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "dataset_id": "stage3-assistant-faq-v1",
+  "provenance": "project-authored synthetic demonstration content",
+  "entries": [
+    {
+      "key": "payment",
+      "question_en": "Which payment methods are available?",
+      "answer_en": "The demonstration checkout accepts sandbox payment tokens only; it does not process real cards.",
+      "question_ar": "ما طرق الدفع المتاحة؟",
+      "answer_ar": "نسخة العرض تقبل رموز دفع تجريبية فقط ولا تعالج بطاقات حقيقية."
+    },
+    {
+      "key": "shipping",
+      "question_en": "How can I track my shipment?",
+      "answer_en": "Sign in and provide your order reference. Shipment information is returned only when the order belongs to your account.",
+      "question_ar": "كيف أتتبع الشحنة؟",
+      "answer_ar": "سجّل الدخول وقدّم مرجع الطلب. تظهر معلومات الشحنة فقط إذا كان الطلب تابعاً لحسابك."
+    },
+    {
+      "key": "returns",
+      "question_en": "What is the return policy?",
+      "answer_en": "A return policy has not been configured for this demonstration, so support must confirm it separately.",
+      "question_ar": "ما سياسة الاسترجاع؟",
+      "answer_ar": "لم تُضبط سياسة استرجاع لنسخة العرض، لذلك يجب تأكيدها مع الدعم بشكل منفصل."
+    }
+  ]
+}

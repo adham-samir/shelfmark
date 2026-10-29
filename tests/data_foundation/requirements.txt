@@ -1,0 +1,3 @@
+# Validation tools only; these are not application runtime dependencies.
+openapi-spec-validator==0.9.0
+jsonschema==4.26.0

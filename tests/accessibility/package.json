@@ -1,0 +1,16 @@
+{
+  "name": "smart-ecommerce-accessibility-checks",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Stage 4 WCAG 2.2 AA automated checks for the storefront and back office.",
+  "scripts": {
+    "check": "node check.mjs",
+    "rehearse": "node rehearsal.mjs",
+    "verify-deck": "node verify-deck.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.3",
+    "playwright-core": "^1.55.0"
+  }
+}
