@@ -28,6 +28,9 @@ from .commerce_models import (
     OrderState,
     OrderStatus,
     OrderSummary,
+    ReorderItem,
+    ReorderResult,
+    ReorderSkipped,
     ReviewDecisionResult,
     ReviewQueueItem,
     Shipment,
@@ -251,6 +254,125 @@ class PostgresCommerceStore:
                 return self._cart_from_rows(cart_id, rows)
         except psycopg.Error as error:
             raise DependencyUnavailable("The commerce store is unavailable.") from error
+
+    def reorder(self, customer_id: UUID, order_id: UUID) -> ReorderResult:
+        """Add a past order's lines to the current cart, reporting every skip.
+
+        Nothing is silently dropped: an inactive product, a missing price, or a
+        shortfall is returned in `skipped` with the reason, and prices are
+        rechecked at add time rather than reusing the old snapshot.
+        """
+        try:
+            with db.connection(self._dsn, row_factory=dict_row) as connection:
+                order = connection.execute(
+                    "SELECT order_id FROM orders WHERE order_id = %s AND customer_id = %s",
+                    (order_id, customer_id),
+                ).fetchone()
+                if order is None:
+                    raise ResourceNotFound("Order not found.")
+                lines = connection.execute(
+                    """
+                    SELECT product_id, product_name_snapshot AS product_name, quantity
+                    FROM order_items WHERE order_id = %s ORDER BY order_item_id
+                    """,
+                    (order_id,),
+                ).fetchall()
+                cart_id = self._open_cart(connection, customer_id, create=True)
+                in_cart = {
+                    row["product_id"]: row["quantity"]
+                    for row in connection.execute(
+                        "SELECT product_id, quantity FROM cart_items WHERE cart_id = %s",
+                        (cart_id,),
+                    ).fetchall()
+                }
+                added: list[ReorderItem] = []
+                skipped: list[ReorderSkipped] = []
+                for line in lines:
+                    product = connection.execute(
+                        """
+                        SELECT r.lifecycle, p.amount, i.available
+                        FROM product_registry r
+                        LEFT JOIN product_prices p USING (product_id)
+                        LEFT JOIN inventory_balances i USING (product_id)
+                        WHERE r.product_id = %s
+                        FOR UPDATE OF r
+                        """,
+                        (line["product_id"],),
+                    ).fetchone()
+
+                    reason = None
+                    if product is None or product["lifecycle"] != "active":
+                        reason = "product_inactive"
+                    elif product["amount"] is None:
+                        reason = "price_unavailable"
+
+                    target = 0
+                    if reason is None:
+                        available = product["available"] or 0
+                        wanted = in_cart.get(line["product_id"], 0) + line["quantity"]
+                        target = min(wanted, available, 99)
+                        if target <= 0:
+                            reason = "out_of_stock"
+                        elif target < wanted:
+                            reason = "quantity_capped"
+
+                    if reason is not None and reason != "quantity_capped":
+                        skipped.append(
+                            ReorderSkipped(
+                                product_id=line["product_id"],
+                                product_name=line["product_name"],
+                                quantity=line["quantity"],
+                                reason=reason,
+                            )
+                        )
+                        continue
+
+                    self._upsert_cart_item(
+                        connection, cart_id, line["product_id"], target
+                    )
+                    in_cart[line["product_id"]] = target
+                    added.append(
+                        ReorderItem(
+                            product_id=line["product_id"],
+                            product_name=line["product_name"],
+                            quantity=target,
+                        )
+                    )
+                    if reason == "quantity_capped":
+                        skipped.append(
+                            ReorderSkipped(
+                                product_id=line["product_id"],
+                                product_name=line["product_name"],
+                                quantity=line["quantity"],
+                                reason="quantity_capped",
+                            )
+                        )
+
+                if added:
+                    connection.execute(
+                        "UPDATE carts SET updated_at = CURRENT_TIMESTAMP WHERE cart_id = %s",
+                        (cart_id,),
+                    )
+                cart = self._cart_from_rows(
+                    cart_id, self._cart_rows(connection, cart_id)
+                )
+        except psycopg.Error as error:
+            raise DependencyUnavailable("The commerce store is unavailable.") from error
+        return ReorderResult(
+            order_id=order_id, cart=cart, added=added, skipped=skipped
+        )
+
+    @staticmethod
+    def _upsert_cart_item(connection, cart_id: UUID, product_id: UUID, quantity: int) -> None:
+        connection.execute(
+            """
+            INSERT INTO cart_items(cart_id, product_id, quantity)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (cart_id, product_id)
+            DO UPDATE SET quantity = EXCLUDED.quantity
+            """,
+            (cart_id, product_id, quantity),
+        )
 
     def checkout_product_ids(self, customer_id: UUID) -> list[UUID]:
         try:
@@ -1356,6 +1478,9 @@ class CommerceService:
 
     def set_cart_item(self, customer_id: UUID, product_id: UUID, quantity: int) -> Cart:
         return self._store.set_cart_item(customer_id, product_id, quantity)
+
+    def reorder(self, customer_id: UUID, order_id: UUID) -> ReorderResult:
+        return self._store.reorder(customer_id, order_id)
 
     def checkout(
         self,

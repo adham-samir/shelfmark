@@ -248,6 +248,29 @@ export interface Shipment {
   events: ShipmentEvent[];
 }
 
+export type ReorderSkipReason =
+  | "product_inactive"
+  | "price_unavailable"
+  | "out_of_stock"
+  | "quantity_capped";
+
+export interface ReorderItem {
+  product_id: string;
+  product_name: string;
+  quantity: number;
+}
+
+export interface ReorderSkipped extends ReorderItem {
+  reason: ReorderSkipReason;
+}
+
+export interface ReorderResult {
+  order_id: string;
+  cart: Cart;
+  added: ReorderItem[];
+  skipped: ReorderSkipped[];
+}
+
 export interface OrderAdjustmentResult {
   order_id: string;
   status: OrderState;

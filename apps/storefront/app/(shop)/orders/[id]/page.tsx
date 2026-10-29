@@ -10,6 +10,7 @@ import { formatDateTime, formatMoney } from "@/lib/format";
 import { ErrorState, Notice } from "@/components/states";
 import { requireCustomer } from "@/lib/session";
 import { CancelOrderControl } from "@/components/cancel-order-control";
+import { ReorderControl } from "@/components/reorder-control";
 
 export async function generateMetadata({
   params,
@@ -141,6 +142,12 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           )}
         </section>
       </div>
+
+      <section className="panel" aria-labelledby="order-reorder" style={{ marginBlockStart: 18 }}>
+        <h2 id="order-reorder">{t("reorder.section")}</h2>
+        <p className="field-hint">{t("reorder.sectionHint")}</p>
+        <ReorderControl locale={locale} orderId={order.order_id} />
+      </section>
 
       {cancellable ? (
         <section className="panel" aria-labelledby="order-cancel" style={{ marginBlockStart: 18 }}>

@@ -44,6 +44,7 @@ from .commerce_models import (
     OrderRefundInput,
     OrderState,
     OrderStatus,
+    ReorderResult,
     ReviewDecisionInput,
     ReviewDecisionResult,
     ReviewQueueItem,
@@ -696,6 +697,18 @@ def create_app(
         principal: Principal = Depends(current_customer),
     ) -> Order:
         return app.state.commerce_service.get_order(principal.customer_id, order_id)
+
+    @app.post(
+        "/v1/orders/{order_id}/reorder",
+        response_model=ReorderResult,
+        responses={404: {"description": "Order not found for this customer."}},
+        tags=["commerce"],
+    )
+    def reorder_own_order(
+        order_id: UUID,
+        principal: Principal = Depends(current_customer),
+    ) -> ReorderResult:
+        return app.state.commerce_service.reorder(principal.customer_id, order_id)
 
     @app.post(
         "/v1/orders/{order_id}/cancel",

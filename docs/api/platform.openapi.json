@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Smart-eCommerce Platform API",
-    "version": "0.14.0",
-    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, saved addresses, owned order/shipment reads, customer-initiated cancellation, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
+    "version": "0.15.0",
+    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, saved addresses, owned order/shipment reads, customer-initiated cancellation, buy-again, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
   },
   "security": [
     {
@@ -2086,6 +2086,46 @@
         "responses": {
           "204": {
             "description": "Address deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_id}/reorder": {
+      "post": {
+        "operationId": "reorderOwnOrder",
+        "tags": [
+          "commerce"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add a past order's items to the cart and report anything skipped",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OrderId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reorder outcome",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReorderResult"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -6052,6 +6092,106 @@
           "limit"
         ],
         "title": "AddressList"
+      },
+      "ReorderItem": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 99,
+            "title": "Quantity"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product_id",
+          "product_name",
+          "quantity"
+        ],
+        "title": "ReorderItem"
+      },
+      "ReorderSkipped": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 99,
+            "title": "Quantity"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "product_inactive",
+              "price_unavailable",
+              "out_of_stock",
+              "quantity_capped"
+            ],
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product_id",
+          "product_name",
+          "quantity",
+          "reason"
+        ],
+        "title": "ReorderSkipped"
+      },
+      "ReorderResult": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Order Id"
+          },
+          "cart": {
+            "$ref": "#/components/schemas/Cart"
+          },
+          "added": {
+            "items": {
+              "$ref": "#/components/schemas/ReorderItem"
+            },
+            "type": "array",
+            "title": "Added"
+          },
+          "skipped": {
+            "items": {
+              "$ref": "#/components/schemas/ReorderSkipped"
+            },
+            "type": "array",
+            "title": "Skipped"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "order_id",
+          "cart",
+          "added",
+          "skipped"
+        ],
+        "title": "ReorderResult"
       }
     },
     "responses": {

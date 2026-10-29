@@ -33,6 +33,9 @@ from smart_ecommerce_api.commerce_models import (
     OrderList,
     OrderStatus,
     OrderSummary,
+    ReorderItem,
+    ReorderResult,
+    ReorderSkipped,
     ReviewDecisionResult,
     ReviewQueueItem,
     Shipment,
@@ -319,6 +322,27 @@ class FakeCommerce:
                     description_ar="تم تحديث الشحنة",
                     description_en="Shipment updated",
                     occurred_at=NOW,
+                )
+            ],
+        )
+
+    def reorder(self, customer_id: UUID, order_id: UUID) -> ReorderResult:
+        return ReorderResult(
+            order_id=order_id,
+            cart=self.get_cart(customer_id),
+            added=[
+                ReorderItem(
+                    product_id=PRODUCT_ID,
+                    product_name="X1 Phone",
+                    quantity=1,
+                )
+            ],
+            skipped=[
+                ReorderSkipped(
+                    product_id=UUID("10000000-0000-4000-8000-000000000099"),
+                    product_name="Retired Phone",
+                    quantity=2,
+                    reason="product_inactive",
                 )
             ],
         )
@@ -1532,6 +1556,48 @@ def test_address_book_rejects_a_customer_outside_the_route() -> None:
     assert api.get(
         "/v1/addresses", headers={"authorization": f"Bearer {operator}"}
     ).status_code == 403
+
+
+def test_reorder_adds_available_lines_and_reports_skips() -> None:
+    commerce = FakeCommerce()
+    api = client(commerce=commerce, identity=FakeIdentity())
+    token = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "customer@example.invalid",
+            "password": "demo-customer-1",
+            "surface": "customer",
+        },
+    ).json()["token"]
+    headers = {"authorization": f"Bearer {token}"}
+    order_id = "70000000-0000-4000-8000-000000000001"
+
+    assert api.post(f"/v1/orders/{order_id}/reorder").status_code == 401
+
+    operator = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "operator@example.invalid",
+            "password": "demo-operator-1",
+            "surface": "operator",
+        },
+    ).json()["token"]
+    assert (
+        api.post(
+            f"/v1/orders/{order_id}/reorder",
+            headers={"authorization": f"Bearer {operator}"},
+        ).status_code
+        == 403
+    )
+
+    result = api.post(f"/v1/orders/{order_id}/reorder", headers=headers)
+    assert result.status_code == 200, result.text
+    body = result.json()
+    assert body["order_id"] == order_id
+    assert [item["quantity"] for item in body["added"]] == [1]
+    assert body["skipped"][0]["reason"] == "product_inactive"
+    assert body["skipped"][0]["product_name"] == "Retired Phone"
+    assert body["cart"]["items"] == []
 
 
 def test_analytics_route_requires_capability_and_validates_range() -> None:

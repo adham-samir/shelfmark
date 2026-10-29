@@ -38,6 +38,7 @@ SF-03 now composes these reads and facets with validated image upload/retrieval 
 | POST | `/v1/account/password` | Rotate the password; ends every other session of the principal and keeps the caller signed in | Customer |
 | GET | `/v1/orders` | Paged order history for the signed-in customer | Customer |
 | POST | `/v1/orders/{order_id}/cancel` | Cancel an own order before it ships, from a fixed reason list plus free-text `other` | Customer |
+| POST | `/v1/orders/{order_id}/reorder` | Add a past order's lines to the cart and report anything skipped | Customer |
 | GET | `/v1/addresses` | Saved addresses, default first, with the book limit | Customer |
 | POST | `/v1/addresses` | Save an address; the first becomes the default | Customer |
 | PUT | `/v1/addresses/{address_id}` | Update an own address; the default can be moved but not cleared | Customer |
@@ -55,6 +56,15 @@ Browsing-event capture, cart, checkout, owned order/shipment reads, trained pre-
 | GET | `/v1/backoffice/orders/{order_id}` | One order with customer, shipping contact, line items, and shipment events | `orders:read` |
 
 The queue exists so an operator can locate the order behind a risk-queue row or a customer question instead of seeing confirmed orders only as analytics aggregates. Customer-owned reads remain `/v1/orders` and `/v1/orders/{order_id}`; an operator token still receives `403` there, and a customer token receives `403` on the back-office routes.
+
+### Buy again
+
+`POST /v1/orders/{order_id}/reorder` copies a past order's lines into the current
+cart at **current** prices and availability, never the old snapshot. It answers
+with `added[]` and `skipped[]`; a skip carries `product_inactive`,
+`price_unavailable`, `out_of_stock`, or `quantity_capped`, so nothing disappears
+silently. Quantities accumulate with what is already in the cart and are capped
+at the smaller of availability and the 99-per-line limit.
 
 ### Saved addresses
 

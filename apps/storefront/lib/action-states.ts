@@ -157,3 +157,12 @@ export interface AddressFormState {
 }
 
 export const initialAddressFormState: AddressFormState = { kind: "idle" };
+
+export interface ReorderState {
+  kind: "idle" | "success" | "error";
+  added?: number;
+  skipped?: { name: string; reason: string }[];
+  code?: "not_found" | "unauthorized" | "forbidden" | "unknown";
+}
+
+export const initialReorderState: ReorderState = { kind: "idle" };

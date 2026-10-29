@@ -40,6 +40,7 @@ class CatalogContractTests(unittest.TestCase):
             "/v1/orders/{order_id}",
             "/v1/orders/{order_id}/shipment",
             "/v1/orders/{order_id}/cancel",
+            "/v1/orders/{order_id}/reorder",
             "/v1/backoffice/inventory",
             "/v1/backoffice/reorders/run",
             "/v1/backoffice/pricing",

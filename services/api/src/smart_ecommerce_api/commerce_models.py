@@ -192,6 +192,33 @@ class OrderAdjustment(StrictModel):
     created_at: datetime
 
 
+ReorderSkipReason = Literal[
+    "product_inactive",
+    "price_unavailable",
+    "out_of_stock",
+    "quantity_capped",
+]
+
+
+class ReorderItem(StrictModel):
+    product_id: UUID
+    product_name: str
+    quantity: Annotated[int, Field(gt=0, le=99)]
+
+
+class ReorderSkipped(ReorderItem):
+    reason: ReorderSkipReason
+
+
+class ReorderResult(StrictModel):
+    """Outcome of copying a past order into the cart. Nothing is silently dropped."""
+
+    order_id: UUID
+    cart: Cart
+    added: list[ReorderItem]
+    skipped: list[ReorderSkipped]
+
+
 CancellationReason = Literal[
     "changed_mind",
     "ordered_by_mistake",

@@ -65,6 +65,15 @@ inventing an answer.
 4. `/orders/{id}` shows items, the price you paid, risk handling status, and the
    shipment timeline. Prices on past orders never change when prices are updated.
 
+### Order again
+Every order page has an **Order again** panel. It adds that order's items to your
+cart at today's prices. If something cannot be added, the panel names it and the
+reason — the product is no longer published, has no current price, is out of
+stock, or only part of the quantity was available.
+
+Quantities add to what is already in the cart. Review the cart before checking
+out, since prices may have changed since the original order.
+
 ### Save delivery addresses
 `/account/addresses` holds up to ten addresses. The first one you save becomes
 the default automatically, and the default is preselected on `/checkout`.

@@ -28,6 +28,7 @@ import type {
   Product,
   ProductPage,
   RecommendationResult,
+  ReorderResult,
   Shipment,
   VoiceSearchResponse,
   InventoryPlanningResponse,
@@ -641,6 +642,13 @@ export const api = {
     return apiRequest<AccountProfile>("/v1/account", {
       method: "PATCH",
       body: input,
+      auth: "customer",
+      noStore: true,
+    });
+  },
+  reorder(orderId: string): Promise<ReorderResult> {
+    return apiRequest<ReorderResult>(`/v1/orders/${orderId}/reorder`, {
+      method: "POST",
       auth: "customer",
       noStore: true,
     });

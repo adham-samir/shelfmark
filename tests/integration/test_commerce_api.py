@@ -887,3 +887,70 @@ def test_customer_address_book_crud_and_default_rules() -> None:
         if orders:
             detail = api.get(f"/v1/orders/{orders[0]['order_id']}", headers=customer)
             assert detail.status_code == 200
+
+def test_buy_again_adds_current_prices_and_reports_skips() -> None:
+    """COM-13: buy-again adds available lines at current prices and names skips."""
+    customer = auth("synthetic-customer-subject")
+    other_customer = auth("synthetic-other-customer-subject")
+
+    with httpx.Client(base_url=BASE_URL, timeout=10) as api:
+        # Start from an empty cart.
+        cart = api.get("/v1/cart", headers=customer).json()
+        for item in cart["items"]:
+            api.put(
+                "/v1/cart/items",
+                headers=customer,
+                json={"product_id": item["product_id"], "quantity": 0},
+            )
+
+        api.put(
+            "/v1/cart/items",
+            headers=customer,
+            json={"product_id": PRODUCT_ONE, "quantity": 2},
+        ).raise_for_status()
+        checkout = api.post(
+            "/v1/checkout",
+            headers=customer,
+            json={
+                "payment_token": "tok_sandbox_safe-buy-again",
+                "idempotency_key": f"buy-again-{uuid4()}",
+                "shipping": SHIPPING,
+            },
+        )
+        assert checkout.status_code == 202, checkout.text
+        order_id = checkout.json()["order_id"]
+
+        # The order is placed, so the cart is empty again.
+        assert api.get("/v1/cart", headers=customer).json()["items"] == []
+        assert_error(
+            api.post(f"/v1/orders/{order_id}/reorder", headers=other_customer),
+            404,
+            "not_found",
+        )
+
+        result = api.post(f"/v1/orders/{order_id}/reorder", headers=customer)
+        assert result.status_code == 200, result.text
+        body = result.json()
+        assert body["order_id"] == order_id
+        assert body["skipped"] == []
+        assert len(body["added"]) == 1
+        assert body["added"][0]["quantity"] == 2
+
+        cart = api.get("/v1/cart", headers=customer).json()
+        line = next(
+            item for item in cart["items"] if item["product_id"] == PRODUCT_ONE
+        )
+        # Current price, not the checkout snapshot.
+        current = api.get(f"/v1/products/{PRODUCT_ONE}").json()["price"]["amount"]
+        assert line["unit_price"] == current
+        assert line["quantity"] == 2
+
+        # Re-adding accumulates rather than replacing.
+        again = api.post(f"/v1/orders/{order_id}/reorder", headers=customer).json()
+        assert again["added"][0]["quantity"] == 4
+
+        api.put(
+            "/v1/cart/items",
+            headers=customer,
+            json={"product_id": PRODUCT_ONE, "quantity": 0},
+        )

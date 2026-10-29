@@ -2,7 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { api, ApiError } from "@/lib/api";
-import type { InventoryAdjustmentState, OrderActionState } from "./action-states";
+import type {
+  InventoryAdjustmentState,
+  OrderActionState,
+  ReorderState,
+} from "./action-states";
 
 const CODES = [
   "conflict",
@@ -163,5 +167,34 @@ export async function cancelOwnOrder(
     return { kind: "success", status: result.status };
   } catch (error) {
     return { kind: "error", ...failure(error) };
+  }
+}
+
+export async function reorderOwnOrder(
+  _previous: ReorderState,
+  formData: FormData,
+): Promise<ReorderState> {
+  const orderId = String(formData.get("order_id") ?? "").trim();
+  if (!orderId) return { kind: "error", code: "not_found" };
+  try {
+    const result = await api.reorder(orderId);
+    revalidatePath("/cart");
+    revalidatePath(`/orders/${orderId}`);
+    return {
+      kind: "success",
+      added: result.added.length,
+      skipped: result.skipped.map((item) => ({
+        name: item.product_name,
+        reason: item.reason,
+      })),
+    };
+  } catch (error) {
+    if (error instanceof ApiError && error.code === "not_found") {
+      return { kind: "error", code: "not_found" };
+    }
+    if (error instanceof ApiError && error.status === 401) {
+      return { kind: "error", code: "unauthorized" };
+    }
+    return { kind: "error", code: "unknown" };
   }
 }
