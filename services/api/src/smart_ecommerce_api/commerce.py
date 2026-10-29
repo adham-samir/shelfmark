@@ -790,6 +790,135 @@ class PostgresCommerceStore:
         except psycopg.Error as error:
             raise DependencyUnavailable("The commerce store is unavailable.") from error
 
+    @staticmethod
+    def _restore_order_inventory(connection, order_id: UUID) -> None:
+        """Return the stock an order actually removed, and only that.
+
+        The `sale` movements are the authority, not `order_items`. Seeded
+        historical orders predate the movement ledger, so they have no `sale`
+        rows and must restore nothing rather than inflating stock.
+        """
+        items = connection.execute(
+            """
+            SELECT product_id, sum(-quantity_delta)::int AS quantity
+            FROM inventory_movements
+            WHERE reference_type = 'order' AND reference_id = %s
+                  AND reason = 'sale'
+            GROUP BY product_id
+            ORDER BY product_id
+            """,
+            (order_id,),
+        ).fetchall()
+        for item in items:
+            connection.execute(
+                """
+                UPDATE inventory_balances
+                SET on_hand = on_hand + %s,
+                    version = version + 1,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE product_id = %s
+                """,
+                (item["quantity"], item["product_id"]),
+            )
+            connection.execute(
+                """
+                INSERT INTO inventory_movements(
+                    movement_id, product_id, quantity_delta, reason,
+                    reference_type, reference_id
+                ) VALUES (%s, %s, %s, 'release', 'order_cancellation', %s)
+                """,
+                (uuid4(), item["product_id"], item["quantity"], order_id),
+            )
+
+    def _cancel_order_locked(
+        self,
+        connection,
+        order: dict[str, Any],
+        reason: str,
+        actor_principal_id: UUID,
+        reason_code: str | None = None,
+    ) -> OrderAdjustmentResult:
+        """Cancel an order that the caller already locked with `FOR UPDATE`.
+
+        Shared by the operator and customer surfaces so the two can never drift
+        on stock restoration, payment state, shipment state, or the audit row.
+        """
+        order_id = order["order_id"]
+        if order["status"] not in (
+            "pending_payment",
+            "pending_risk",
+            "review",
+            "confirmed",
+        ):
+            raise Conflict("Only an order that has not shipped can be cancelled.")
+
+        if order["status"] == "confirmed":
+            self._restore_order_inventory(connection, order_id)
+
+        connection.execute(
+            """
+            UPDATE orders
+            SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP
+            WHERE order_id = %s
+            """,
+            (order_id,),
+        )
+        connection.execute(
+            """
+            UPDATE payment_transactions
+            SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP
+            WHERE order_id = %s AND status IN ('prepared', 'authorized')
+            """,
+            (order_id,),
+        )
+        shipment = connection.execute(
+            """
+            UPDATE shipments
+            SET status = 'exception', updated_at = CURRENT_TIMESTAMP
+            WHERE order_id = %s AND status <> 'delivered'
+            RETURNING shipment_id
+            """,
+            (order_id,),
+        ).fetchone()
+        if shipment is not None:
+            connection.execute(
+                """
+                INSERT INTO shipment_events(
+                    shipment_event_id, shipment_id, status,
+                    description_ar, description_en, occurred_at,
+                    actor_principal_id
+                ) VALUES (%s, %s, 'exception', %s, %s,
+                          CURRENT_TIMESTAMP, %s)
+                """,
+                (
+                    uuid4(),
+                    shipment["shipment_id"],
+                    "أُلغيت الشحنة مع الطلب",
+                    "Shipment cancelled with the order",
+                    actor_principal_id,
+                ),
+            )
+
+        adjustment = connection.execute(
+            """
+            INSERT INTO order_adjustments(
+                adjustment_id, order_id, kind, amount, reason,
+                actor_principal_id, reason_code
+            ) VALUES (%s, %s, 'cancellation', 0, %s, %s, %s)
+            RETURNING adjustment_id, created_at
+            """,
+            (uuid4(), order_id, reason, actor_principal_id, reason_code),
+        ).fetchone()
+        return OrderAdjustmentResult(
+            order_id=order_id,
+            status="cancelled",
+            refund_total=_decimal_text(order["refund_total"]),
+            adjustment_id=adjustment["adjustment_id"],
+            kind="cancellation",
+            amount="0",
+            created_at=adjustment["created_at"],
+        )
+
     def operator_cancel_order(
         self,
         order_id: UUID,
@@ -808,119 +937,8 @@ class PostgresCommerceStore:
                 ).fetchone()
                 if order is None:
                     raise ResourceNotFound("Order not found.")
-                if order["status"] not in (
-                    "pending_payment",
-                    "pending_risk",
-                    "review",
-                    "confirmed",
-                ):
-                    raise Conflict(
-                        "Only an order that has not shipped can be cancelled."
-                    )
-
-                if order["status"] == "confirmed":
-                    # Restore only stock that this order actually removed. Seeded
-                    # historical orders predate the movement ledger, so they have
-                    # no `sale` rows and must not inflate stock when cancelled.
-                    items = connection.execute(
-                        """
-                        SELECT product_id, sum(-quantity_delta)::int AS quantity
-                        FROM inventory_movements
-                        WHERE reference_type = 'order' AND reference_id = %s
-                              AND reason = 'sale'
-                        GROUP BY product_id
-                        ORDER BY product_id
-                        """,
-                        (order_id,),
-                    ).fetchall()
-                    for item in items:
-                        connection.execute(
-                            """
-                            UPDATE inventory_balances
-                            SET on_hand = on_hand + %s,
-                                version = version + 1,
-                                updated_at = CURRENT_TIMESTAMP
-                            WHERE product_id = %s
-                            """,
-                            (item["quantity"], item["product_id"]),
-                        )
-                        connection.execute(
-                            """
-                            INSERT INTO inventory_movements(
-                                movement_id, product_id, quantity_delta, reason,
-                                reference_type, reference_id
-                            ) VALUES (%s, %s, %s, 'release', 'order_cancellation', %s)
-                            """,
-                            (
-                                uuid4(),
-                                item["product_id"],
-                                item["quantity"],
-                                order_id,
-                            ),
-                        )
-
-                connection.execute(
-                    """
-                    UPDATE orders
-                    SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP
-                    WHERE order_id = %s
-                    """,
-                    (order_id,),
-                )
-                connection.execute(
-                    """
-                    UPDATE payment_transactions
-                    SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP
-                    WHERE order_id = %s AND status IN ('prepared', 'authorized')
-                    """,
-                    (order_id,),
-                )
-                shipment = connection.execute(
-                    """
-                    UPDATE shipments
-                    SET status = 'exception', updated_at = CURRENT_TIMESTAMP
-                    WHERE order_id = %s AND status <> 'delivered'
-                    RETURNING shipment_id
-                    """,
-                    (order_id,),
-                ).fetchone()
-                if shipment is not None:
-                    connection.execute(
-                        """
-                        INSERT INTO shipment_events(
-                            shipment_event_id, shipment_id, status,
-                            description_ar, description_en, occurred_at,
-                            actor_principal_id
-                        ) VALUES (%s, %s, 'exception', %s, %s,
-                                  CURRENT_TIMESTAMP, %s)
-                        """,
-                        (
-                            uuid4(),
-                            shipment["shipment_id"],
-                            "أُلغيت الشحنة مع الطلب",
-                            "Shipment cancelled with the order",
-                            actor_principal_id,
-                        ),
-                    )
-
-                adjustment = connection.execute(
-                    """
-                    INSERT INTO order_adjustments(
-                        adjustment_id, order_id, kind, amount, reason,
-                        actor_principal_id
-                    ) VALUES (%s, %s, 'cancellation', 0, %s, %s)
-                    RETURNING adjustment_id, created_at
-                    """,
-                    (uuid4(), order_id, reason, actor_principal_id),
-                ).fetchone()
-                return OrderAdjustmentResult(
-                    order_id=order_id,
-                    status="cancelled",
-                    refund_total=_decimal_text(order["refund_total"]),
-                    adjustment_id=adjustment["adjustment_id"],
-                    kind="cancellation",
-                    amount="0",
-                    created_at=adjustment["created_at"],
+                return self._cancel_order_locked(
+                    connection, order, reason, actor_principal_id
                 )
         except psycopg.Error as error:
             raise DependencyUnavailable("The commerce store is unavailable.") from error
