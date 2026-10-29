@@ -12,7 +12,7 @@ Selections are recorded in [the decision register](docs/decisions.md). Developme
 
 - [Requirements](docs/SRS.md), [traceability](docs/requirements-traceability.md), and [data plan](docs/data-plan.md).
 - [Architecture diagrams](docs/diagrams/README.md).
-- [Data foundation](docs/architecture/data-foundation.md): 29 PostgreSQL tables across eleven migrations, MongoDB validation/indexes, seeds, ownership, and consistency contracts.
+- [Data foundation](docs/architecture/data-foundation.md): 30 PostgreSQL tables across twelve migrations, MongoDB validation/indexes, seeds, ownership, and consistency contracts.
 - [UI/UX specification](docs/ui-ux/README.md): approved visual composition, complete customer/back-office screens, states, and flows; Figma file pending external access.
 - [Implemented design system](DESIGN.md): exact bilingual tokens, typography, controls, responsive rules, accessibility conventions, reusable components, and synthetic asset provenance; machine-readable sidecar at `.impeccable/design.json`.
 - [API contracts](docs/api/README.md): catalog and full-platform OpenAPI 3.1 designs.

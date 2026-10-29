@@ -11,7 +11,7 @@ environment. Nothing in this document claims a cloud deployment has happened.
 
 | Component | Image / artifact | Notes |
 |---|---|---|
-| `postgres` | `postgres:18.6` | Migrations 0001–0011 and the synthetic seed mount into `/docker-entrypoint-initdb.d` (identity is `008-identity.sql`, operator order access is `009-operator-orders.sql`, the order lifecycle is `010-order-lifecycle.sql`, cancellation reason codes are `011-adjustment-reason.sql`, and the seed is `012-seed.sql`). |
+| `postgres` | `postgres:18.6` | Migrations 0001–0012 and the synthetic seed mount into `/docker-entrypoint-initdb.d` (identity is `008-identity.sql`, operator order access is `009-operator-orders.sql`, the order lifecycle is `010-order-lifecycle.sql`, cancellation reason codes are `011-adjustment-reason.sql`, the address book is `012-addresses.sql`, and the seed is `013-seed.sql`). |
 | `mongo` | `mongo:8.0.34` | Validator and indexes applied by `catalog-init`. |
 | `catalog-init` | `mongo:8.0.34` | One-shot: `setup.js` + `seed.synthetic.js`. |
 | `api` | `services/api/Dockerfile` | FastAPI + uvicorn on port 8000, runs as UID 65532. |

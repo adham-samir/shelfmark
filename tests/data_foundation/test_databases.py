@@ -138,7 +138,7 @@ class DatabaseFoundationTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('relation "product_registry" already exists', result.stderr)
         result = self.sql("SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
-        self.assertEqual(result.stdout.strip(), "29")
+        self.assertEqual(result.stdout.strip(), "30")
 
     def test_commerce_identity_cart_risk_and_reorder_constraints(self):
         customer = "21000000-0000-4000-8000-000000000001"
@@ -239,6 +239,49 @@ class DatabaseFoundationTests(unittest.TestCase):
             f"VALUES ('{principal}', 'adjustment-operator-3', 'backoffice'); "
             f"INSERT INTO principal_scopes(principal_id, scope) VALUES ('{principal}', 'orders:delete'); "
             "ROLLBACK;",
+            "check constraint",
+        )
+
+    def test_customer_address_book_default_and_ownership_rules(self):
+        customer = "21000000-0000-4000-8000-0000000000b1"
+        other = "21000000-0000-4000-8000-0000000000b2"
+        fixture = (
+            f"INSERT INTO customers(customer_id, email, display_name) "
+            f"VALUES ('{customer}', 'address@example.invalid', 'Address fixture'); "
+            f"INSERT INTO customers(customer_id, email, display_name) "
+            f"VALUES ('{other}', 'address-other@example.invalid', 'Other fixture'); "
+        )
+        # At most one default address per customer.
+        self.assert_sql_rejected(
+            fixture
+            + "INSERT INTO customer_addresses(address_id, customer_id, label, recipient_name, phone, city, address_line, is_default) "
+            "VALUES ('76000000-0000-4000-8000-0000000000b1', "
+            f"'{customer}', 'Home', 'Synthetic', '+201000000001', 'Cairo', '1 Street', true); "
+            "INSERT INTO customer_addresses(address_id, customer_id, label, recipient_name, phone, city, address_line, is_default) "
+            "VALUES ('76000000-0000-4000-8000-0000000000b2', "
+            f"'{customer}', 'Work', 'Synthetic', '+201000000002', 'Giza', '2 Street', true);",
+            "duplicate key",
+        )
+        # A second customer may have their own default.
+        result = self.sql(
+            "BEGIN; "
+            + fixture
+            + "INSERT INTO customer_addresses(address_id, customer_id, label, recipient_name, phone, city, address_line, is_default) "
+            "VALUES ('76000000-0000-4000-8000-0000000000b3', "
+            f"'{customer}', 'Home', 'Synthetic', '+201000000001', 'Cairo', '1 Street', true); "
+            "INSERT INTO customer_addresses(address_id, customer_id, label, recipient_name, phone, city, address_line, is_default) "
+            "VALUES ('76000000-0000-4000-8000-0000000000b4', "
+            f"'{other}', 'Home', 'Synthetic', '+201000000003', 'Cairo', '3 Street', true); "
+            "SELECT 'defaults=' || count(*) FROM customer_addresses WHERE is_default; "
+            "ROLLBACK;"
+        )
+        self.assertIn("defaults=2", result.stdout)
+        # A malformed phone is refused.
+        self.assert_sql_rejected(
+            fixture
+            + "INSERT INTO customer_addresses(address_id, customer_id, label, recipient_name, phone, city, address_line) "
+            "VALUES ('76000000-0000-4000-8000-0000000000b5', "
+            f"'{customer}', 'Home', 'Synthetic', 'call-me', 'Cairo', '1 Street');",
             "check constraint",
         )
 

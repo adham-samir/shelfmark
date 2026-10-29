@@ -1,6 +1,6 @@
 from datetime import UTC, date, datetime
 from decimal import Decimal
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi.testclient import TestClient
 
@@ -11,10 +11,12 @@ from smart_ecommerce_api.catalog import (
     PostgresOperationalCatalog,
 )
 from smart_ecommerce_api.errors import (
+    Conflict,
     DependencyUnavailable,
     IncorrectPassword,
     InvalidInput,
     ProductNotFound,
+    ResourceNotFound,
     Unauthorized,
 )
 from smart_ecommerce_api.commerce_models import (
@@ -35,6 +37,13 @@ from smart_ecommerce_api.commerce_models import (
     ReviewQueueItem,
     Shipment,
     ShipmentEvent,
+)
+from smart_ecommerce_api.addresses import (
+    MAX_ADDRESSES,
+    Address,
+    AddressInput,
+    AddressList,
+    AddressStore,
 )
 from smart_ecommerce_api.analytics import (
     AnalyticsResponse,
@@ -59,6 +68,13 @@ from smart_ecommerce_api.forecasting import (
     InventoryPlanningResponse,
     InventoryPolicy,
     ReorderRunResult,
+)
+from smart_ecommerce_api.addresses import (
+    MAX_ADDRESSES,
+    Address,
+    AddressInput,
+    AddressList,
+    AddressStore,
 )
 from smart_ecommerce_api.analytics import (
     AnalyticsResponse,
@@ -679,11 +695,79 @@ class FakeIdentity:
         return PasswordChangeResult(revoked_sessions=len(revoked))
 
 
+class FakeAddressStore:
+    """In-memory address book that mirrors the store's default rules."""
+
+    def __init__(self) -> None:
+        self.items: list[Address] = []
+        self.deleted: list[UUID] = []
+
+    def list(self, customer_id: UUID) -> AddressList:
+        ordered = sorted(self.items, key=lambda item: not item.is_default)
+        return AddressList(items=ordered, limit=MAX_ADDRESSES)
+
+    def create(self, customer_id: UUID, payload: AddressInput) -> Address:
+        if len(self.items) >= MAX_ADDRESSES:
+            raise Conflict("The address book holds at most 10 addresses.")
+        is_default = payload.is_default or not self.items
+        if is_default:
+            self.items = [
+                item.model_copy(update={"is_default": False}) for item in self.items
+            ]
+        address = Address(
+            address_id=uuid4(),
+            created_at=NOW,
+            updated_at=NOW,
+            **payload.model_dump(exclude={"is_default"}),
+            is_default=is_default,
+        )
+        self.items.append(address)
+        return address
+
+    def update(
+        self, customer_id: UUID, address_id: UUID, payload: AddressInput
+    ) -> Address:
+        for index, item in enumerate(self.items):
+            if item.address_id != address_id:
+                continue
+            if item.is_default and not payload.is_default:
+                raise Conflict(
+                    "Choose another default address instead of clearing this one."
+                )
+            if payload.is_default:
+                self.items = [
+                    entry.model_copy(update={"is_default": False})
+                    for entry in self.items
+                ]
+            updated = Address(
+                address_id=address_id,
+                created_at=item.created_at,
+                updated_at=NOW,
+                **payload.model_dump(),
+            )
+            self.items[index] = updated
+            return updated
+        raise ResourceNotFound("Address not found.")
+
+    def delete(self, customer_id: UUID, address_id: UUID) -> None:
+        for index, item in enumerate(self.items):
+            if item.address_id == address_id:
+                self.deleted.append(address_id)
+                del self.items[index]
+                if item.is_default and self.items:
+                    self.items[0] = self.items[0].model_copy(
+                        update={"is_default": True}
+                    )
+                return
+        raise ResourceNotFound("Address not found.")
+
+
 def client(
     service: FakeService | None = None,
     commerce: FakeCommerce | None = None,
     segmentation: FakeSegmentation | None = None,
     identity: FakeIdentity | None = None,
+    addresses: FakeAddressStore | None = None,
 ) -> TestClient:
     return TestClient(
         create_app(
@@ -696,6 +780,7 @@ def client(
             analytics_service=FakeAnalytics(),
             risk_model=FakeRiskModel(),
             identity_store=identity,
+            address_store=addresses,
         ),
         raise_server_exceptions=False,
     )
@@ -1321,6 +1406,132 @@ def test_operator_order_detail_exposes_the_adjustment_history() -> None:
     assert adjustments[0]["actor_kind"] == "operator"
     assert adjustments[0]["actor_name"] == "Demo Operator"
     assert adjustments[0]["reason"] == "Damaged item"
+
+
+def test_address_book_crud_default_rules_and_ownership() -> None:
+    addresses = FakeAddressStore()
+    identity = FakeIdentity()
+    api = client(identity=identity, addresses=addresses)
+    token = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "customer@example.invalid",
+            "password": "demo-customer-1",
+            "surface": "customer",
+        },
+    ).json()["token"]
+    headers = {"authorization": f"Bearer {token}"}
+
+    assert api.get("/v1/addresses").status_code == 401
+    empty = api.get("/v1/addresses", headers=headers)
+    assert empty.status_code == 200
+    assert empty.json() == {"items": [], "limit": MAX_ADDRESSES}
+
+    first = api.post(
+        "/v1/addresses",
+        headers=headers,
+        json={
+            "label": "Home",
+            "recipient_name": "Synthetic Customer",
+            "phone": "+201000000001",
+            "city": "Cairo",
+            "address_line": "1 Synthetic Street",
+        },
+    )
+    assert first.status_code == 201, first.text
+    # The first address becomes the default without being asked.
+    assert first.json()["is_default"] is True
+
+    second = api.post(
+        "/v1/addresses",
+        headers=headers,
+        json={
+            "label": "Work",
+            "recipient_name": "Synthetic Customer",
+            "phone": "+201000000002",
+            "city": "Giza",
+            "address_line": "2 Synthetic Street",
+            "is_default": True,
+        },
+    )
+    assert second.status_code == 201, second.text
+    listing = api.get("/v1/addresses", headers=headers).json()["items"]
+    assert [item["label"] for item in listing] == ["Work", "Home"]
+    assert [item["is_default"] for item in listing] == [True, False]
+
+    invalid = api.post(
+        "/v1/addresses",
+        headers=headers,
+        json={
+            "label": "Bad",
+            "recipient_name": "X",
+            "phone": "not-a-phone",
+            "city": "Cairo",
+            "address_line": "short",
+        },
+    )
+    assert invalid.status_code == 422
+
+    cleared = api.put(
+        f"/v1/addresses/{listing[0]['address_id']}",
+        headers=headers,
+        json={
+            "label": "Work",
+            "recipient_name": "Synthetic Customer",
+            "phone": "+201000000002",
+            "city": "Giza",
+            "address_line": "2 Synthetic Street",
+            "is_default": False,
+        },
+    )
+    assert cleared.status_code == 409
+
+    promoted = api.put(
+        f"/v1/addresses/{listing[1]['address_id']}",
+        headers=headers,
+        json={
+            "label": "Home renamed",
+            "recipient_name": "Synthetic Customer",
+            "phone": "+201000000001",
+            "city": "Alexandria",
+            "address_line": "1 Synthetic Street",
+            "is_default": True,
+        },
+    )
+    assert promoted.status_code == 200, promoted.text
+    assert promoted.json()["label"] == "Home renamed"
+    assert promoted.json()["is_default"] is True
+    listing = api.get("/v1/addresses", headers=headers).json()["items"]
+    assert [item["is_default"] for item in listing] == [True, False]
+
+    assert (
+        api.delete(f"/v1/addresses/{listing[0]['address_id']}", headers=headers).status_code
+        == 204
+    )
+    # Deleting the default promotes the survivor.
+    remaining = api.get("/v1/addresses", headers=headers).json()["items"]
+    assert len(remaining) == 1
+    assert remaining[0]["is_default"] is True
+
+    missing = api.delete(
+        "/v1/addresses/11111111-1111-4111-8111-111111111111", headers=headers
+    )
+    assert missing.status_code == 404
+
+
+def test_address_book_rejects_a_customer_outside_the_route() -> None:
+    api = client(identity=FakeIdentity(), addresses=FakeAddressStore())
+    operator = api.post(
+        "/v1/auth/login",
+        json={
+            "email": "operator@example.invalid",
+            "password": "demo-operator-1",
+            "surface": "operator",
+        },
+    ).json()["token"]
+    assert api.get(
+        "/v1/addresses", headers={"authorization": f"Bearer {operator}"}
+    ).status_code == 403
 
 
 def test_analytics_route_requires_capability_and_validates_range() -> None:

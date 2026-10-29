@@ -38,6 +38,10 @@ SF-03 now composes these reads and facets with validated image upload/retrieval 
 | POST | `/v1/account/password` | Rotate the password; ends every other session of the principal and keeps the caller signed in | Customer |
 | GET | `/v1/orders` | Paged order history for the signed-in customer | Customer |
 | POST | `/v1/orders/{order_id}/cancel` | Cancel an own order before it ships, from a fixed reason list plus free-text `other` | Customer |
+| GET | `/v1/addresses` | Saved addresses, default first, with the book limit | Customer |
+| POST | `/v1/addresses` | Save an address; the first becomes the default | Customer |
+| PUT | `/v1/addresses/{address_id}` | Update an own address; the default can be moved but not cleared | Customer |
+| DELETE | `/v1/addresses/{address_id}` | Delete an own address; a survivor is promoted to default | Customer |
 
 Credentials are argon2id hashes in `account_credentials`; session tokens are stored only as SHA-256 digests with a seven-day sliding expiry. A password change requires the current password, rejects reuse of it, and revokes every other session of the same principal (`400 incorrect_password` when the current value is wrong). `python -m smart_ecommerce_api.session_reaper` deletes expired rows and revoked rows older than 30 days; it runs as the `session-reaper` compose job. Responses carry `x-content-type-options`, `referrer-policy`, `x-frame-options`, `permissions-policy`, and a strict `content-security-policy` on every path except the interactive docs. Customer and operator sessions are independent, and the session-surface trigger rejects a mismatch. Ten failed logins per five minutes return `429 rate_limited`. Open registration is a demo choice; there is no email verification, password reset, MFA, or OAuth/OIDC claim.
 
@@ -51,6 +55,18 @@ Browsing-event capture, cart, checkout, owned order/shipment reads, trained pre-
 | GET | `/v1/backoffice/orders/{order_id}` | One order with customer, shipping contact, line items, and shipment events | `orders:read` |
 
 The queue exists so an operator can locate the order behind a risk-queue row or a customer question instead of seeing confirmed orders only as analytics aggregates. Customer-owned reads remain `/v1/orders` and `/v1/orders/{order_id}`; an operator token still receives `403` there, and a customer token receives `403` on the back-office routes.
+
+### Saved addresses
+
+The book holds at most ten addresses per customer and exactly one default,
+enforced by a partial unique index. The first saved address becomes the default
+even when the request does not ask for it, deleting the default promotes the
+oldest survivor, and clearing the default outright is refused (`409`) — the
+supported move is to promote another address. Checkout preselects the default and
+offers an opt-in save; a full book never turns a successful checkout into an
+error, because the order is reported first and the save outcome separately.
+Orders never read this table: each keeps its own frozen shipping snapshot, so
+editing or deleting an address cannot rewrite history.
 
 ### Customer cancellation
 

@@ -16,7 +16,12 @@ export default async function CheckoutPage() {
   await requireCustomer("/checkout");
 
   try {
-    const [cart, catalog] = await Promise.all([api.cart(), api.products({ limit: 100 })]);
+    const [cart, catalog, addresses] = await Promise.all([
+      api.cart(),
+      api.products({ limit: 100 }),
+      // A missing address book must never block checkout.
+      api.addresses().catch(() => null),
+    ]);
     const names: Record<string, string> = {};
     for (const product of catalog.items as Product[]) {
       names[product.product_id] = product.name;
@@ -56,7 +61,14 @@ export default async function CheckoutPage() {
         </div>
         <div style={{ marginBlockStart: 18 }}>
           <Notice tone="warn">{t("checkout.riskNote")}</Notice>
-          <CheckoutForm locale={locale} cart={cart} names={names} />
+          <CheckoutForm
+            locale={locale}
+            cart={cart}
+            names={names}
+            defaultAddress={
+              addresses?.items.find((item) => item.is_default) ?? null
+            }
+          />
         </div>
       </main>
     );

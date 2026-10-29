@@ -36,6 +36,7 @@ const AUTH_ROUTES = [
   ["voice search", "/search/voice"],
   ["account", "/account"],
   ["account orders", "/account/orders"],
+  ["account addresses", "/account/addresses"],
   ["back-office overview", "/backoffice"],
   ["back-office orders", "/backoffice/orders"],
   ["back-office inventory", "/backoffice/inventory"],

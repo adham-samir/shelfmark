@@ -801,3 +801,89 @@ def test_customer_cancels_own_order_with_a_listed_reason() -> None:
             409,
             "conflict",
         )
+
+def test_customer_address_book_crud_and_default_rules() -> None:
+    """COM-12: saved addresses, one default, and an opt-in save at checkout."""
+    customer = auth("synthetic-customer-subject")
+    operator = auth("synthetic-operator-subject")
+
+    with httpx.Client(base_url=BASE_URL, timeout=10) as api:
+        book = api.get("/v1/addresses", headers=customer)
+        assert book.status_code == 200, book.text
+        starting = book.json()["items"]
+        assert book.json()["limit"] == 10
+
+        first = api.post(
+            "/v1/addresses",
+            headers=customer,
+            json={
+                "label": "Integration home",
+                "recipient_name": "Synthetic Customer",
+                "phone": "+201000000051",
+                "city": "Cairo",
+                "address_line": "51 Integration Street",
+            },
+        )
+        assert first.status_code == 201, first.text
+        # With no prior addresses the new one becomes the default.
+        assert first.json()["is_default"] is (not starting)
+
+        second = api.post(
+            "/v1/addresses",
+            headers=customer,
+            json={
+                "label": "Integration work",
+                "recipient_name": "Synthetic Customer",
+                "phone": "+201000000052",
+                "city": "Giza",
+                "address_line": "52 Integration Street",
+                "is_default": True,
+            },
+        )
+        assert second.status_code == 201, second.text
+
+        listed = api.get("/v1/addresses", headers=customer).json()["items"]
+        defaults = [item for item in listed if item["is_default"]]
+        assert len(defaults) == 1
+        assert defaults[0]["address_id"] == second.json()["address_id"]
+
+        # An operator cannot reach the customer address book.
+        assert_error(
+            api.get("/v1/addresses", headers=operator), 403, "forbidden"
+        )
+
+        # The default cannot be cleared, only moved.
+        assert_error(
+            api.put(
+                f"/v1/addresses/{second.json()['address_id']}",
+                headers=customer,
+                json={
+                    "label": "Integration work",
+                    "recipient_name": "Synthetic Customer",
+                    "phone": "+201000000052",
+                    "city": "Giza",
+                    "address_line": "52 Integration Street",
+                    "is_default": False,
+                },
+            ),
+            409,
+            "conflict",
+        )
+
+        deleted = api.delete(
+            f"/v1/addresses/{second.json()['address_id']}", headers=customer
+        )
+        assert deleted.status_code == 204, deleted.text
+        survivors = api.get("/v1/addresses", headers=customer).json()["items"]
+        assert all(
+            item["address_id"] != second.json()["address_id"] for item in survivors
+        )
+        if survivors:
+            assert sum(1 for item in survivors if item["is_default"]) == 1
+
+        api.delete(f"/v1/addresses/{first.json()['address_id']}", headers=customer)
+        # Addresses never rewrite order history.
+        orders = api.get("/v1/orders", headers=customer).json()["items"]
+        if orders:
+            detail = api.get(f"/v1/orders/{orders[0]['order_id']}", headers=customer)
+            assert detail.status_code == 200

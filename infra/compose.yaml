@@ -24,7 +24,8 @@ services:
       - ../database/relational/migrations/0009_operator_order_access.sql:/docker-entrypoint-initdb.d/009-operator-orders.sql:ro
       - ../database/relational/migrations/0010_order_lifecycle.sql:/docker-entrypoint-initdb.d/010-order-lifecycle.sql:ro
       - ../database/relational/migrations/0011_order_adjustment_reason_code.sql:/docker-entrypoint-initdb.d/011-adjustment-reason.sql:ro
-      - ../database/relational/seeds/0001_synthetic_demo.sql:/docker-entrypoint-initdb.d/012-seed.sql:ro
+      - ../database/relational/migrations/0012_customer_addresses.sql:/docker-entrypoint-initdb.d/012-addresses.sql:ro
+      - ../database/relational/seeds/0001_synthetic_demo.sql:/docker-entrypoint-initdb.d/013-seed.sql:ro
 
   mongo:
     image: mongo:8.0.34

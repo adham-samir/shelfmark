@@ -141,3 +141,19 @@ export interface PasswordFormState {
 }
 
 export const initialPasswordFormState: PasswordFormState = { kind: "idle" };
+
+export interface AddressFormState {
+  kind: "idle" | "success" | "error";
+  action?: "created" | "updated" | "deleted";
+  code?:
+    | "conflict"
+    | "not_found"
+    | "invalid_input"
+    | "unauthorized"
+    | "forbidden"
+    | "dependency_unavailable"
+    | "unknown";
+  requestId?: string;
+}
+
+export const initialAddressFormState: AddressFormState = { kind: "idle" };

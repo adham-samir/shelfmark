@@ -70,6 +70,13 @@ export default async function AccountPage() {
                 <dd>{profile.order_count}</dd>
               </div>
             </dl>
+            <Link
+              className="btn btn-quiet btn-block"
+              href="/account/addresses"
+              style={{ marginBlockStart: 12 }}
+            >
+              {t("account.addresses")}
+            </Link>
           </section>
 
           <section className="panel" aria-labelledby="account-recent-orders">

@@ -8,6 +8,8 @@
  * plumbing, not an authentication implementation.
  */
 import type {
+  Address,
+  AddressList,
   AccountProfile,
   AccountView,
   AssistantResponse,
@@ -577,6 +579,52 @@ export const api = {
     return apiRequest<void>("/v1/auth/logout", {
       method: "POST",
       auth: surface,
+      noStore: true,
+    });
+  },
+  addresses(): Promise<AddressList> {
+    return apiRequest<AddressList>("/v1/addresses", {
+      auth: "customer",
+      noStore: true,
+    });
+  },
+  createAddress(input: {
+    label: string;
+    recipient_name: string;
+    phone: string;
+    city: string;
+    address_line: string;
+    is_default?: boolean;
+  }): Promise<Address> {
+    return apiRequest<Address>("/v1/addresses", {
+      method: "POST",
+      body: input,
+      auth: "customer",
+      noStore: true,
+    });
+  },
+  updateAddress(
+    addressId: string,
+    input: {
+      label: string;
+      recipient_name: string;
+      phone: string;
+      city: string;
+      address_line: string;
+      is_default: boolean;
+    },
+  ): Promise<Address> {
+    return apiRequest<Address>(`/v1/addresses/${addressId}`, {
+      method: "PUT",
+      body: input,
+      auth: "customer",
+      noStore: true,
+    });
+  },
+  deleteAddress(addressId: string): Promise<void> {
+    return apiRequest<void>(`/v1/addresses/${addressId}`, {
+      method: "DELETE",
+      auth: "customer",
       noStore: true,
     });
   },

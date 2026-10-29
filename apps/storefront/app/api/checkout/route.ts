@@ -27,6 +27,14 @@ export async function POST(request: Request) {
     }
   }
 
+  const saveAddress = payload.save_address === true;
+  // The customer already typed the city, so it makes a meaningful label in
+  // either locale. An explicit label wins when the caller supplies one.
+  const addressLabel =
+    typeof payload.address_label === "string" && payload.address_label.trim()
+      ? payload.address_label.trim().slice(0, 60)
+      : String(address.city).trim().slice(0, 60);
+
   try {
     const result = await api.checkout({
       payment_token: paymentToken,
@@ -38,7 +46,24 @@ export async function POST(request: Request) {
         address_line: String(address.address_line),
       },
     });
-    return Response.json(result, { status: 202 });
+    // The order is the important outcome: a full address book must not turn a
+    // successful checkout into an error, so the save is reported separately.
+    let addressSaved = false;
+    if (saveAddress) {
+      try {
+        await api.createAddress({
+          label: addressLabel,
+          recipient_name: String(address.recipient_name).trim(),
+          phone: String(address.phone).trim(),
+          city: String(address.city).trim(),
+          address_line: String(address.address_line).trim(),
+        });
+        addressSaved = true;
+      } catch {
+        addressSaved = false;
+      }
+    }
+    return Response.json({ ...result, address_saved: addressSaved }, { status: 202 });
   } catch (error) {
     return errorResponse(error);
   }

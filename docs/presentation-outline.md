@@ -60,7 +60,7 @@ Walk the seven modules with one screenshot each and one measured number:
 - Ten simultaneous identical checkout retries produced one order.
 - Operator lifecycle: shipment state machine, bounded refunds, cancellable
   orders, and audited stock adjustments verified live.
-- Accessibility: axe-core WCAG 2.2 AA, 0 violations across 42 pages (21 routes
+- Accessibility: axe-core WCAG 2.2 AA, 0 violations across 44 pages (22 routes
   in Arabic RTL and English LTR, including signed-in customer and operator
   states and an operator order detail) plus a keyboard focus check.
 - Security: capability enforcement, cross-customer 404s, upload validation, no

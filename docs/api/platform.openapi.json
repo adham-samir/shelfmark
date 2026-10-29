@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Smart-eCommerce Platform API",
-    "version": "0.13.0",
-    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, owned order/shipment reads, customer-initiated cancellation, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
+    "version": "0.14.0",
+    "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, saved addresses, owned order/shipment reads, customer-initiated cancellation, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
   },
   "security": [
     {
@@ -1914,6 +1914,187 @@
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/v1/addresses": {
+      "get": {
+        "operationId": "listAddresses",
+        "tags": [
+          "identity",
+          "commerce"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List the signed-in customer's saved addresses, default first",
+        "responses": {
+          "200": {
+            "description": "Saved addresses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAddress",
+        "tags": [
+          "identity",
+          "commerce"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Save a new address; the first address becomes the default",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Address created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Address"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/v1/addresses/{address_id}": {
+      "put": {
+        "operationId": "updateAddress",
+        "tags": [
+          "identity",
+          "commerce"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update an own address; the default cannot be cleared, only moved",
+        "parameters": [
+          {
+            "name": "address_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Address updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Address"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAddress",
+        "tags": [
+          "identity",
+          "commerce"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete an own address; a surviving address becomes the default",
+        "parameters": [
+          {
+            "name": "address_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Address deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -5734,6 +5915,143 @@
           "created_at"
         ],
         "title": "OrderAdjustment"
+      },
+      "AddressInput": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60,
+            "title": "Label"
+          },
+          "recipient_name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120,
+            "title": "Recipient Name"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?[0-9][0-9 -]{6,19}$",
+            "title": "Phone"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 80,
+            "title": "City"
+          },
+          "address_line": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 300,
+            "title": "Address Line"
+          },
+          "is_default": {
+            "type": "boolean",
+            "default": false,
+            "title": "Is Default"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "recipient_name",
+          "phone",
+          "city",
+          "address_line"
+        ],
+        "title": "AddressInput"
+      },
+      "Address": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60,
+            "title": "Label"
+          },
+          "recipient_name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120,
+            "title": "Recipient Name"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?[0-9][0-9 -]{6,19}$",
+            "title": "Phone"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 80,
+            "title": "City"
+          },
+          "address_line": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 300,
+            "title": "Address Line"
+          },
+          "is_default": {
+            "type": "boolean",
+            "default": false,
+            "title": "Is Default"
+          },
+          "address_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Address Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "address_id",
+          "label",
+          "recipient_name",
+          "phone",
+          "city",
+          "address_line",
+          "is_default",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Address"
+      },
+      "AddressList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "limit"
+        ],
+        "title": "AddressList"
       }
     },
     "responses": {

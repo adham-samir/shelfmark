@@ -26,6 +26,7 @@ exception**, **Simulated**, **Blocked**.
 | BI-01 | Both analysis areas present, filters change results, totals reconcile. | **Passed on synthetic activity** | 5,400 views / 2,252 sessions / 95 orders; category filter reduces views and revenue; both reconciliation checks match; unknown category shows the empty state. |
 | COM-07 | Customers and operators authenticate on separate, revocable sessions; gated routes reject anonymous access. | **Passed for the demo harness (DEC-017)** | Registration, login, throttled failures, logout revocation, session expiry, customer/operator isolation, account update, and order listing pass route tests; browser smoke checks confirm `/account`, `/account/orders`, `/cart`, `/checkout`, `/assistant`, and every `/backoffice` page gate to the correct sign-in page. |
 | COM-08 | An operator can locate and inspect any customer order without customer credentials. | **Passed** | `/v1/backoffice/orders` returns 521 live orders with customer identity and a status filter; `/v1/backoffice/orders/{id}` returns shipping, line items, and shipment events. A customer token receives 403 and an operator token still receives 403 on `/v1/orders`. |
+| COM-12 | A customer can save addresses and reuse the default at checkout. | **Passed** | The isolated schema rejects a second default and accepts one per customer; the black-box flow creates, promotes, refuses to clear, and deletes addresses, and checks that order detail still returns its own shipping snapshot. |
 | COM-11 | A customer can cancel their own order before it ships, with a recorded reason. | **Passed** | The black-box flow cancels a confirmed order as its owner, checks that another customer receives 404 and a shipped order 409, and confirms the stock returns exactly one unit and the operator detail shows a customer-attributed adjustment with the chosen reason code. |
 | COM-09 | An operator can fulfil, cancel, refund, and adjust stock with an auditable record. | **Passed** | Route tests cover each transition, the illegal-jump 409, cancellation, bounded refunds, and inventory adjustment, plus 403 for a customer token. The black-box flow `test_operator_order_lifecycle_advances_cancels_refunds_and_adjusts` repeats this on a freshly seeded stack. A browser rehearsal on a temporary order walked `pending → ready → in_transit → delivered`; cancelling a confirmed order moved stock 20 → 19 → 20; a seeded order with no sale ledger restored nothing; a manual +3 adjustment appeared as an audited movement. The rehearsal rows were then removed so the seeded demo counts stay reproducible. |
 
@@ -106,12 +107,12 @@ This is the demonstration workload, not a production capacity claim.
 
 `tests/accessibility/check.mjs` runs axe-core 4.14.0 with the
 `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, and `wcag22aa` rules against 19
-routes in Arabic (RTL) and English (LTR) — 42 pages at 1440×900 with reduced
+routes in Arabic (RTL) and English (LTR) — 44 pages at 1440×900 with reduced
 motion. The operator order queue and one live order detail are included. The script signs in through the API once per run and attaches both
 session cookies, so customer and operator pages are checked in their real
 signed-in state; the three sign-in/registration pages are checked as a guest.
 
-**Passed — 0 violations on all 42 pages**, and the operator order queue, order detail, and inventory page show zero document overflow at 1440, 960, and 700 px in Arabic and English. The gate found and the code now fixes
+**Passed — 0 violations on all 44 pages**, and the operator order queue, order detail, and inventory page show zero document overflow at 1440, 960, and 700 px in Arabic and English. The gate found and the code now fixes
 seven defect classes:
 
 | Finding | Fix |

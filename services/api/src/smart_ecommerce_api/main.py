@@ -15,6 +15,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from .addresses import Address, AddressInput, AddressList, AddressStore
 from .analytics import AnalyticsResponse, AnalyticsService, AnalyticsStore
 from .assistant import (
     AssistantRequest,
@@ -169,6 +170,7 @@ def create_app(
     analytics_service: AnalyticsService | None = None,
     risk_model: ModelRiskAssessor | None = None,
     identity_store: IdentityStore | None = None,
+    address_store: AddressStore | None = None,
     login_throttle: LoginThrottle | None = None,
     settings_factory: Callable[[], Settings] = Settings.from_environment,
 ) -> FastAPI:
@@ -202,6 +204,7 @@ def create_app(
         or analytics_service is None
         or risk_model is None
         or identity_store is None
+        or address_store is None
     ):
         settings = settings_factory()
         worker_threads = settings.worker_threads
@@ -230,6 +233,8 @@ def create_app(
         )
     if identity_store is None:
         identity_store = IdentityStore(settings.postgres_dsn)
+    if address_store is None:
+        address_store = AddressStore(settings.postgres_dsn)
     if authenticator is None:
         authenticator = identity_store
     if login_throttle is None:
@@ -288,6 +293,7 @@ def create_app(
     app.state.analytics_service = analytics_service
     app.state.risk_model = risk_model
     app.state.identity_store = identity_store
+    app.state.address_store = address_store
     app.state.login_throttle = login_throttle
 
     bearer = HTTPBearer(auto_error=False)
@@ -483,6 +489,60 @@ def create_app(
         token: str = Depends(presented_token),
     ) -> PasswordChangeResult:
         return app.state.identity_store.change_password(principal, token, change)
+
+    @app.get(
+        "/v1/addresses",
+        response_model=AddressList,
+        tags=["identity", "commerce"],
+    )
+    def list_addresses(
+        principal: Principal = Depends(current_customer),
+    ) -> AddressList:
+        return app.state.address_store.list(principal.customer_id)
+
+    @app.post(
+        "/v1/addresses",
+        response_model=Address,
+        status_code=status.HTTP_201_CREATED,
+        responses={409: {"description": "Address book is full."}},
+        tags=["identity", "commerce"],
+    )
+    def create_address(
+        address: AddressInput,
+        principal: Principal = Depends(current_customer),
+    ) -> Address:
+        return app.state.address_store.create(principal.customer_id, address)
+
+    @app.put(
+        "/v1/addresses/{address_id}",
+        response_model=Address,
+        responses={
+            404: {"description": "Address not found for this customer."},
+            409: {"description": "The default address cannot be cleared."},
+        },
+        tags=["identity", "commerce"],
+    )
+    def update_address(
+        address_id: UUID,
+        address: AddressInput,
+        principal: Principal = Depends(current_customer),
+    ) -> Address:
+        return app.state.address_store.update(
+            principal.customer_id, address_id, address
+        )
+
+    @app.delete(
+        "/v1/addresses/{address_id}",
+        status_code=status.HTTP_204_NO_CONTENT,
+        responses={404: {"description": "Address not found for this customer."}},
+        tags=["identity", "commerce"],
+    )
+    def delete_address(
+        address_id: UUID,
+        principal: Principal = Depends(current_customer),
+    ) -> Response:
+        app.state.address_store.delete(principal.customer_id, address_id)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     @app.get(
         "/v1/orders",

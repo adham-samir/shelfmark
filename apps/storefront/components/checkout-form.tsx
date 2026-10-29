@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { Cart, Locale } from "@/lib/types";
+import type { Address, Cart, Locale } from "@/lib/types";
 import { translator } from "@/lib/i18n";
 import { formatMoney, multiplyMoney, sumMoney } from "@/lib/format";
 
@@ -32,20 +32,24 @@ export function CheckoutForm({
   locale,
   cart,
   names,
+  defaultAddress,
 }: {
   locale: Locale;
   cart: Cart;
   names: Record<string, string>;
+  defaultAddress: Address | null;
 }) {
   const t = translator(locale);
   const router = useRouter();
   const [form, setForm] = useState<FormState>({
-    recipient_name: "",
-    phone: "",
-    city: "القاهرة",
-    address_line: "",
+    recipient_name: defaultAddress?.recipient_name ?? "",
+    phone: defaultAddress?.phone ?? "",
+    city: defaultAddress?.city ?? "القاهرة",
+    address_line: defaultAddress?.address_line ?? "",
     payment_token: TOKENS[0].value,
   });
+  // Opt-in: an address is only stored when the customer asks for it.
+  const [saveAddress, setSaveAddress] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [failure, setFailure] = useState<{ code: string; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -88,6 +92,7 @@ export function CheckoutForm({
             city: form.city.trim(),
             address_line: form.address_line.trim(),
           },
+          save_address: saveAddress,
         }),
       });
       const payload = (await response.json().catch(() => null)) as
@@ -199,6 +204,20 @@ export function CheckoutForm({
                   {errors.address_line}
                 </p>
               ) : null}
+            </div>
+
+            <div className="form-row checkbox-row">
+              <input
+                id="save-address"
+                name="save_address"
+                type="checkbox"
+                checked={saveAddress}
+                onChange={(event) => setSaveAddress(event.target.checked)}
+              />
+              <label className="field-label" htmlFor="save-address">
+                {t("checkout.saveAddress")}
+              </label>
+              <p className="field-hint">{t("checkout.saveAddressHint")}</p>
             </div>
           </div>
         </section>

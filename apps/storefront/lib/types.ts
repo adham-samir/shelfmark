@@ -186,6 +186,23 @@ export interface OperatorOrderDetail {
   adjustments: OrderAdjustment[];
 }
 
+export interface Address {
+  address_id: string;
+  label: string;
+  recipient_name: string;
+  phone: string;
+  city: string;
+  address_line: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AddressList {
+  items: Address[];
+  limit: number;
+}
+
 export interface AccountProfile {
   customer_id: string;
   email: string;

@@ -65,6 +65,20 @@ inventing an answer.
 4. `/orders/{id}` shows items, the price you paid, risk handling status, and the
    shipment timeline. Prices on past orders never change when prices are updated.
 
+### Save delivery addresses
+`/account/addresses` holds up to ten addresses. The first one you save becomes
+the default automatically, and the default is preselected on `/checkout`.
+
+- **Edit** changes the details or promotes the address to default. You cannot
+  clear the default outright — promote another address instead.
+- **Delete** removes it; if it was the default, the oldest remaining address
+  takes over.
+- At checkout, tick **Save this address to my account** to add the address you
+  just typed. It is off by default, and a full book never blocks the order.
+
+Editing or deleting an address never changes a placed order: each order keeps the
+address it was bought with.
+
 ### Cancel your own order
 Before an order ships you can cancel it from `/orders/{id}`:
 
