@@ -104,6 +104,23 @@ if (orderResponse.ok) {
   }
 }
 
+// The customer order page carries the cancel form and the reorder control, so it
+// needs its own check rather than relying on the operator detail being similar.
+// A confirmed order keeps both controls rendered.
+const customerOrders = await fetch(`${API_URL}/v1/orders?limit=50`, {
+  headers: { authorization: `Bearer ${customerToken}` },
+});
+if (customerOrders.ok) {
+  const items = (await customerOrders.json()).items;
+  const cancellable = items.find((item) => item.status === "confirmed") ?? items[0];
+  if (cancellable) {
+    AUTH_ROUTES.push([
+      "customer order detail",
+      `/orders/${cancellable.order_id}`,
+    ]);
+  }
+}
+
 
 function serious(violations) {
   return violations.filter(

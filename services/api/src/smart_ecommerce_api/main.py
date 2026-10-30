@@ -492,6 +492,7 @@ def create_app(
 
     @app.post(
         "/v1/auth/register",
+        operation_id="registerAccount",
         response_model=AuthSession,
         status_code=status.HTTP_201_CREATED,
         responses={
@@ -506,6 +507,7 @@ def create_app(
 
     @app.post(
         "/v1/auth/login",
+        operation_id="loginAccount",
         response_model=AuthSession,
         responses={
             401: {"description": "Unknown account or wrong password."},
@@ -527,6 +529,7 @@ def create_app(
 
     @app.post(
         "/v1/auth/logout",
+        operation_id="logoutAccount",
         status_code=status.HTTP_204_NO_CONTENT,
         tags=["identity"],
     )
@@ -540,6 +543,7 @@ def create_app(
 
     @app.get(
         "/v1/auth/me",
+        operation_id="getCurrentAccount",
         response_model=AccountView,
         tags=["identity"],
     )
@@ -548,6 +552,7 @@ def create_app(
 
     @app.get(
         "/v1/account",
+        operation_id="getAccount",
         response_model=AccountProfile,
         tags=["identity", "commerce"],
     )
@@ -556,6 +561,7 @@ def create_app(
 
     @app.patch(
         "/v1/account",
+        operation_id="updateAccount",
         response_model=AccountProfile,
         tags=["identity", "commerce"],
     )
@@ -567,6 +573,7 @@ def create_app(
 
     @app.post(
         "/v1/account/password",
+        operation_id="changeAccountPassword",
         response_model=PasswordChangeResult,
         responses={401: {"description": "The current password is incorrect."}},
         tags=["identity"],
@@ -580,6 +587,7 @@ def create_app(
 
     @app.get(
         "/v1/addresses",
+        operation_id="listAddresses",
         response_model=AddressList,
         tags=["identity", "commerce"],
     )
@@ -590,6 +598,7 @@ def create_app(
 
     @app.post(
         "/v1/addresses",
+        operation_id="createAddress",
         response_model=Address,
         status_code=status.HTTP_201_CREATED,
         responses={409: {"description": "Address book is full."}},
@@ -603,6 +612,7 @@ def create_app(
 
     @app.put(
         "/v1/addresses/{address_id}",
+        operation_id="updateAddress",
         response_model=Address,
         responses={
             404: {"description": "Address not found for this customer."},
@@ -621,6 +631,7 @@ def create_app(
 
     @app.delete(
         "/v1/addresses/{address_id}",
+        operation_id="deleteAddress",
         status_code=status.HTTP_204_NO_CONTENT,
         responses={404: {"description": "Address not found for this customer."}},
         tags=["identity", "commerce"],
@@ -634,6 +645,7 @@ def create_app(
 
     @app.get(
         "/v1/orders",
+        operation_id="listOrders",
         response_model=OrderList,
         tags=["commerce"],
     )
@@ -730,6 +742,7 @@ def create_app(
 
     @app.post(
         "/v1/events/browsing",
+        operation_id="recordBrowsingEvent",
         status_code=status.HTTP_202_ACCEPTED,
         tags=["interactions"],
     )
@@ -748,11 +761,11 @@ def create_app(
         )
         return Response(status_code=status.HTTP_202_ACCEPTED)
 
-    @app.get("/v1/cart", response_model=Cart, tags=["commerce"])
+    @app.get("/v1/cart", operation_id="getCart", response_model=Cart, tags=["commerce"])
     def get_cart(principal: Principal = Depends(current_customer)) -> Cart:
         return app.state.commerce_service.get_cart(principal.customer_id)
 
-    @app.put("/v1/cart/items", response_model=Cart, tags=["commerce"])
+    @app.put("/v1/cart/items", operation_id="setCartItem", response_model=Cart, tags=["commerce"])
     def set_cart_item(
         item: CartItemInput,
         principal: Principal = Depends(current_customer),
@@ -763,6 +776,7 @@ def create_app(
 
     @app.post(
         "/v1/checkout",
+        operation_id="submitCheckout",
         response_model=OrderStatus,
         status_code=status.HTTP_202_ACCEPTED,
         tags=["commerce", "risk"],
@@ -778,7 +792,7 @@ def create_app(
             checkout_input.shipping,
         )
 
-    @app.get("/v1/orders/{order_id}", response_model=Order, tags=["commerce"])
+    @app.get("/v1/orders/{order_id}", operation_id="getOwnOrder", response_model=Order, tags=["commerce"])
     def get_order(
         order_id: UUID,
         principal: Principal = Depends(current_customer),
@@ -787,6 +801,7 @@ def create_app(
 
     @app.post(
         "/v1/orders/{order_id}/reorder",
+        operation_id="reorderOwnOrder",
         response_model=ReorderResult,
         responses={404: {"description": "Order not found for this customer."}},
         tags=["commerce"],
@@ -799,6 +814,7 @@ def create_app(
 
     @app.post(
         "/v1/orders/{order_id}/cancel",
+        operation_id="cancelOwnOrder",
         response_model=OrderAdjustmentResult,
         responses={
             404: {"description": "Order not found for this customer."},
@@ -821,6 +837,7 @@ def create_app(
 
     @app.get(
         "/v1/orders/{order_id}/shipment",
+        operation_id="getOwnShipment",
         response_model=Shipment,
         tags=["commerce", "assistant"],
     )
@@ -834,6 +851,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/orders",
+        operation_id="listOperatorOrders",
         response_model=OperatorOrderList,
         tags=["backoffice", "orders"],
     )
@@ -849,6 +867,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/orders/{order_id}",
+        operation_id="getOperatorOrder",
         response_model=OperatorOrderDetail,
         responses={404: {"description": "Order not found."}},
         tags=["backoffice", "orders"],
@@ -861,6 +880,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/orders/{order_id}/shipment",
+        operation_id="transitionOperatorShipment",
         response_model=Shipment,
         responses={
             404: {"description": "Shipment not found."},
@@ -879,6 +899,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/orders/{order_id}/cancel",
+        operation_id="cancelOperatorOrder",
         response_model=OrderAdjustmentResult,
         responses={
             404: {"description": "Order not found."},
@@ -897,6 +918,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/orders/{order_id}/refund",
+        operation_id="refundOperatorOrder",
         response_model=OrderAdjustmentResult,
         responses={
             404: {"description": "Order not found."},
@@ -915,6 +937,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/risk/{assessment_id}/decision",
+        operation_id="decideRiskReview",
         response_model=ReviewDecisionResult,
         tags=["backoffice", "risk"],
     )
@@ -929,6 +952,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/risk",
+        operation_id="getRiskReviewQueue",
         response_model=list[ReviewQueueItem],
         tags=["backoffice", "risk"],
     )
@@ -939,6 +963,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/risk/model",
+        operation_id="getFraudModel",
         response_model=FraudModelSummary,
         responses={503: {"description": "Fraud model artifact unavailable."}},
         tags=["backoffice", "risk"],
@@ -950,6 +975,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/inventory",
+        operation_id="getInventoryPlanning",
         response_model=InventoryPlanningResponse,
         tags=["backoffice", "inventory"],
     )
@@ -960,6 +986,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/inventory/{product_id}/adjustments",
+        operation_id="adjustOperatorInventory",
         response_model=InventoryAdjustmentResult,
         responses={
             404: {"description": "Inventory balance not found."},
@@ -981,6 +1008,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/reorders/run",
+        operation_id="runReorderEvaluation",
         response_model=ReorderRunResult,
         status_code=status.HTTP_202_ACCEPTED,
         tags=["backoffice", "inventory"],
@@ -992,6 +1020,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/pricing",
+        operation_id="getPricingOverview",
         response_model=PricingOverviewResponse,
         responses={503: {"description": "Pricing inputs or season calendar unavailable."}},
         tags=["backoffice", "pricing"],
@@ -1003,6 +1032,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/pricing/run",
+        operation_id="runPricingEvaluation",
         response_model=PricingRunResult,
         status_code=status.HTTP_202_ACCEPTED,
         tags=["backoffice", "pricing"],
@@ -1017,6 +1047,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/pricing/observations",
+        operation_id="recordPricingObservation",
         response_model=PricingObservationResult,
         status_code=status.HTTP_202_ACCEPTED,
         tags=["backoffice", "pricing"],
@@ -1029,6 +1060,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/segments",
+        operation_id="getCustomerSegments",
         response_model=SegmentationResponse,
         responses={503: {"description": "Order history or snapshots unavailable."}},
         tags=["backoffice", "segments"],
@@ -1049,6 +1081,7 @@ def create_app(
 
     @app.post(
         "/v1/backoffice/segments/run",
+        operation_id="runCustomerSegmentation",
         response_model=SegmentationRunResult,
         status_code=status.HTTP_202_ACCEPTED,
         tags=["backoffice", "segments"],
@@ -1060,6 +1093,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/segments/export",
+        operation_id="exportCustomerSegments",
         response_class=Response,
         responses={
             200: {
@@ -1120,6 +1154,7 @@ def create_app(
 
     @app.get(
         "/v1/backoffice/analytics",
+        operation_id="getAnalytics",
         response_model=AnalyticsResponse,
         responses={
             422: {"description": "Invalid date range."},
@@ -1141,6 +1176,7 @@ def create_app(
 
     @app.get(
         "/v1/recommendations",
+        operation_id="getRecommendations",
         response_model=RecommendationResult,
         tags=["smart-storefront"],
     )
@@ -1154,6 +1190,7 @@ def create_app(
 
     @app.post(
         "/v1/assistant/messages",
+        operation_id="sendAssistantMessage",
         response_model=AssistantResponse,
         tags=["assistant", "smart-storefront"],
     )
@@ -1165,6 +1202,7 @@ def create_app(
 
     @app.post(
         "/v1/search/image",
+        operation_id="searchByImage",
         response_model=ImageSearchResponse,
         tags=["search", "smart-storefront"],
     )
@@ -1188,6 +1226,7 @@ def create_app(
 
     @app.post(
         "/v1/search/voice",
+        operation_id="searchByVoice",
         response_model=VoiceSearchResponse,
         tags=["search", "smart-storefront"],
     )

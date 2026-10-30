@@ -85,7 +85,7 @@
           "smart-storefront"
         ],
         "summary": "Image Search",
-        "operationId": "image_search_v1_search_image_post",
+        "operationId": "searchByImage",
         "parameters": [
           {
             "name": "category",
@@ -180,7 +180,7 @@
           "smart-storefront"
         ],
         "summary": "Voice Search",
-        "operationId": "voice_search_v1_search_voice_post",
+        "operationId": "searchByVoice",
         "parameters": [
           {
             "name": "locale",
@@ -289,7 +289,7 @@
           "smart-storefront"
         ],
         "summary": "Assistant Message",
-        "operationId": "assistant_message_v1_assistant_messages_post",
+        "operationId": "sendAssistantMessage",
         "requestBody": {
           "content": {
             "application/json": {
@@ -540,7 +540,7 @@
           "inventory"
         ],
         "summary": "Get Inventory Planning",
-        "operationId": "get_inventory_planning_v1_backoffice_inventory_get",
+        "operationId": "getInventoryPlanning",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -570,7 +570,7 @@
           "inventory"
         ],
         "summary": "Run Reorder Evaluation",
-        "operationId": "run_reorder_evaluation_v1_backoffice_reorders_run_post",
+        "operationId": "runReorderEvaluation",
         "responses": {
           "202": {
             "description": "Successful Response",
@@ -600,7 +600,7 @@
           "pricing"
         ],
         "summary": "Get Pricing Overview",
-        "operationId": "get_pricing_overview_v1_backoffice_pricing_get",
+        "operationId": "getPricingOverview",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -639,7 +639,7 @@
           "pricing"
         ],
         "summary": "Run Pricing Evaluation",
-        "operationId": "run_pricing_evaluation_v1_backoffice_pricing_run_post",
+        "operationId": "runPricingEvaluation",
         "requestBody": {
           "required": false,
           "content": {
@@ -691,7 +691,7 @@
           "pricing"
         ],
         "summary": "Record Pricing Observation",
-        "operationId": "record_pricing_observation_v1_backoffice_pricing_observations_post",
+        "operationId": "recordPricingObservation",
         "requestBody": {
           "required": true,
           "content": {
@@ -743,7 +743,7 @@
           "segments"
         ],
         "summary": "Get Customer Segments",
-        "operationId": "get_customer_segments_v1_backoffice_segments_get",
+        "operationId": "getCustomerSegments",
         "parameters": [
           {
             "name": "reference_date",
@@ -848,7 +848,7 @@
           "segments"
         ],
         "summary": "Run Customer Segmentation",
-        "operationId": "run_customer_segmentation_v1_backoffice_segments_run_post",
+        "operationId": "runCustomerSegmentation",
         "responses": {
           "202": {
             "description": "Successful Response",
@@ -887,7 +887,7 @@
           "segments"
         ],
         "summary": "Export Customer Segment Group",
-        "operationId": "export_customer_segments_v1_backoffice_segments_export_get",
+        "operationId": "exportCustomerSegments",
         "parameters": [
           {
             "name": "reference_date",
@@ -1004,7 +1004,7 @@
           "risk"
         ],
         "summary": "Get Fraud Model",
-        "operationId": "get_fraud_model_v1_backoffice_risk_model_get",
+        "operationId": "getFraudModel",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1110,7 +1110,7 @@
           "analytics"
         ],
         "summary": "Get Analytics",
-        "operationId": "get_analytics_v1_backoffice_analytics_get",
+        "operationId": "getAnalytics",
         "parameters": [
           {
             "name": "from",
@@ -1192,7 +1192,7 @@
           "identity"
         ],
         "summary": "Register Account",
-        "operationId": "register_account_v1_auth_register_post",
+        "operationId": "registerAccount",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1232,7 +1232,7 @@
           "identity"
         ],
         "summary": "Login",
-        "operationId": "login_v1_auth_login_post",
+        "operationId": "loginAccount",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1275,7 +1275,7 @@
           "identity"
         ],
         "summary": "Logout",
-        "operationId": "logout_v1_auth_logout_post",
+        "operationId": "logoutAccount",
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -1294,7 +1294,7 @@
           "identity"
         ],
         "summary": "Whoami",
-        "operationId": "whoami_v1_auth_me_get",
+        "operationId": "getCurrentAccount",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1321,7 +1321,7 @@
           "commerce"
         ],
         "summary": "Get Account",
-        "operationId": "get_account_v1_account_get",
+        "operationId": "getAccount",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1346,7 +1346,7 @@
           "commerce"
         ],
         "summary": "Update Account",
-        "operationId": "update_account_v1_account_patch",
+        "operationId": "updateAccount",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1385,7 +1385,7 @@
           "commerce"
         ],
         "summary": "List Orders",
-        "operationId": "list_orders_v1_orders_get",
+        "operationId": "listOrders",
         "security": [
           {
             "bearerAuth": []
