@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { api } from "@/lib/api";
 import { badRequest, errorResponse, isUuid, readJson } from "@/lib/http";
+import { forbiddenOrigin, sameOrigin } from "@/lib/origin";
 
 export const dynamic = "force-dynamic";
 
 const EVENT_TYPES = ["view", "search_click", "compare", "add_to_cart"] as const;
 
 export async function POST(request: Request) {
+  if (!sameOrigin(request)) return forbiddenOrigin();
   const payload = await readJson(request);
   if (!payload) return badRequest("invalid_input", "A JSON body is required.");
 

@@ -51,6 +51,9 @@ tier) and keep the API worker count in mind: each worker opens its own pool.
 | `SMART_ECOMMERCE_MAXIMUM_UPLOAD_BYTES` | Upload cap (default 5 MiB) | Optional |
 | `SMART_ECOMMERCE_POSTGRES_POOL_SIZE` | Bounded PostgreSQL connections per process (default 48) | Optional |
 | `SMART_ECOMMERCE_WORKER_THREADS` | AnyIO worker threads for synchronous endpoints (default 100, the DEC-014 session baseline) | Optional |
+| `SMART_ECOMMERCE_LOG_LEVEL` | Log level (default `INFO`) | Optional |
+| `SMART_ECOMMERCE_LOG_FORMAT` | `json` (default) or `text` for readable local output | Optional |
+| `SMART_ECOMMERCE_MIGRATIONS_DIR` / `SMART_ECOMMERCE_SEEDS_DIR` | SQL directories for the migration job (compose mounts them at `/sql`) | Migration job |
 | `SMART_ECOMMERCE_API_URL` | Storefront → API base URL | Storefront |
 | `SMART_ECOMMERCE_COOKIE_SECURE` | Set to `1` to mark both session cookies `Secure` (requires HTTPS) | Storefront, production |
 | `SMART_ECOMMERCE_SANDBOX_TOKEN` / `SMART_ECOMMERCE_OPERATOR_TOKEN` | Optional legacy server-side bearer identities for scripts. The storefront now authenticates through the session cookies and ignores these when unset. | Storefront, optional |
@@ -122,6 +125,39 @@ uv run --project services/api python services/api/ml/fraud/train.py
 
 Model and evaluation rows are registered on first use (`model_versions`,
 `evaluation_runs`). Fraud evidence registers once per process.
+
+## 5a. Logging and cross-origin requests
+
+Every request writes exactly one structured line to stdout:
+
+```json
+{"ts":"2026-10-30T02:19:40.753Z","level":"INFO","logger":"smart_ecommerce.access","event":"http_request","request_id":"1ab64fe3-...","method":"GET","path":"/v1/orders","status":401,"duration_ms":1}
+```
+
+The `request_id` is the same value returned in the `x-request-id` header and in
+every error body, so a reported ID can be traced to the exact call. 4xx errors
+log at `WARNING` without a traceback; 5xx log at `ERROR` with one. uvicorn's own
+access log is silenced so there is one line per request, but `uvicorn.error`
+still reports startup and crash messages. The access line never contains
+credentials, cookies, request bodies, or contact details.
+
+Set `SMART_ECOMMERCE_LOG_FORMAT=text` for readable local output.
+
+**Cross-origin requests.** Session cookies are `httpOnly`, `SameSite=Lax`, and
+never sent to the API — the storefront reads them server-side and forwards a
+bearer token, so the API is only ever called server-to-server. Two layers protect
+the storefront:
+
+1. Server Actions compare `Origin` against `Host` inside Next.js. If a CDN or
+   proxy fronts the storefront, add its host to `serverActions.allowedOrigins` in
+   `next.config.ts`, or those actions will be rejected.
+2. The four cookie-authenticated Route Handlers (`/api/checkout`, `/api/cart`,
+   `/api/events`, `/api/assistant`) call `sameOrigin` from `lib/origin.ts` and
+   return `403 forbidden_origin` on a mismatch. A request with no `Origin` is
+   allowed, which keeps curl and server-to-server calls working.
+
+The operator CSV export stays a `GET`: it is cookie-authenticated, but a
+cross-site `GET` cannot read the response body, so it needs no origin check.
 
 ## 5b. Response security headers
 

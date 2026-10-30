@@ -2,6 +2,8 @@
 
 import csv
 import io
+import logging
+import time
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from datetime import UTC, date, datetime
@@ -78,6 +80,14 @@ from .identity import (
     RegisterInput,
 )
 from .models import CatalogFacets, Health, Product, ProductPage
+from .observability import (
+    ACCESS_EVENT,
+    ERROR_EVENT,
+    access_logger,
+    configure_logging,
+    error_logger,
+    request_id_var,
+)
 from .pricing import (
     PricingObservationInput,
     PricingObservationResult,
@@ -182,6 +192,9 @@ def create_app(
         anyio.to_thread.current_default_thread_limiter().total_tokens = (
             application.state.worker_threads
         )
+        # Configured here rather than at import so a bare TestClient, which does
+        # not run lifespan, keeps the stdlib logging defaults.
+        configure_logging()
         yield
 
     app = FastAPI(
@@ -336,7 +349,39 @@ def create_app(
         request.state.request_id = _validated_request_id(
             request.headers.get("x-request-id")
         )
-        response = await call_next(request)
+        token = request_id_var.set(request.state.request_id)
+        started = time.perf_counter()
+        try:
+            response = await call_next(request)
+        except Exception:
+            # The exception handlers turn this into a 500, but the access line
+            # must still be written, and the traceback must reach the log.
+            access_logger().exception(
+                ACCESS_EVENT,
+                extra={
+                    "event": ACCESS_EVENT,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status": 500,
+                    "duration_ms": int((time.perf_counter() - started) * 1000),
+                    "request_id": request.state.request_id,
+                },
+            )
+            raise
+        finally:
+            request_id_var.reset(token)
+        duration_ms = int((time.perf_counter() - started) * 1000)
+        access_logger().info(
+            ACCESS_EVENT,
+            extra={
+                "event": ACCESS_EVENT,
+                "method": request.method,
+                "path": request.url.path,
+                "status": response.status_code,
+                "duration_ms": duration_ms,
+                "request_id": request.state.request_id,
+            },
+        )
         response.headers["x-request-id"] = request.state.request_id
         # The API serves JSON only, so it can afford a policy stricter than the
         # storefront's. Nothing here is meant to be framed or sniffed.
@@ -357,6 +402,21 @@ def create_app(
 
     @app.exception_handler(ApplicationError)
     async def application_error(request: Request, error: ApplicationError):
+        # 4xx is the caller's mistake and needs no traceback; 5xx is ours.
+        log = error_logger()
+        level = logging.ERROR if error.status_code >= 500 else logging.WARNING
+        log.log(
+            level,
+            ERROR_EVENT,
+            extra={
+                "event": ERROR_EVENT,
+                "code": error.code,
+                "status": error.status_code,
+                "method": request.method,
+                "path": request.url.path,
+                "request_id": _request_id(request),
+            },
+        )
         return _error_response(
             request,
             status_code=error.status_code,
@@ -366,6 +426,17 @@ def create_app(
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, _error: RequestValidationError):
+        error_logger().warning(
+            ERROR_EVENT,
+            extra={
+                "event": ERROR_EVENT,
+                "code": "validation_error",
+                "status": 422,
+                "method": request.method,
+                "path": request.url.path,
+                "request_id": _request_id(request),
+            },
+        )
         return _error_response(
             request,
             status_code=422,
@@ -374,7 +445,20 @@ def create_app(
         )
 
     @app.exception_handler(Exception)
-    async def unexpected_error(request: Request, _error: Exception):
+    async def unexpected_error(request: Request, error: Exception):
+        # Log the traceback here: the client receives only a generic message.
+        error_logger().error(
+            ERROR_EVENT,
+            extra={
+                "event": ERROR_EVENT,
+                "code": "internal_error",
+                "status": 500,
+                "method": request.method,
+                "path": request.url.path,
+                "request_id": _request_id(request),
+            },
+            exc_info=error,
+        )
         return _error_response(
             request,
             status_code=500,

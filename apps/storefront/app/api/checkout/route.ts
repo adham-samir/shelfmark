@@ -1,9 +1,11 @@
 import { api } from "@/lib/api";
 import { badRequest, errorResponse, readJson } from "@/lib/http";
+import { forbiddenOrigin, sameOrigin } from "@/lib/origin";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  if (!sameOrigin(request)) return forbiddenOrigin();
   const payload = await readJson(request);
   if (!payload) return badRequest("invalid_input", "A JSON body is required.");
 

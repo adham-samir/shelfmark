@@ -32,6 +32,8 @@ exception**, **Simulated**, **Blocked**.
 | COM-12 | A customer can save addresses and reuse the default at checkout. | **Passed** | The isolated schema rejects a second default and accepts one per customer; the black-box flow creates, promotes, refuses to clear, and deletes addresses, and checks that order detail still returns its own shipping snapshot. |
 | COM-13 | A customer can repeat a past order into the cart. | **Passed** | The black-box flow reorders into an empty cart, asserts the cart line uses the current product price rather than the checkout snapshot, confirms a second call accumulates, and checks that another customer receives 404. |
 
+| Structured logging | **Passed** | `caplog` confirms exactly one access record per request, that the record's `request_id` equals the returned `x-request-id`, that a client-supplied non-UUID is replaced, that 4xx logs at WARNING with no traceback while 5xx carries one, and that no authorization header, cookie value, or contact detail appears in any rendered record. Both formatters round-trip. |
+| Cross-origin protection | **Passed** | Eight Node tests cover same-origin, cross-origin, port mismatch, absent `Origin`, `X-Forwarded-Host`, malformed `Origin`, and a missing `Host`. Live: `POST /api/checkout` and `/api/assistant` with `Origin: https://evil.example` return `403 forbidden_origin`; same-origin and no-origin requests still succeed. |
 | Migration runner | **Passed** | Twelve migrations apply once each on a fresh database (30 tables plus `schema_migrations`, 13 seeded products); a second run applies nothing; a database stopped at 0011 upgrades by applying only 0012; an edited migration aborts with its filename; a failing migration leaves neither schema nor version row. Compose runs it as the `migrate` service and the API waits for it. |
 
 ## 2. Security testing
@@ -165,6 +167,9 @@ python -m smart_ecommerce_api.migrate --status
 
 # Unit, route, and contract suites
 uv run --project services/api --extra test pytest services/api/tests
+
+# Storefront helper tests (Node runs TypeScript directly)
+cd apps/storefront && npm test
 uv run --with-requirements tests/data_foundation/requirements.txt \
   python -m unittest discover -s tests/data_foundation -v
 

@@ -4,7 +4,7 @@
 |---|---|
 | Status | Accepted Stage 1 baseline; Stage 3 implementation and Stage 4 QA complete |
 | Source | `docs/source-specification-plan.md` |
-| Last updated | 2026-10-29 |
+| Last updated | 2026-10-30 |
 | Scope | Storefront, supporting commerce flow, seven smart modules, and BI dashboards |
 
 ## 1. Purpose and scope

@@ -35,6 +35,9 @@ uv run --project services/api --extra test pytest services/api/tests
 uv run --project services/api --extra test pytest tests/integration/test_commerce_api.py -v
 uv run --project services/api --extra test pytest tests/security tests/load -v
 
+# Storefront helpers (Node runs TypeScript directly)
+cd apps/storefront && npm test && cd ../..
+
 # The migration runner's database behaviour, against a disposable PostgreSQL.
 SMART_ECOMMERCE_TEST_POSTGRES_DSN=postgresql://postgres:ephemeral@127.0.0.1:15501/postgres \
   uv run --project services/api --extra test pytest services/api/tests/test_migrations.py -v
