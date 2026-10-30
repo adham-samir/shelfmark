@@ -88,10 +88,10 @@ seconds with up to 100 requests in flight, then a 100-session burst. p95 in ms:
 | Sustained 10 req/s | Product detail | ≤500 | 7.0 | Passed |
 | Sustained 10 req/s | Recommendations | ≤500 | 16.4 | Passed |
 | Sustained 10 req/s | Cart | ≤500 | 12.6 | Passed |
-| Sustained 10 req/s | Analytics (month) | ≤2 s | 25.7 | Passed |
-| 100-session burst | Catalog list | ≤500 | 135.3 | Passed |
+| Sustained 10 req/s | Analytics (month) | ≤2 s | 30.3 | Passed |
+| 100-session burst | Catalog list | ≤500 | 156.6 | Passed |
 | 100-session burst | Product detail | ≤500 | 125.8 | Passed |
-| 100-session burst | Recommendations | ≤500 | 243.7 | Passed |
+| 100-session burst | Recommendations | ≤500 | 252.6 | Passed |
 | 100-session burst | Cart | ≤500 | 213.7 | Passed |
 
 The burst measurement warms each session with `/health/live`, so it reports
@@ -113,12 +113,12 @@ This is the demonstration workload, not a production capacity claim.
 
 `tests/accessibility/check.mjs` runs axe-core 4.14.0 with the
 `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, and `wcag22aa` rules against 19
-routes in Arabic (RTL) and English (LTR) — 44 pages at 1440×900 with reduced
-motion. The operator order queue and one live order detail are included. The script signs in through the API once per run and attaches both
+routes in Arabic (RTL) and English (LTR) — 46 pages at 1440×900 with reduced
+motion. The operator order queue, the operator order detail, and the customer order detail (cancel form and reorder control) are included. The script signs in through the API once per run and attaches both
 session cookies, so customer and operator pages are checked in their real
 signed-in state; the three sign-in/registration pages are checked as a guest.
 
-**Passed — 0 violations on all 44 pages**, and the operator order queue, order detail, and inventory page show zero document overflow at 1440, 960, and 700 px in Arabic and English. The gate found and the code now fixes
+**Passed — 0 violations on all 46 pages**, and the operator order queue, order detail, and inventory page show zero document overflow at 1440, 960, and 700 px in Arabic and English. The gate found and the code now fixes
 seven defect classes:
 
 | Finding | Fix |

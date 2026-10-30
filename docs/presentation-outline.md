@@ -55,12 +55,12 @@ Walk the seven modules with one screenshot each and one measured number:
 - 104 API tests, 16 contract/database tests, 5 integration flows, 7 security
   checks, and 3 workload checks.
 - Latency at the DEC-014 workload (10 req/s, 100 concurrent sessions): catalog
-  8.0 ms sustained / 135.3 ms at burst; recommendations 16.4 ms / 243.7 ms;
-  analytics 25.7 ms (p95, containerized local stack).
+  8.5 ms sustained / 156.6 ms at burst; recommendations 33.8 ms / 252.6 ms;
+  analytics 30.3 ms (p95, containerized local stack, measured 2026-10-30).
 - Ten simultaneous identical checkout retries produced one order.
 - Operator lifecycle: shipment state machine, bounded refunds, cancellable
   orders, and audited stock adjustments verified live.
-- Accessibility: axe-core WCAG 2.2 AA, 0 violations across 44 pages (22 routes
+- Accessibility: axe-core WCAG 2.2 AA, 0 violations across 46 pages (23 routes
   in Arabic RTL and English LTR, including signed-in customer and operator
   states and an operator order detail) plus a keyboard focus check.
 - Security: capability enforcement, cross-customer 404s, upload validation, no
