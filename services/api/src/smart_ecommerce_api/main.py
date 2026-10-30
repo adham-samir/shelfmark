@@ -199,8 +199,11 @@ def create_app(
 
     app = FastAPI(
         title="Smart-eCommerce API",
-        version="0.1.0",
-        description="Stage 3 commerce and smart-eCommerce API.",
+        version="0.15.0",
+        description=(
+            "Smart-eCommerce API. The version tracks docs/api/platform.openapi.json, "
+            "which a drift test keeps in step with this application."
+        ),
         lifespan=lifespan,
     )
 

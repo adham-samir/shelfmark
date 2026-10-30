@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T18:21:41+03:00",
+  "title": "Design System: Smart-eCommerce Management System",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Instrument Paper",
+        "canonical": "#f7f6e8",
+        "tonalRamp": ["oklch(15% 0.012 95)", "oklch(27% 0.012 95)", "oklch(39% 0.012 95)", "oklch(51% 0.012 95)", "oklch(63% 0.012 95)", "oklch(75% 0.012 95)", "oklch(87% 0.012 95)", "oklch(95% 0.012 95)"]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Deep Instrument Paper",
+        "canonical": "#efece0",
+        "tonalRamp": ["oklch(15% 0.016 90)", "oklch(27% 0.016 90)", "oklch(39% 0.016 90)", "oklch(51% 0.016 90)", "oklch(63% 0.016 90)", "oklch(75% 0.016 90)", "oklch(87% 0.016 90)", "oklch(95% 0.016 90)"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Work Surface",
+        "canonical": "#fbf8ee",
+        "tonalRamp": ["oklch(15% 0.012 88)", "oklch(27% 0.012 88)", "oklch(39% 0.012 88)", "oklch(51% 0.012 88)", "oklch(63% 0.012 88)", "oklch(75% 0.012 88)", "oklch(87% 0.012 88)", "oklch(95% 0.012 88)"]
+      },
+      "surface-alt": {
+        "role": "neutral",
+        "displayName": "Alternate Work Surface",
+        "canonical": "#f4f1e4",
+        "tonalRamp": ["oklch(15% 0.016 88)", "oklch(27% 0.016 88)", "oklch(39% 0.016 88)", "oklch(51% 0.016 88)", "oklch(63% 0.016 88)", "oklch(75% 0.016 88)", "oklch(87% 0.016 88)", "oklch(95% 0.016 88)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Near-Black Ink",
+        "canonical": "#101011",
+        "tonalRamp": ["oklch(15% 0.004 280)", "oklch(27% 0.004 280)", "oklch(39% 0.004 280)", "oklch(51% 0.004 280)", "oklch(63% 0.004 280)", "oklch(75% 0.004 280)", "oklch(87% 0.004 280)", "oklch(95% 0.004 280)"]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#3f3f3f",
+        "tonalRamp": ["oklch(15% 0.003 90)", "oklch(27% 0.003 90)", "oklch(39% 0.003 90)", "oklch(51% 0.003 90)", "oklch(63% 0.003 90)", "oklch(75% 0.003 90)", "oklch(87% 0.003 90)", "oklch(95% 0.003 90)"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Graphite",
+        "canonical": "#62625e",
+        "tonalRamp": ["oklch(15% 0.006 95)", "oklch(27% 0.006 95)", "oklch(39% 0.006 95)", "oklch(51% 0.006 95)", "oklch(63% 0.006 95)", "oklch(75% 0.006 95)", "oklch(87% 0.006 95)", "oklch(95% 0.006 95)"]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Ruled Line",
+        "canonical": "#c2c1bb",
+        "tonalRamp": ["oklch(15% 0.006 90)", "oklch(27% 0.006 90)", "oklch(39% 0.006 90)", "oklch(51% 0.006 90)", "oklch(63% 0.006 90)", "oklch(75% 0.006 90)", "oklch(87% 0.006 90)", "oklch(95% 0.006 90)"]
+      },
+      "rule-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ruled Line",
+        "canonical": "#ddd9cd",
+        "tonalRamp": ["oklch(15% 0.012 85)", "oklch(27% 0.012 85)", "oklch(39% 0.012 85)", "oklch(51% 0.012 85)", "oklch(63% 0.012 85)", "oklch(75% 0.012 85)", "oklch(87% 0.012 85)", "oklch(95% 0.012 85)"]
+      },
+      "amber": {
+        "role": "primary",
+        "displayName": "Measurement Amber",
+        "canonical": "#b87820",
+        "tonalRamp": ["oklch(15% 0.12 70)", "oklch(27% 0.12 70)", "oklch(39% 0.12 70)", "oklch(51% 0.12 70)", "oklch(63% 0.12 70)", "oklch(75% 0.12 70)", "oklch(87% 0.12 70)", "oklch(95% 0.12 70)"]
+      },
+      "amber-strong": {
+        "role": "primary",
+        "displayName": "Strong Measurement Amber",
+        "canonical": "#9c6114",
+        "tonalRamp": ["oklch(15% 0.13 68)", "oklch(27% 0.13 68)", "oklch(39% 0.13 68)", "oklch(51% 0.13 68)", "oklch(63% 0.13 68)", "oklch(75% 0.13 68)", "oklch(87% 0.13 68)", "oklch(95% 0.13 68)"]
+      },
+      "amber-soft": {
+        "role": "primary",
+        "displayName": "Soft Measurement Amber",
+        "canonical": "#f1e2c2",
+        "tonalRamp": ["oklch(15% 0.06 80)", "oklch(27% 0.06 80)", "oklch(39% 0.06 80)", "oklch(51% 0.06 80)", "oklch(63% 0.06 80)", "oklch(75% 0.06 80)", "oklch(87% 0.06 80)", "oklch(95% 0.06 80)"]
+      },
+      "plate": {
+        "role": "neutral",
+        "displayName": "Product Plate",
+        "canonical": "#faf8ee",
+        "tonalRamp": ["oklch(15% 0.011 90)", "oklch(27% 0.011 90)", "oklch(39% 0.011 90)", "oklch(51% 0.011 90)", "oklch(63% 0.011 90)", "oklch(75% 0.011 90)", "oklch(87% 0.011 90)", "oklch(95% 0.011 90)"]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "Availability Green",
+        "canonical": "#2c7a3f",
+        "tonalRamp": ["oklch(15% 0.1 145)", "oklch(27% 0.1 145)", "oklch(39% 0.1 145)", "oklch(51% 0.1 145)", "oklch(63% 0.1 145)", "oklch(75% 0.1 145)", "oklch(87% 0.1 145)", "oklch(95% 0.1 145)"]
+      },
+      "green-soft": {
+        "role": "secondary",
+        "displayName": "Soft Availability Green",
+        "canonical": "#dcecdd",
+        "tonalRamp": ["oklch(15% 0.05 145)", "oklch(27% 0.05 145)", "oklch(39% 0.05 145)", "oklch(51% 0.05 145)", "oklch(63% 0.05 145)", "oklch(75% 0.05 145)", "oklch(87% 0.05 145)", "oklch(95% 0.05 145)"]
+      },
+      "red": {
+        "role": "tertiary",
+        "displayName": "Recovery Red",
+        "canonical": "#a13b2e",
+        "tonalRamp": ["oklch(15% 0.12 28)", "oklch(27% 0.12 28)", "oklch(39% 0.12 28)", "oklch(51% 0.12 28)", "oklch(63% 0.12 28)", "oklch(75% 0.12 28)", "oklch(87% 0.12 28)", "oklch(95% 0.12 28)"]
+      },
+      "red-soft": {
+        "role": "tertiary",
+        "displayName": "Soft Recovery Red",
+        "canonical": "#f4ddd8",
+        "tonalRamp": ["oklch(15% 0.05 28)", "oklch(27% 0.05 28)", "oklch(39% 0.05 28)", "oklch(51% 0.05 28)", "oklch(63% 0.05 28)", "oklch(75% 0.05 28)", "oklch(87% 0.05 28)", "oklch(95% 0.05 28)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Command Display", "purpose": "The BO-01 inventory command heading only." },
+      "headline": { "displayName": "Page Headline", "purpose": "Page and product titles." },
+      "title": { "displayName": "Section Title", "purpose": "Panel, tray, sheet, and card-level headings." },
+      "body": { "displayName": "Interface Body", "purpose": "Default bilingual interface copy and record content." },
+      "caption": { "displayName": "Evidence Caption", "purpose": "Attributes, counts, availability, and secondary evidence." },
+      "label": { "displayName": "Control Label", "purpose": "Controls, actions, table cells, and compact metadata." },
+      "price": { "displayName": "Compact Price", "purpose": "Product-card prices only." },
+      "compact-headline": { "displayName": "Compact Headline", "purpose": "Narrow page heads and ledger emphasis." },
+      "micro": { "displayName": "Audit Microcopy", "purpose": "Status chips, table headers, timestamps, and qualifiers." },
+      "identifier": { "displayName": "Machine Identifier", "purpose": "Immutable product IDs and machine references; ui-monospace, SFMono-Regular, Consolas, monospace at 9px." }
+    },
+    "shadows": [
+      { "name": "card-hover", "value": "0 2px 10px rgb(38 37 34 / 6%)", "purpose": "A subtle direct-hover response paired with a one-pixel lift." },
+      { "name": "dock-separation", "value": "0 -2px 10px rgb(38 37 34 / 8%)", "purpose": "Separates the fixed comparison bar from scrolling content below 1100px." },
+      { "name": "recording-pulse", "value": "0 0 0 8px rgba(161, 59, 46, 0.12)", "purpose": "The midpoint ring of the active microphone pulse." }
+    ],
+    "motion": [
+      { "name": "state-fast", "value": "120ms ease", "purpose": "Default button background and text state changes." },
+      { "name": "card-response", "value": "140ms ease", "purpose": "Product-card border, shadow, and one-pixel lift." },
+      { "name": "tray-enter", "value": "160ms ease-out", "purpose": "Comparison products enter with a short opacity and vertical transition." },
+      { "name": "feedback-hold", "value": "2200ms", "purpose": "Successful add-to-cart feedback remains visible before returning to idle." },
+      { "name": "ambient-cycle", "value": "1.4s ease-in-out", "purpose": "Recording pulse; skeleton shimmer uses the same 1.4s duration with linear travel." },
+      { "name": "reduced-motion", "value": "0.001ms", "purpose": "All transitions and animations collapse to effectively instant when reduced motion is requested." }
+    ],
+    "breakpoints": [
+      { "name": "wide-workbench", "value": "1320px" },
+      { "name": "comparison-dock", "value": "1100px" },
+      { "name": "inventory-stack", "value": "1050px" },
+      { "name": "single-workbench", "value": "900px" },
+      { "name": "inventory-audit-cards", "value": "700px" },
+      { "name": "single-product-column", "value": "560px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button-default",
+      "description": "The standard ruled action for retry, reset, and secondary workbench actions.",
+      "html": "<button class=\"ds-btn\" type=\"button\">Retry</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:36px; padding-inline:14px; border:1px solid var(--graphite); border-radius:0; background:var(--surface); color:var(--ink); font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; font-size:12px; font-weight:500; transition:background 120ms ease,color 120ms ease; cursor:pointer; } .ds-btn:hover { background:var(--ink); color:var(--paper); } .ds-btn:focus-visible { outline:2px solid var(--amber-strong); outline-offset:2px; } .ds-btn:active { background:var(--graphite); } .ds-btn:disabled { opacity:.55; cursor:not-allowed; }"
+    },
+    {
+      "name": "Inventory Run Button",
+      "kind": "button",
+      "refersTo": "button-amber",
+      "description": "The prominent BO-01 action for an explicit, auditable planning run.",
+      "html": "<button class=\"ds-btn-run\" type=\"button\">Run inventory planning</button>",
+      "css": ".ds-btn-run { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding-inline:14px; border:1px solid var(--amber); border-radius:0; background:var(--amber); color:var(--ink); font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; font-size:12px; font-weight:600; transition:background 120ms ease,color 120ms ease; cursor:pointer; } .ds-btn-run:hover { background:var(--amber-soft); color:var(--ink); } .ds-btn-run:focus-visible { outline:2px solid var(--amber-strong); outline-offset:2px; } .ds-btn-run:active { background:var(--amber-strong); color:var(--paper); }"
+    },
+    {
+      "name": "Ruled Text Field",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "The compact paper field used for forms and numeric filters.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Minimum price</span><input class=\"ds-input\" type=\"number\" placeholder=\"0 EGP\"></label>",
+      "css": ".ds-field { display:grid; gap:6px; color:var(--ink); font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; } .ds-field-label { font-size:12px; font-weight:500; } .ds-input { width:100%; min-height:38px; border:1px solid var(--rule); border-radius:0; background:var(--paper); color:var(--ink); padding:8px 10px; font:400 13px/1.5 var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; caret-color:var(--amber-strong); } .ds-input:hover { border-color:var(--graphite); } .ds-input:focus-visible { outline:2px solid var(--amber-strong); outline-offset:0; } .ds-input:invalid { border-color:var(--red); }"
+    },
+    {
+      "name": "Active Category Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "A logical-direction category list with amber selection and count evidence.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Categories\"><a class=\"ds-nav-item\" href=\"#\">Phones <span class=\"ds-nav-count\">12</span></a><a class=\"ds-nav-item\" href=\"#\" aria-current=\"page\">Laptops <span class=\"ds-nav-count\">8</span></a></nav>",
+      "css": ".ds-nav { display:grid; gap:2px; font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; } .ds-nav-item { display:flex; align-items:center; gap:10px; padding:9px 10px; border-inline-start:2px solid transparent; color:var(--graphite); font-size:13px; text-decoration:none; } .ds-nav-item:hover { background:var(--surface-alt); color:var(--ink); } .ds-nav-item:focus-visible { outline:2px solid var(--amber-strong); outline-offset:2px; } .ds-nav-item[aria-current=\"page\"] { background:var(--amber-soft); border-inline-start-color:var(--amber); color:var(--ink); font-weight:500; } .ds-nav-count { margin-inline-start:auto; color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }"
+    },
+    {
+      "name": "Inventory Status Chips",
+      "kind": "chip",
+      "refersTo": "status-success",
+      "description": "Text-labeled planned, pending, and failed states using the semantic palette.",
+      "html": "<div class=\"ds-status-set\"><span class=\"ds-status\" data-status=\"planned\">Planned</span><span class=\"ds-status\" data-status=\"pending\">Reorder pending</span><span class=\"ds-status\" data-status=\"failed\">Supplier failed</span></div>",
+      "css": ".ds-status-set { display:flex; flex-wrap:wrap; gap:8px; font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; } .ds-status { display:inline-flex; align-items:center; min-height:24px; padding-inline:7px; border:1px solid var(--rule); border-radius:0; background:var(--surface-alt); color:var(--graphite); font-size:10px; font-weight:600; } .ds-status[data-status=\"planned\"] { border-color:var(--green); background:var(--green-soft); color:#1f5a2b; } .ds-status[data-status=\"pending\"] { border-color:var(--amber); background:var(--amber-soft); color:#6d4409; } .ds-status[data-status=\"failed\"] { border-color:var(--red); background:var(--red-soft); color:#76291f; }"
+    },
+    {
+      "name": "Synthetic Product Card",
+      "kind": "card",
+      "refersTo": "card-product",
+      "description": "The ruled catalog card with synthetic provenance, compact evidence, availability, and EGP price.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-plate\" aria-hidden=\"true\"><strong>X1</strong></div><span class=\"ds-card-badge\">Synthetic product</span><h3 class=\"ds-card-title\">X1 Smartphone</h3><dl class=\"ds-card-attrs\"><div><dt>Storage</dt><dd dir=\"ltr\">256 GB</dd></div><div><dt>Memory</dt><dd dir=\"ltr\">8 GB</dd></div></dl><p class=\"ds-card-avail\">In stock</p><p class=\"ds-card-price\">18,900 <small>EGP</small></p><button class=\"ds-card-action\" type=\"button\">Add to cart</button></article>",
+      "css": ".ds-card { display:flex; flex-direction:column; padding:8px; border:1px solid var(--rule); border-radius:0; background:var(--surface); color:var(--ink); font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; transition:border-color 140ms ease,box-shadow 140ms ease,transform 140ms ease; } .ds-card:hover { border-color:var(--graphite); box-shadow:0 2px 10px rgb(38 37 34 / 6%); transform:translateY(-1px); } .ds-card:focus-within { outline:2px solid var(--amber-strong); outline-offset:2px; } .ds-card-plate { aspect-ratio:4/3; display:grid; place-items:center; background:var(--plate); color:var(--rule); font-size:19px; } .ds-card-badge { align-self:flex-start; margin-block:6px 4px; padding:1px 5px; background:var(--amber-soft); color:#6d4409; font-size:10px; } .ds-card-title { margin:0 0 4px; font-size:15px; font-weight:500; line-height:1.28; } .ds-card-attrs { display:grid; gap:1px; margin:0 0 5px; } .ds-card-attrs div { display:flex; gap:6px; color:var(--graphite); font-size:11px; } .ds-card-attrs dt { color:var(--muted); } .ds-card-attrs dd { margin:0; unicode-bidi:isolate; } .ds-card-avail { display:flex; align-items:center; gap:6px; margin:0 0 5px; font-size:11px; } .ds-card-avail::before { content:\"\"; width:7px; height:7px; border-radius:50%; background:var(--green); } .ds-card-price { margin:auto 0 6px; font-size:17px; font-weight:700; font-variant-numeric:tabular-nums; } .ds-card-price small { color:var(--muted); font-size:11px; font-weight:400; } .ds-card-action { min-height:30px; border:1px solid var(--graphite); border-radius:0; background:var(--surface); color:var(--ink); font:500 12px/1.5 var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; cursor:pointer; } .ds-card-action:hover { background:var(--ink); color:var(--paper); } .ds-card-action:focus-visible { outline:2px solid var(--amber-strong); outline-offset:2px; }"
+    },
+    {
+      "name": "Inventory Audit Card",
+      "kind": "custom",
+      "refersTo": "card-product",
+      "description": "The mobile BO-01 transformation of a dense inventory table row into a labeled audit card.",
+      "html": "<article class=\"ds-audit-card\" data-status=\"pending\"><header class=\"ds-audit-head\"><strong>H2 Headphones</strong><code dir=\"ltr\">000000000008</code></header><dl class=\"ds-audit-grid\"><div><dt>Available</dt><dd>14</dd></div><div><dt>Threshold</dt><dd>20</dd></div><div class=\"ds-audit-wide\"><dt>Forecast</dt><dd>31 units · 7 days</dd></div><div class=\"ds-audit-wide\"><dt>Status</dt><dd><span class=\"ds-audit-status\">Reorder pending</span></dd></div></dl></article>",
+      "css": ".ds-audit-card { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border:1px solid var(--rule); border-radius:0; background:#fffaf0; color:var(--ink); font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; } .ds-audit-head { grid-column:1/-1; display:grid; gap:4px; padding:12px; border-block-end:1px solid var(--rule-soft); background:var(--paper-deep); font-size:12px; } .ds-audit-head code { color:var(--muted); font:400 9px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; unicode-bidi:isolate; } .ds-audit-grid { display:contents; } .ds-audit-grid div { min-width:0; padding:12px; border-block-end:1px solid var(--rule-soft); } .ds-audit-grid div:nth-child(even) { border-inline-start:1px solid var(--rule-soft); } .ds-audit-grid dt { margin-block-end:7px; color:var(--muted); font-size:10px; font-weight:500; } .ds-audit-grid dd { margin:0; font-size:12px; font-variant-numeric:tabular-nums; } .ds-audit-grid .ds-audit-wide { grid-column:1/-1; border-inline-start:0; } .ds-audit-status { display:inline-flex; align-items:center; min-height:24px; padding-inline:7px; border:1px solid var(--amber); background:var(--amber-soft); color:#6d4409; font-size:10px; font-weight:600; } .ds-audit-card:focus-within { outline:2px solid var(--amber-strong); outline-offset:2px; }"
+    },
+    {
+      "name": "Error Recovery State",
+      "kind": "custom",
+      "refersTo": "status-error",
+      "description": "A ruled alert surface with explicit explanation and retry path.",
+      "html": "<div class=\"ds-error\" role=\"alert\"><h2>Unable to load inventory</h2><p>The request failed. Review access or try again.</p><a class=\"ds-error-action\" href=\"#\">Retry</a></div>",
+      "css": ".ds-error { padding:26px 20px; border:1px dashed var(--red); border-radius:0; background:var(--red-soft); color:var(--ink); text-align:center; font-family:var(--font-alexandria),\"Noto Sans Arabic\",\"Segoe UI\",Tahoma,Arial,sans-serif; } .ds-error h2 { margin:0 0 6px; color:var(--red); font-size:15px; font-weight:600; } .ds-error p { max-width:56ch; margin:0 auto 14px; color:var(--muted); font-size:12px; } .ds-error-action { display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding-inline:14px; border:1px solid var(--graphite); background:var(--surface); color:var(--ink); font-size:12px; font-weight:500; text-decoration:none; } .ds-error-action:hover { background:var(--ink); color:var(--paper); } .ds-error-action:focus-visible { outline:2px solid var(--amber-strong); outline-offset:2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Instrument Ledger",
+    "overview": "The interface feels like a calm service-counter worksheet: warm paper, dark graphite rules, compact typography, and dense but legible records. It supports both storefront discovery and operator audit work without changing visual identity, keeping every claim, control, and state visibly grounded in commerce data.\n\nThe system is flat and evidence-led. Structure comes from ruled edges, tonal paper layers, tabular figures, and precise alignment; amber marks intent or selection, while green and red remain semantic. Arabic and English are equal compositions, with direction changing the flow rather than the information hierarchy.",
+    "keyCharacteristics": [
+      "Warm paper rather than clinical white.",
+      "Hairline graphite rules rather than floating containers.",
+      "Compact Alexandria typography across Arabic and Latin scripts.",
+      "Amber selection, green success and availability, red failure and recovery.",
+      "Dense, auditable data that becomes stacked cards on narrow screens.",
+      "Synthetic assets and evaluation limits are labeled, never implied away."
+    ],
+    "rules": [
+      { "name": "The Semantic Accent Rule", "body": "Amber communicates intent or selection; green communicates availability or success; red communicates failure, invalidity, or destructive recovery. Never use those colors as interchangeable decoration.", "section": "colors" },
+      { "name": "The Warm Canvas Rule", "body": "Keep the page and controls within the paper family; pure white is reserved for tiny contrast details, not major surfaces.", "section": "colors" },
+      { "name": "The Alexandria Rule", "body": "Use Alexandria at weights 400, 500, or 600 for both Arabic and English; reserve heavier emphasis for numeric prices already established in product cards.", "section": "typography" },
+      { "name": "The Evidence Numeral Rule", "body": "Prices, counts, dates, quantities, and policy values use tabular numerals; Latin identifiers and supplier references are isolated LTR inside RTL copy.", "section": "typography" },
+      { "name": "The Logical Direction Rule", "body": "Mirror flow with document direction and logical properties; do not manually reverse content order or duplicate separate Arabic and English layouts.", "section": "layout" },
+      { "name": "The Reference Exception Rule", "body": "`.impeccable/mocks/comp-a.png` is an LTR reference. The storefront comparison score of 58.53% is an approved RTL composition exception, not a numerical pass; preserve equivalent hierarchy and task order rather than chasing pixel symmetry.", "section": "layout" },
+      { "name": "The Flat-by-Default Rule", "body": "Static hierarchy is made with rules and tonal paper layers; shadow appears only for hover, fixed-overlay separation, or an active recording signal.", "section": "elevation" },
+      { "name": "The Ruled Rectangle Rule", "body": "Use a one-pixel graphite or soft-rule border and square corners for all primary containers and controls; do not soften the workbench into rounded cards.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do preserve the warm paper, graphite rule, and compact Alexandria foundation across storefront and back-office screens.",
+      "Do use logical CSS properties, document direction, bidi isolation, and explicit LTR spans for Latin identifiers so Arabic and English remain equal experiences.",
+      "Do keep statuses text-labeled and pair amber, green, or red with borders and surface tones rather than color alone.",
+      "Do transform dense inventory rows into labeled mobile audit cards at 700px instead of forcing a 960px table through a phone viewport.",
+      "Do label synthetic product imagery and synthetic operational evidence at the point where users encounter it."
+    ],
+    "donts": [
+      "Don't introduce rounded dashboard cards, glass effects, decorative gradients, or persistent ambient shadows.",
+      "Don't treat the 58.53% comparison against `.impeccable/mocks/comp-a.png` as a pass; it is an approved RTL composition exception to an LTR reference.",
+      "Don't use amber, green, or red as arbitrary decoration or as the only carrier of state meaning.",
+      "Don't fabricate logos, real-product photography, reviews, discounts, production prices, or operational-quality claims.",
+      "Don't remove visible focus, text alternatives, retry paths, reduced-motion behavior, or equivalent text paths for image and voice search."
+    ]
+  }
+}

@@ -10,7 +10,13 @@ node_modules/
 .coverage
 coverage/
 graphify-out/
-.impeccable/
+# Design tooling: the sidecar and the approved comp are committed so the links in
+# README.md, apps/storefront/README.md, and DESIGN.md resolve on a fresh clone.
+# Its generated build, review, and cache output is not.
+.impeccable/build/
+.impeccable/review/
+.impeccable/surfaces/
+.impeccable/hook.cache.json
 .opencode/
 # Segmentation exports are regenerated on demand by the back office.
 /rfm-*.csv
