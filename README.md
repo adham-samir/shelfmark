@@ -19,7 +19,7 @@ Selections are recorded in [the decision register](docs/decisions.md). Developme
 - [FastAPI service](services/api/README.md): Dockerized catalog, commerce/risk spine, demo identity/session harness, trained hybrid recommendations, grounded assistant orchestration, image/voice search, BO-01 predictive inventory control, BO-02 dynamic pricing, BO-03 RFM segmentation, BO-04 trained fraud assessment, and BI-01 analytics backed by both databases.
 - [Next.js application](apps/storefront/README.md): Arabic-first RTL customer storefront with sign-in, registration, account, and order history, plus a separately gated operator back office with BO-01 inventory, BO-02 pricing, BO-03 segmentation, BO-04 risk-review, and BI-01 analytics pages, English LTR parity, and server-only credentials.
 - [Stage 4 test report](docs/test-report.md): functional matrix, security, workload, accessibility, reliability, and AI evaluation.
-- [Final presentation](docs/presentation/README.md): 17-slide self-contained HTML deck with speaker notes, exported PDF, 26 system screenshots, and the [demo rehearsal log](docs/presentation/rehearsal.md).
+- [Final presentation](docs/presentation/README.md): 17-slide self-contained HTML deck with speaker notes, exported PDF, 31 system screenshots, and the [demo rehearsal log](docs/presentation/rehearsal.md).
 - [Progress and remaining decisions](docs/progress.md).
 
 ## Verify this increment

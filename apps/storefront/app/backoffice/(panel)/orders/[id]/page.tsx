@@ -222,7 +222,14 @@ export default async function BackofficeOrderPage({
         {order.adjustments.length === 0 ? (
           <p className="field-hint">{t("adminOrders.noAdjustments")}</p>
         ) : (
-          <div className="inventory-table-wrap">
+          <div
+            className="inventory-table-wrap"
+            // A scrollable region needs to be reachable by keyboard, or its
+            // overflow is invisible to anyone not using a mouse.
+            tabIndex={0}
+            role="region"
+            aria-label={t("adminOrders.adjustments")}
+          >
             <table className="inventory-table orders-table">
               <thead>
                 <tr>

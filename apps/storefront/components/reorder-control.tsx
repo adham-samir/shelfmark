@@ -25,7 +25,9 @@ export function ReorderControl({
   const [state, action, pending] = useActionState(reorderOwnOrder, initialReorderState);
 
   return (
-    <form action={action} className="lifecycle-control" style={{ marginBlockStart: 0 }}>
+    // No inputs, so it deliberately skips the boxed `lifecycle-control` styling
+    // that the operator forms need to separate their fields.
+    <form action={action} className="lifecycle-inline">
       <input type="hidden" name="order_id" value={orderId} />
       <div className="row-actions">
         <button className="btn" type="submit" disabled={pending}>

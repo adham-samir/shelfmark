@@ -2345,3 +2345,13 @@ time { direction: ltr; }
   .bo-home .bo-cards { grid-template-columns: minmax(0, 1fr); }
   .bo-top-actions { width: 100%; }
 }
+
+/* A lifecycle action with no fields: the button and its message, unboxed. */
+.lifecycle-inline { display: grid; gap: 6px; margin-block-start: 12px; }
+.lifecycle-inline p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-2xs);
+}
+.lifecycle-inline p[data-tone="success"] { color: #1f5a2b; }
+.lifecycle-inline p[data-tone="error"] { color: var(--red); }

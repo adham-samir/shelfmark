@@ -4,7 +4,7 @@
 |---|---|
 | `deck.html` | The deck: 17 slides, self-contained (no network, no CDN), English speaker notes |
 | `deck.pdf` | Exported from `deck.html` for submission or offline reading |
-| `assets/` | 26 screenshots captured from the running system during the rehearsal |
+| `assets/` | 31 screenshots captured from the running system during the rehearsal |
 | `rehearsal.md` | Rehearsal log: timings, observed results, drift found and how it was resolved |
 
 ## Using the deck
