@@ -146,7 +146,7 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
             <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
               <button
                 type="button"
-                className="btn btn-dark"
+                className="btn btn-primary"
                 onClick={() => void search(phase.file, phase.url)}
               >
                 {t("image.search")}

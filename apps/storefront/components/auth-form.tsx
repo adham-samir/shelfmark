@@ -115,7 +115,7 @@ export function AuthForm({
         ) : null}
 
         <div className="form-actions">
-          <button className="btn btn-dark" type="submit" disabled={pending}>
+          <button className="btn btn-primary" type="submit" disabled={pending}>
             {registering ? t("auth.registerSubmit") : t("auth.submit")}
           </button>
           {state.kind === "error" ? (

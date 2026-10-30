@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Locale } from "@/lib/types";
 import { translator } from "@/lib/i18n";
 import { catalogHref, PAGE_SIZES, type CatalogState } from "@/lib/params";
-import { IconChevron, IconGrid, IconList } from "./icons";
+import { IconGrid, IconList } from "./icons";
 
 export function ResultToolbar({ locale, state }: { locale: Locale; state: CatalogState }) {
   const t = translator(locale);
@@ -18,7 +18,7 @@ export function ResultToolbar({ locale, state }: { locale: Locale; state: Catalo
   return (
     <div className="toolbar">
       <label className="control">
-        <span className="suffix">{t("listing.sort")}</span>
+        <span>{t("listing.sort")}</span>
         <select
           value={state.sort}
           onChange={(event) => go({ sort: event.target.value as CatalogState["sort"] })}
@@ -29,7 +29,6 @@ export function ResultToolbar({ locale, state }: { locale: Locale; state: Catalo
           <option value="price_desc">{t("listing.sortPriceDesc")}</option>
           <option value="name_asc">{t("listing.sortName")}</option>
         </select>
-        <IconChevron size={12} aria-hidden="true" />
       </label>
 
       <div className="view-toggle" role="group" aria-label={t("listing.gridView")}>
@@ -50,7 +49,7 @@ export function ResultToolbar({ locale, state }: { locale: Locale; state: Catalo
       </div>
 
       <label className="control">
-        <span className="suffix">{t("listing.pageSize")}</span>
+        <span>{t("listing.pageSize")}</span>
         <select
           value={state.size}
           onChange={(event) => go({ size: Number(event.target.value) })}
@@ -62,7 +61,6 @@ export function ResultToolbar({ locale, state }: { locale: Locale; state: Catalo
             </option>
           ))}
         </select>
-        <IconChevron size={12} aria-hidden="true" />
       </label>
     </div>
   );

@@ -134,7 +134,7 @@ export default async function BackofficeOrdersPage({
               {t("adminOrders.page", { page, pages })}
             </span>
           </div>
-          <div className="inventory-table-wrap">
+          <div className="inventory-table-wrap" tabIndex={0}>
             <table className="inventory-table orders-table">
               <thead>
                 <tr>

@@ -255,11 +255,16 @@ export default async function AnalyticsPage({
               <span data-kind="orders">{t("analytics.orders")}</span>
             </div>
             <ol className="analytics-trend" aria-label={t("analytics.trend")}>
-              {report.daily.map((point) => (
+              {report.daily.map((point, index) => (
                 <li key={point.day} title={`${point.day} · ${point.views}`}>
                   <span
                     className="analytics-bar"
-                    style={{ height: `${percentOfMax(point.views, peak)}%` }}
+                    style={
+                      {
+                        height: `${percentOfMax(point.views, peak)}%`,
+                        "--i": Math.min(index, 24),
+                      } as React.CSSProperties
+                    }
                     data-orders={point.orders > 0 ? "true" : "false"}
                   />
                   <span className="visually-hidden">
@@ -280,7 +285,7 @@ export default async function AnalyticsPage({
               {report.top_products.length === 0 ? (
                 <EmptyState title={t("analytics.noEvents")} />
               ) : (
-                <div className="inventory-table-wrap">
+                <div className="inventory-table-wrap" tabIndex={0}>
                   <table className="inventory-table analytics-table">
                     <thead>
                       <tr>

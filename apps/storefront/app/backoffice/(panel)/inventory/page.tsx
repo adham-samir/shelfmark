@@ -123,7 +123,7 @@ export default async function InventoryPage() {
           {planning.items.length === 0 ? (
             <EmptyState title={t("inventory.empty")} />
           ) : (
-            <div className="inventory-table-wrap">
+            <div className="inventory-table-wrap" tabIndex={0}>
               <table className="inventory-table">
                 <thead>
                   <tr>

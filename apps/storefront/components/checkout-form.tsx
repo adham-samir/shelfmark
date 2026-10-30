@@ -115,7 +115,7 @@ export function CheckoutForm({
   };
 
   return (
-    <form className="split" onSubmit={submit} noValidate>
+    <form className="page-split" onSubmit={submit} noValidate>
       <div>
         <section className="panel" aria-labelledby="checkout-contact">
           <h2 id="checkout-contact">{t("checkout.contact")}</h2>
@@ -248,7 +248,8 @@ export function CheckoutForm({
         </section>
       </div>
 
-      <aside className="panel" aria-labelledby="checkout-review">
+      <aside className="summary-aside">
+        <div className="panel" aria-labelledby="checkout-review">
         <h2 id="checkout-review">{t("checkout.review")}</h2>
         <ul className="summary-lines">
           {cart.items.map((item) => (
@@ -283,7 +284,7 @@ export function CheckoutForm({
 
         <button
           type="submit"
-          className="btn btn-amber btn-block"
+          className="btn btn-primary btn-block"
           style={{ marginBlockStart: 14 }}
           disabled={busy}
           aria-busy={busy}
@@ -293,6 +294,7 @@ export function CheckoutForm({
         <p className="field-hint" style={{ marginBlockStart: 8 }}>
           {t("checkout.riskNote")}
         </p>
+        </div>
       </aside>
     </form>
   );

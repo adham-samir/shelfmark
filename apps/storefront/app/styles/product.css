@@ -1,0 +1,446 @@
+/* ============================================================================
+   Product detail, compare route, cart, checkout
+   ========================================================================== */
+
+/* ---------------------------------------------------------- product detail --- */
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.detail-media {
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-4));
+}
+
+.detail-plate {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  max-height: 460px;
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.detail-plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.detail-plate .placeholder {
+  display: grid;
+  place-items: center;
+  gap: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.detail-plate .placeholder strong {
+  color: var(--border-strong);
+  font-size: var(--text-2xl);
+}
+
+.product-title {
+  margin-block: var(--space-2) var(--space-3);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.price-block {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-block: var(--space-3) var(--space-2);
+}
+
+.price-block .price-amount {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.price-block .currency {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+/* The purchase controls: a bordered block that stays in view while the shopper
+   reads the specification below it. */
+.buy-box {
+  display: grid;
+  gap: var(--space-3);
+  margin-block: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.buy-box-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.buy-box .detail-actions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.buy-box .detail-actions .btn {
+  min-height: 46px;
+}
+
+.detail-actions .compare-toggle {
+  justify-self: start;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.detail-specs-block {
+  margin-block-start: var(--space-5);
+}
+
+.spec-group + .spec-group {
+  margin-block-start: var(--space-4);
+}
+
+.spec-group h3 {
+  margin-block-end: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rail-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+}
+
+.rail-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.rail-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-1);
+}
+
+.rail-card .plate {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--canvas);
+}
+
+.rail-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.rail-card h3 {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+}
+
+.rail-card .price-amount {
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 1000px) {
+  .detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .detail-media {
+    position: static;
+  }
+}
+
+/* ------------------------------------------------------------ compare page --- */
+
+.compare-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.compare-full {
+  width: 100%;
+  min-width: 620px;
+  font-size: var(--text-sm);
+}
+
+.compare-full th,
+.compare-full td {
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--border);
+  border-inline-start: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.compare-full th:first-child,
+.compare-full td:first-child {
+  border-inline-start: 0;
+}
+
+.compare-full thead th {
+  background: var(--surface-sunken);
+  vertical-align: bottom;
+  font-weight: var(--weight-semibold);
+}
+
+.compare-full tbody th {
+  width: 22%;
+  color: var(--ink-3);
+  font-weight: var(--weight-regular);
+}
+
+.compare-full tbody tr.band th {
+  width: auto;
+  background: var(--canvas-deep);
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.compare-full td.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-head {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.compare-head .plate {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 148px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.compare-head .plate img {
+  max-width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+}
+
+.compare-head a {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.compare-head a:hover {
+  color: var(--primary);
+}
+
+.compare-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-3);
+  margin-block-start: var(--space-5);
+}
+
+.compare-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.compare-action p {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+/* -------------------------------------------------------------------- cart --- */
+
+/* A cart line reads left-to-right as: what it is, how many, what it costs. The
+   price sits in its own end-aligned column so the column of totals is scannable
+   down the page. */
+.cart-line {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: start;
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--border);
+}
+
+.cart-line .plate {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--canvas);
+}
+
+.cart-line img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cart-line .line-body {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.cart-line .line-title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+}
+
+.cart-line .line-title a:hover {
+  color: var(--primary);
+}
+
+.cart-line .line-total {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: end;
+  text-align: end;
+}
+
+.cart-line .line-total .price-amount {
+  font-size: var(--text-md);
+}
+
+.cart-line .line-remove {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.cart-line .line-remove:hover {
+  color: var(--danger);
+}
+
+.qty {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.qty button {
+  width: 34px;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.qty button:hover {
+  background: var(--surface-hover);
+}
+
+.qty span {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  border-inline: 1px solid var(--border);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.totals {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+.totals > div.grand {
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--border);
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.summary-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+  border-block-end: 1px solid var(--border);
+  font-size: var(--text-sm);
+}
+
+.summary-lines li:last-child {
+  border-block-end: 0;
+}
+
+/* A sticky summary column keeps the total visible while the form scrolls. */
+.summary-aside {
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-4));
+}
+
+@media (max-width: 900px) {
+  .cart-line {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .cart-line .line-total {
+    grid-column: 2;
+    text-align: end;
+  }
+  .summary-aside {
+    position: static;
+  }
+}

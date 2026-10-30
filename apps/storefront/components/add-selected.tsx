@@ -34,7 +34,7 @@ export function AddSelectedButton({
     return (
       <span className="add-to-cart">
         <Link
-          className="btn btn-amber btn-block"
+          className="btn btn-primary btn-block"
           href={`/login?next=${encodeURIComponent(pathname)}`}
         >
           {t("cart.signInToCompare")}
@@ -75,7 +75,7 @@ export function AddSelectedButton({
     <span className="add-to-cart">
       <button
         type="button"
-        className="btn btn-amber btn-block"
+        className="btn btn-primary btn-block"
         onClick={add}
         disabled={disabled || state === "busy"}
         aria-busy={state === "busy"}

@@ -100,9 +100,10 @@ export function AssistantChat({ locale }: { locale: Locale }) {
     <div className="chat">
       <div className="chat-log" ref={logRef} aria-live="polite" aria-relevant="additions">
         {messages.length === 0 ? (
-          <div className="state" data-tone="info" style={{ textAlign: "start" }}>
+          <div className="chat-empty">
             <h2>{t("assistant.suggestions")}</h2>
-            <div className="chat-suggestions" style={{ marginBlockStart: 10 }}>
+            <p className="field-hint">{t("assistant.emptyHint")}</p>
+            <div className="chat-suggestions">
               <button type="button" onClick={() => send(t("assistant.suggestionOne"))}>
                 {t("assistant.suggestionOne")}
               </button>
@@ -184,7 +185,7 @@ export function AssistantChat({ locale }: { locale: Locale }) {
           />
           <button
             type="button"
-            className="btn btn-dark"
+            className="btn btn-primary"
             onClick={() => void send(draft)}
             disabled={busy || !draft.trim()}
             aria-busy={busy}

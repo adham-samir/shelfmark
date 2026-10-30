@@ -85,7 +85,7 @@ export default async function AccountPage() {
               <p className="field-hint">{t("orders.signIn")}</p>
             ) : recent.items.length === 0 ? (
               <EmptyState title={t("account.emptyOrders")}>
-                <Link className="btn btn-dark" href="/">
+                <Link className="btn btn-primary" href="/">
                   {t("cart.browse")}
                 </Link>
               </EmptyState>

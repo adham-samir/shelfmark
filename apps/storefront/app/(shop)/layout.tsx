@@ -28,6 +28,7 @@ export default async function ShopLayout({
       value={{
         signedIn: account !== null,
         displayName: account?.profile?.display_name ?? null,
+        cartCount: items,
       }}
     >
       <a className="skip-link" href="#main">
@@ -44,12 +45,11 @@ export default async function ShopLayout({
         <footer className="site-footer">
           <div className="inner">
             <p>{t("common.footerNote")}</p>
-            <nav aria-label="footer">
+            <nav aria-label={t("common.footerNav")}>
               <Link href="/assistant">{t("nav.assistant")}</Link>
-              <span aria-hidden="true"> · </span>
               <Link href="/search/image">{t("search.image")}</Link>
-              <span aria-hidden="true"> · </span>
               <Link href="/search/voice">{t("search.voice")}</Link>
+              <Link href="/account">{t("nav.account")}</Link>
             </nav>
           </div>
         </footer>

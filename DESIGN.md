@@ -1,163 +1,146 @@
 ---
 name: Smart-eCommerce Management System
-description: A bilingual evidence-led commerce workbench rendered as a warm, ruled instrument ledger.
+description: A bilingual evidence-led commerce workbench, rendered as two instruments: a calm storefront and a dense operations console.
 colors:
-  paper: "#f7f6e8"
-  paper-deep: "#efece0"
-  surface: "#fbf8ee"
-  surface-alt: "#f4f1e4"
-  ink: "#101011"
-  graphite: "#3f3f3f"
-  muted: "#62625e"
-  rule: "#c2c1bb"
-  rule-soft: "#ddd9cd"
-  amber: "#b87820"
-  amber-strong: "#9c6114"
-  amber-soft: "#f1e2c2"
-  plate: "#faf8ee"
-  green: "#2c7a3f"
-  green-soft: "#dcecdd"
-  red: "#a13b2e"
-  red-soft: "#f4ddd8"
+  canvas: "#f6f7f9"
+  canvas-deep: "#eff2f5"
+  surface: "#ffffff"
+  surface-sunken: "#f4f6f8"
+  ink: "#0f172a"
+  ink-2: "#334155"
+  ink-3: "#556070"
+  ink-4: "#94a3b8"
+  border: "#e2e5ea"
+  border-strong: "#cbd5e1"
+  border-control: "#6e7787"
+  primary: "#2563eb"
+  primary-hover: "#1d4ed8"
+  primary-active: "#1e40af"
+  primary-soft: "#eff4ff"
+  success: "#14682f"
+  success-soft: "#e7f4ec"
+  danger: "#b42318"
+  danger-soft: "#fbeae8"
+  warning: "#b45309"
+  warning-soft: "#fdf3e4"
+  rail: "#16233b"
+  rail-active: "#23324e"
+  rail-text: "#e6eaf0"
 typography:
   display:
     fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "clamp(28px, 4vw, 52px)"
-    fontWeight: 500
-    lineHeight: 1.05
-    letterSpacing: "-0.025em"
+    fontSize: "clamp(32px, 3.6vw, 46px)"
+    fontWeight: 600
+    lineHeight: 1.15
+    letterSpacing: "-0.02em"
   headline:
     fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "24px"
+    fontSize: "32px"
     fontWeight: 600
-    lineHeight: 1.25
-    letterSpacing: "-0.01em"
+    lineHeight: 1.2
+    letterSpacing: "-0.02em"
   title:
     fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "15px"
+    fontSize: "17px"
     fontWeight: 600
-    lineHeight: 1.5
+    lineHeight: 1.4
     letterSpacing: "normal"
   body:
     fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "13px"
+    fontSize: "15px"
     fontWeight: 400
+    lineHeight: 1.55
+    letterSpacing: "normal"
+  label:
+    fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
+    fontSize: "13px"
+    fontWeight: 500
     lineHeight: 1.5
     letterSpacing: "normal"
   caption:
     fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "11px"
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: "normal"
-  label:
-    fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
     fontSize: "12px"
-    fontWeight: 500
+    fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
   price:
     fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "17px"
+    fontSize: "20px"
     fontWeight: 700
-    lineHeight: 1.5
-    letterSpacing: "normal"
-  compact-headline:
-    fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "19px"
-    fontWeight: 600
-    lineHeight: 1.25
-    letterSpacing: "-0.01em"
-  micro:
-    fontFamily: 'var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif'
-    fontSize: "10px"
-    fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.4
     letterSpacing: "normal"
   identifier:
     fontFamily: "ui-monospace, SFMono-Regular, Consolas, monospace"
-    fontSize: "9px"
+    fontSize: "11px"
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
 rounded:
-  none: "0px"
-  control: "2px"
-  circle: "50%"
+  sm: "4px"
+  control: "6px"
+  panel: "8px"
+  card: "10px"
+  feature: "14px"
+  pill: "999px"
 spacing:
-  xxs: "2px"
-  xs: "4px"
-  sm: "6px"
-  md: "8px"
-  lg: "10px"
-  xl: "12px"
-  2xl: "14px"
-  3xl: "16px"
-  panel: "18px"
-  gutter: "20px"
-  section: "24px"
-  command: "32px"
+  "1": "4px"
+  "2": "8px"
+  "3": "12px"
+  "4": "16px"
+  "5": "20px"
+  "6": "24px"
+  "8": "32px"
+  "10": "40px"
+  "12": "48px"
+  "16": "64px"
 components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "#ffffff"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "8px 16px"
+    height: "40px"
   button-default:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "8px 14px"
-    height: "36px"
-  button-dark:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "8px 14px"
-    height: "36px"
-  button-amber:
-    backgroundColor: "{colors.amber}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "8px 14px"
-    height: "46px"
+    rounded: "{rounded.control}"
+    padding: "8px 16px"
+    height: "40px"
   input-default:
-    backgroundColor: "{colors.paper}"
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.none}"
-    padding: "8px 10px"
-    height: "38px"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "8px 12px"
+    height: "42px"
   card-product:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     typography: "{typography.body}"
-    rounded: "{rounded.none}"
-    padding: "8px"
-  navigation-active:
-    backgroundColor: "{colors.amber-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.none}"
-    padding: "9px 10px"
+    rounded: "{rounded.card}"
+    padding: "0"
   status-success:
-    backgroundColor: "{colors.green-soft}"
-    textColor: "{colors.green}"
-    typography: "{typography.micro}"
-    rounded: "{rounded.none}"
-    padding: "4px 7px"
+    backgroundColor: "{colors.success-soft}"
+    textColor: "{colors.success}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.pill}"
+    padding: "2px 8px"
     height: "24px"
   status-warning:
-    backgroundColor: "{colors.amber-soft}"
-    textColor: "{colors.amber-strong}"
-    typography: "{typography.micro}"
-    rounded: "{rounded.none}"
-    padding: "4px 7px"
+    backgroundColor: "{colors.warning-soft}"
+    textColor: "{colors.warning}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.pill}"
+    padding: "2px 8px"
     height: "24px"
   status-error:
-    backgroundColor: "{colors.red-soft}"
-    textColor: "{colors.red}"
-    typography: "{typography.micro}"
-    rounded: "{rounded.none}"
-    padding: "4px 7px"
+    backgroundColor: "{colors.danger-soft}"
+    textColor: "{colors.danger}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.pill}"
+    padding: "2px 8px"
     height: "24px"
 ---
 
@@ -165,166 +148,296 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Instrument Ledger"**
+**Creative North Star: "Two instruments, one truth."**
 
-The interface feels like a calm service-counter worksheet: warm paper, dark graphite rules, compact typography, and dense but legible records. It supports both storefront discovery and operator audit work without changing visual identity, keeping every claim, control, and state visibly grounded in commerce data.
+The product serves two audiences whose jobs are genuinely different, so it is
+built as two instruments on one foundation:
 
-The system is flat and evidence-led. Structure comes from ruled edges, tonal paper layers, tabular figures, and precise alignment; amber marks intent or selection, while green and red remain semantic. Arabic and English are equal compositions, with direction changing the flow rather than the information hierarchy.
+- **The storefront is a calm browsing surface.** It gets the space, the larger
+  type, and the white cards. The product photography is the loudest thing on the
+  page and the interface stays out of its way.
+- **The back office is a dense operations console.** It gets the dark rail, the
+  compact tables, and the audit vocabulary. The data is the subject and the
+  chrome recedes.
 
-**Key Characteristics:**
+Both read the same semantic tokens, so they cannot drift apart in meaning: blue
+always means the primary action, green always means a healthy state, red always
+means something needs recovery.
 
-- Warm paper rather than clinical white.
-- Hairline graphite rules rather than floating containers.
-- Compact Alexandria typography across Arabic and Latin scripts.
-- Amber selection, green success and availability, red failure and recovery.
-- Dense, auditable data that becomes stacked cards on narrow screens.
-- Synthetic assets and evaluation limits are labeled, never implied away.
+The previous iteration of this document described a warm-paper "instrument
+ledger" palette (cream canvas, graphite rules, amber selection) and recorded a
+58.53% comparison against `.impeccable/mocks/comp-a.png` as an approved
+exception. **That composition and that palette are retired.** The amber primary
+failed AA contrast at 3.36:1 against its own canvas and 3.66:1 for white-on-amber
+text, the 10px type tier was below a comfortable reading size for Arabic, and the
+near-invisible 1.66:1 rule made every container read as an unfinished outline.
+This document describes what is actually shipped now; the comp and its score are
+historical artifacts, not a specification.
 
 ## Colors
 
-The palette is a restrained warm-paper neutral field with one measurement amber and two explicit semantic colors.
+A cool neutral field with one operating colour and three semantic statuses.
+Every value below is verified against WCAG 2.2 AA by
+`tests/ui/verify-contrast.mjs`, which fails the build on a regression.
 
 ### Primary
 
-- **Measurement Amber** (`amber`, `amber-strong`, `amber-soft`): selection fills, current navigation, checkbox accents, focus, active pagination, primary operational action, and warning states.
+- **Operating Blue** (`primary`, `primary-hover`, `primary-active`,
+  `primary-soft`): primary buttons, links, focus rings, selected states, active
+  navigation, and the leading bar on the current back-office section. White on
+  primary measures 5.17:1; primary on its own tint measures 4.69:1.
 
-### Secondary
+### Semantic
 
-- **Availability Green** (`green`, `green-soft`): in-stock marks, successful cart feedback, completed timeline points, and planned inventory states.
-
-### Tertiary
-
-- **Recovery Red** (`red`, `red-soft`): field errors, failed payments or suppliers, destructive actions, recording state, and error recovery surfaces.
+- **Healthy Green** (`success`, `success-soft`): in-stock marks, completed steps,
+  confirmed orders, applied price changes. 6.08:1 on its tint.
+- **Recovery Red** (`danger`, `danger-soft`): invalid fields, failed payments,
+  supplier failures, destructive actions. 5.65:1 on its tint.
+- **Attention Amber** (`warning`, `warning-soft`): pending review, stale input,
+  reorder pending — states that need a human but are not failures. 4.57:1 on its
+  tint.
+- **Dark chrome** (`rail`, `rail-active`, `rail-text`): the back-office
+  navigation only. `rail-text` on `rail-active` measures 10.6:1.
 
 ### Neutral
 
-- **Instrument Paper** (`paper`, `paper-deep`): page canvas, footer, table heads, and stronger ruled bands.
-- **Work Surface** (`surface`, `surface-alt`, `plate`): cards, controls, alternate rows, product plates, and tonal separation.
-- **Graphite Ink** (`ink`, `graphite`, `muted`): primary text, secondary text, labels, and de-emphasized evidence.
-- **Ruled Line** (`rule`, `rule-soft`): structural borders and low-emphasis dividers.
+- **Canvas** (`canvas`, `canvas-deep`): the page field. Cool and untinted, so it
+  never competes with product photography.
+- **Surface** (`surface`, `surface-sunken`): cards, panels, tables, and the
+  inset band inside a table head.
+- **Ink** (`ink`, `ink-2`, `ink-3`): body, secondary, and muted text.
+  `ink-3` is deliberately darker than a typical muted grey because it must clear
+  4.5:1 on `canvas-deep` (5.67:1), not only on white.
+- **Ink-4** (`ink-4`): icons, separators, and disabled states. **Never text.**
+- **Borders** (`border`, `border-strong`, `border-control`): `border` is
+  structural and intentionally low contrast. `border-control` outlines an
+  interactive control and clears 4.2:1, satisfying the 3:1 non-text requirement
+  that the previous 1.66:1 rule failed.
 
 ### Named Rules
 
-**The Semantic Accent Rule.** Amber communicates intent or selection; green communicates availability or success; red communicates failure, invalidity, or destructive recovery. Never use those colors as interchangeable decoration.
+**The One Blue Rule.** Blue means "this is the action" or "this is where you
+are". It never means success, warning, or decoration.
 
-**The Warm Canvas Rule.** Keep the page and controls within the paper family; pure white is reserved for tiny contrast details, not major surfaces.
+**The Semantic Colour Rule.** Green, red, and amber carry state and nothing else.
+Every status also carries a text label, so meaning never depends on hue alone.
+
+**The Contrast Floor Rule.** No text below 4.5:1 against the surface it sits on;
+no interactive control border below 3:1. `ink-4` is excluded from text use
+precisely because it cannot meet that floor.
 
 ## Typography
 
-**Display Font:** Alexandria with Noto Sans Arabic, Segoe UI, Tahoma, Arial, and sans-serif fallbacks  
-**Body Font:** Alexandria with the same bilingual fallback stack  
-**Label/Mono Font:** Alexandria for labels; `ui-monospace, SFMono-Regular, Consolas, monospace` only for immutable identifiers
-
-**Character:** Alexandria gives Arabic and Latin copy a shared, compact geometry. Weight, size, and tabular figures establish hierarchy; the system does not introduce a decorative display face.
+**Display / Body / Label Font:** Alexandria, with Noto Sans Arabic, Segoe UI,
+Tahoma, and sans-serif fallbacks. Arabic and Latin share one geometry.
+**Identifier Font:** `ui-monospace, SFMono-Regular, Consolas, monospace` for
+immutable identifiers only.
 
 ### Hierarchy
 
-- **Display** (500, fluid 28–52px, 1.05): the dark inventory command heading only; mobile resolves to 32px.
-- **Headline** (600, 24px, 1.25): page and product titles, with 19px used for narrow page heads.
-- **Title** (600, 15px, 1.5): panels, trays, inventory sheet headings, and strong card-level labels.
-- **Body** (400, 13px, 1.5): default interface copy and record content; long introductions stop around 62–70ch.
-- **Caption** (400, 11px, 1.5): attributes, counts, availability, and secondary evidence.
-- **Label** (500, 12px, 1.5): controls, compact actions, table content, and metadata.
-- **Price** (700, 17px, 1.5): compact product-card prices only.
-- **Compact Headline** (600, 19px, 1.25): narrow page heads and ledger emphasis.
-- **Micro** (400–600, 10px, 1.5): status chips, table headers, timestamps, IDs, and audit qualifiers.
-- **Identifier** (400, 9px, 1.5): immutable product IDs and other machine references only.
+- **Display** (600, fluid 32–46px): the back-office command heading only.
+- **Headline** (600, 32px): page titles. 24px on narrow viewports.
+- **Title** (600, 17px): panel headings and product names.
+- **Body** (400, 15px): interface copy. 13px in back-office tables via the
+  `[data-density="compact"]` scope.
+- **Label** (500, 13px): controls, actions, table content.
+- **Caption** (400, 12px): hints, metadata, secondary evidence.
+- **Price** (700, 20px): product and line-item prices, tabular figures.
+- **Identifier** (400, 11px, mono): product IDs, principal IDs, supplier
+  references.
 
 ### Named Rules
 
-**The Alexandria Rule.** Use Alexandria at weights 400, 500, or 600 for both Arabic and English; reserve heavier emphasis for numeric prices already established in product cards.
+**The No-Micro-Text Rule.** Eleven pixels is the floor, and it is reserved for
+machine identifiers. Nothing a reader is expected to parse as a sentence is set
+below 12px. The previous 9px and 10px tiers were removed because they made
+Arabic genuinely hard to read.
 
-**The Evidence Numeral Rule.** Prices, counts, dates, quantities, and policy values use tabular numerals; Latin identifiers and supplier references are isolated LTR inside RTL copy.
+**The Evidence Numeral Rule.** Prices, counts, dates, and quantities use tabular
+figures. Latin identifiers are isolated LTR inside RTL copy.
 
 ## Layout
 
-The global canvas is capped at 1505px with a 20px inline gutter, reducing to 14px at 900px. Desktop storefront chrome is a sticky 100px header using a 200px/search/actions grid and a 208px/1fr/344px workbench for filter rail, product field, and comparison tray. Product results use four columns, then three at 1320px, two at 900px, and one at 560px. At 1100px the comparison tray leaves the side column and the fixed comparison bar becomes the persistent entry point.
+The storefront canvas is capped at 1400px with a 24px gutter (14px below 900px).
+The header is 72px and condenses to 60px once the page scrolls, driven by an
+IntersectionObserver sentinel rather than a scroll handler.
 
-The BO-01 inventory surface uses a dark command block over a four-cell ledger, then a 1fr/278px sheet-and-evidence layout. At 1050px the command, sheet, and evidence stack; the evidence becomes two columns. At 700px the ledger becomes two by two and each inventory row becomes a bordered two-column audit card: the product header spans both columns, labels are restored with `data-label`, forecast and status span the full width, and status-tinted rows remain distinguishable.
+The catalog is **filters plus results, and nothing else**: a 264px sticky filter
+rail beside a three-column grid (two at 1240px, one at 640px). Comparison is a
+dock at the foot of the page that only exists once something is selected. The
+earlier design reserved a permanent 344px column for comparison, which cost 21%
+of the desktop width while empty and squeezed product cards to 207px.
 
-Direction comes from the document root (`dir="rtl"` or `dir="ltr"`) and CSS logical properties. Grids retain their semantic order, borders use inline/block edges, numeric or Latin fragments use bidi isolation, and explicitly Latin IDs use `dir="ltr"`. `.impeccable/mocks/comp-a.png` is an LTR reference whose 58.53% storefront comparison is an approved RTL composition exception, not a numerical pass.
+The back office uses a 248px dark rail that collapses to 64px below 1280px and
+becomes a labelled horizontal strip below 900px. Below 760px the dense inventory
+table becomes labelled audit cards rather than a horizontal scroller.
+
+Direction comes from the document root (`dir="rtl"` or `dir="ltr"`) and CSS
+logical properties. Nothing is manually reversed, and no surface has a separate
+Arabic and English layout.
 
 ### Named Rules
 
-**The Logical Direction Rule.** Mirror flow with document direction and logical properties; do not manually reverse content order or duplicate separate Arabic and English layouts.
+**The Logical Direction Rule.** Mirror flow with document direction and logical
+properties. Motion that moves horizontally flips with the document; motion that
+moves vertically does not need to.
 
-**The Reference Exception Rule.** `.impeccable/mocks/comp-a.png` is an LTR reference. The storefront comparison score of 58.53% is an approved RTL composition exception, not a numerical pass; preserve equivalent hierarchy and task order rather than chasing pixel symmetry.
+**The Content Width Rule.** Reading surfaces cap at 960px. Data surfaces use the
+full canvas, because an operator comparing 13 inventory rows needs the width
+more than they need a comfortable line length.
 
 ## Elevation & Depth
 
-The system is flat by default. A one-pixel rule and a change between paper, deep paper, surface, and alternate surface establish containment; there are no ambient shadows on static panels. Product cards gain only a restrained 0 2px 10px warm-black shadow at 6% and a one-pixel lift on hover. The fixed compare bar uses a 0 -2px 10px shadow at 8% solely to separate it from scrolling content, and the recording control uses a temporary red pulse ring.
+Two tiers, deliberately. `shadow-1` (a single 1px hairline shadow) marks a card
+or panel that sits on the canvas. `shadow-2` marks something that is interactive
+on hover or floating above the page. The compare dock and drawer use a larger,
+directionally-correct shadow because they overlay scrolling content.
 
-### Shadow Vocabulary
-
-- **Card Hover** (`0 2px 10px rgb(38 37 34 / 6%)`): a subtle response to direct hover, paired with a one-pixel lift.
-- **Dock Separation** (`0 -2px 10px rgb(38 37 34 / 8%)`): the mobile/tablet fixed comparison bar only.
-- **Recording Pulse** (`0 0 0 8px rgba(161, 59, 46, 0.12)`): the midpoint of the active microphone pulse only.
+Static structure comes from the border and the tonal step between `canvas`,
+`surface`, and `surface-sunken` — not from ambient shadow.
 
 ### Named Rules
 
-**The Flat-by-Default Rule.** Static hierarchy is made with rules and tonal paper layers; shadow appears only for hover, fixed-overlay separation, or an active recording signal.
+**The Two-Tier Rule.** A surface is either flat on the canvas, raised one tier,
+or floating. There is no third resting elevation and no decorative glow.
 
 ## Shapes
 
-The form language is rectangular and ruled. Panels, cards, tables, buttons, fields, notices, chips, and navigation remain square; the shared 2px radius is limited to small utility controls and the skip link. Circles are functional marks only: range handles, availability dots, timeline points, and the microphone control. Dashed borders indicate empty, drop, or placeholder states rather than a new surface style.
+Controls use a 6px radius, panels 8px, cards 10px, and feature surfaces 14px.
+Pills are fully round and are reserved for status chips and the compare control
+that floats over a product image. Circles are functional: the microphone button
+and timeline dots only.
+
+Dashed borders appear in exactly one place: the image-search drop zone, where
+the dashed edge genuinely means "drop something here". They are not used for
+empty states, placeholders, or panels.
 
 ### Named Rules
 
-**The Ruled Rectangle Rule.** Use a one-pixel graphite or soft-rule border and square corners for all primary containers and controls; do not soften the workbench into rounded cards.
+**The Honest Border Rule.** A border style must mean what it looks like. Dashed
+means drop target. Solid means container. If an empty state needs emphasis it
+gets a tonal fill, not a dashed outline.
+
+## Motion
+
+Motion explains what changed; it never decorates and never blocks input.
+
+- **Durations:** 80ms for colour and border swaps, 140ms for hover and focus,
+  220ms for disclosure, 320ms for entering panels, 480ms for the dock and
+  drawer.
+- **Only `transform` and `opacity` animate.** Nothing that triggers layout.
+- **One spring**, described as sampled `linear()` points so it is identical
+  across browsers, with overshoot capped under 1.5%.
+- **Entrance staggers are capped** (6 cards, 24 chart bars) so a long list keeps
+  the same total duration as a short one.
+- **Focus rings never animate.** A ring that fades in is a ring that is invisible
+  for 140ms.
+- **`prefers-reduced-motion: reduce`** collapses every duration and delay to
+  0.001ms rather than removing the animation, so `animationend` and
+  `transitionend` handlers still fire and nothing hangs waiting on an event.
+
+Where motion appears: product cards stagger up on first paint, filter groups
+disclose, the compare dock slides in and its thumbnails pop, add-to-cart swaps
+its label and bumps the cart badge once, chart bars grow from the baseline,
+assistant bubbles rise, and the microphone pulses only while recording.
 
 ## Components
 
 ### Buttons
 
-Buttons are restrained rectangular controls whose state comes from fill and border, not size inflation.
-
-- **Shape:** square by default, 36px minimum height, 14px inline padding, one-pixel graphite border.
-- **Primary operational:** amber fill with dark ink; BO-01 uses a 46px minimum height for the inventory run action.
-- **Dark:** ink fill with paper text for decisive storefront actions.
-- **Default:** surface fill with graphite border; hover reverses to ink and paper.
-- **Quiet:** transparent border and background until hover; danger keeps a red rule until hover fills red.
-- **Hover / focus / disabled:** state transitions run 120–160ms; the global focus ring is 2px strong amber with a 2px offset; disabled controls remain visible at 55% opacity and use `not-allowed`.
+40px minimum height, 6px radius, one-pixel border. **Primary** is blue with white
+text and appears at most once per view. **Default** is a white control with a
+`border-control` outline that clears 3:1. **Quiet** has no border until hover.
+**Danger** outlines in red and fills on hover. Disabled controls sit at 50%
+opacity and keep `not-allowed`. A successful add-to-cart swaps both colour and
+label, so the state never relies on colour alone.
 
 ### Chips
 
-Status and filter chips remain flat, square, and text-labeled. Active filters use amber-soft with an amber rule and move to red-soft on removal hover. Success, pending, and failed statuses pair green, amber, and red fills with explicit text so meaning never relies on color alone.
+Status chips are pills with a tinted fill and the darker text step of the same
+hue, always carrying a written label. Filter chips are removable and turn red on
+hover to signal removal. They are not colour-coded by category.
 
 ### Cards / Containers
 
-Product cards use a surface fill, one-pixel rule, 8px padding, and a 4:3 tonal plate. Titles stay to one line; up to three ordered attributes, visible availability text, tabular EGP price, and the action follow in a consistent vertical rhythm. The compare tray, panels, notices, empty states, and inventory sheet use the same ruled containment rather than independent visual styles.
+A product card is a white surface with a hairline border, a 10px radius, and a
+4:3 image plate whose frame is owned by CSS — the image is absolutely positioned
+inside it, so a tall photograph cannot stretch the card and break the grid
+rhythm. Titles clamp to two lines, three ordered attributes follow, then
+availability, price, and one primary action.
 
-All catalog imagery is synthetic repository material: four generated base raster plates plus two generated angle/tone variants per base live under `apps/storefront/public/products`, with prompts under `.impeccable/build/prompts`. Fixture IDs map to plates in `apps/storefront/lib/plates.ts`; every product card carries a visible synthetic-product label. No licensed catalog photography or CDN provenance is implied.
+Below 640px the plate flattens to 16:10 so a single-column card still shows its
+price and action above the fold.
 
 ### Inputs / Fields
 
-Inputs use paper or surface backgrounds, one-pixel rules, square corners, and compact 38px minimum height. Search is the larger exception at 56px desktop and 48px narrow. Focus uses the strong amber two-pixel ring; invalid fields replace the rule with red and add programmatic error text. Every icon-only or visually hidden field retains an accessible name.
+White background, 6px radius, `border-control` outline at 4.2:1. Focus replaces
+the outline with a blue border plus a 3px soft ring. Invalid fields turn red and
+add programmatic error text. Placeholder text uses `ink-3` — placeholders are
+text and must meet the same contrast floor as a value.
 
 ### Navigation
 
-The sticky header uses a two-line wordmark, dominant search strip, locale switch, and compact action links separated by soft inline rules. Active category navigation uses amber-soft plus a two-pixel amber inline-start rule; links underline or change tone on hover. At 900px the header becomes brand/actions over a full-width search row, action labels hide but accessible names remain, and the filter rail becomes an expandable ruled panel.
+The storefront header carries the wordmark, a centred search field with voice
+and image modes inside it, the locale switch, assistant, account, and a cart
+badge that always shows its count. Below 1180px action labels hide but every
+control keeps its accessible name; below 900px the header becomes two rows and
+the brand drops its subtitle so the actions stay on one line.
 
-### Inventory Audit Sheet
+The back-office rail groups sections by intent — **Overview**, **Operations**,
+**Intelligence** — and marks the current section with a filled pill plus a
+leading blue bar. Two signals, so it survives forced-colors mode where the fill
+is dropped. Labels are never removed: at the narrowest breakpoint the rail
+scrolls horizontally rather than becoming a row of unlabelled icons.
 
-The command block is the only large ink-filled surface. It pairs a fluid heading, operator/update evidence, and an amber run action with an `aria-live` result. The ledger summarizes four counts. The sheet uses sticky headers, fixed table proportions, tabular figures, product IDs, explicit status chips, and subtle row tints for pending and supplier-failed states. On mobile, the table is intentionally transformed into audit cards rather than horizontally scrolled miniatures.
+### Comparison Dock
+
+Selecting a product raises a dock at the foot of the catalog showing what is
+inside and offering Compare and Clear. It expands into a drawer holding the full
+attribute matrix, grouped into basic information, specifications, other details,
+and price. Escape closes the drawer and returns focus to the control that opened
+it. The dock does not exist when nothing is selected.
+
+### Tables
+
+Back-office tables are 13px with sticky headers, tonal header bands, and row
+tints only where a status chip also states the reason. Below 760px each row
+becomes a labelled card with `data-label` restored, so no column is lost.
 
 ### Interaction & Accessibility
 
-Keyboard focus is always visible; a skip link moves to `#main`; inputs, groups, tables, live results, notices, and error recovery use programmatic labels or roles. Icon-only actions include hidden text. Status changes use `aria-live`, errors use `role="alert"`, and busy actions expose `aria-busy`. All animation and transition durations collapse to 0.001ms under `prefers-reduced-motion: reduce`.
+A skip link precedes the header. Focus is always visible: a 2px blue ring with a
+2px offset, and a lighter ring on dark chrome. Icon-only controls carry hidden
+text. Status changes use `aria-live`; errors use `role="alert"`; busy actions
+expose `aria-busy`. Horizontal scroll regions are keyboard focusable. The
+accessibility gate in `tests/accessibility/check.mjs` runs 46 pages across both
+locales and fails on any serious or critical violation; it currently reports
+zero.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** preserve the warm paper, graphite rule, and compact Alexandria foundation across storefront and back-office screens.
-- **Do** use logical CSS properties, document direction, bidi isolation, and explicit LTR spans for Latin identifiers so Arabic and English remain equal experiences.
-- **Do** keep statuses text-labeled and pair amber, green, or red with borders and surface tones rather than color alone.
-- **Do** transform dense inventory rows into labeled mobile audit cards at 700px instead of forcing a 960px table through a phone viewport.
-- **Do** label synthetic product imagery and synthetic operational evidence at the point where users encounter it.
+- **Do** keep blue for action and current location, and green, red, and amber for
+  state only.
+- **Do** use logical CSS properties and let document direction drive the flow.
+- **Do** verify every colour pairing against the contrast script before shipping
+  it; a token that only works on white is not a token.
+- **Do** keep status text-labelled, and pair colour with a written state.
+- **Do** reserve dashed borders for drop targets.
+- **Do** cap entrance staggers so a long list does not turn into a slot machine.
+- **Do** label synthetic product imagery and synthetic operational evidence at
+  the point where users encounter it.
 
 ### Don't:
 
-- **Don't** introduce rounded dashboard cards, glass effects, decorative gradients, or persistent ambient shadows.
-- **Don't** treat the 58.53% comparison against `.impeccable/mocks/comp-a.png` as a pass; it is an approved RTL composition exception to an LTR reference.
-- **Don't** use amber, green, or red as arbitrary decoration or as the only carrier of state meaning.
-- **Don't** fabricate logos, real-product photography, reviews, discounts, production prices, or operational-quality claims.
-- **Don't** remove visible focus, text alternatives, retry paths, reduced-motion behavior, or equivalent text paths for image and voice search.
+- **Don't** reintroduce the warm-paper palette, the amber primary, or the 9–10px
+  type tiers; they failed contrast and legibility respectively.
+- **Don't** reserve layout space for a control that is empty most of the time.
+- **Don't** animate a layout-affecting property, or animate a focus ring.
+- **Don't** remove a visible label and leave an icon-only control.
+- **Don't** use `ink-4` for text, or a hairline border on an interactive control.
+- **Don't** fabricate logos, real product photography, reviews, discounts,
+  production prices, or operational-quality claims.
+- **Don't** cite the retired `.impeccable/mocks/comp-a.png` comparison as a
+  current specification.

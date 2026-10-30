@@ -125,7 +125,7 @@ export function OrderCancelControl({
         maxLength={300}
       />
       <div className="row-actions">
-        <button className="btn btn-dark" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {t("orderLifecycle.confirmCancel")}
         </button>
         <button className="btn btn-quiet" type="button" onClick={() => setOpen(false)}>
@@ -191,7 +191,7 @@ export function OrderRefundControl({
         maxLength={300}
       />
       <div className="row-actions">
-        <button className="btn btn-dark" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {t("orderLifecycle.confirmRefund")}
         </button>
         <button className="btn btn-quiet" type="button" onClick={() => setOpen(false)}>

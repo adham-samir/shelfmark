@@ -70,7 +70,7 @@ export function CancelOrderControl({
         </>
       ) : null}
       <div className="row-actions">
-        <button className="btn btn-dark" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? t("cancel.submitting") : t("cancel.confirm")}
         </button>
         <button className="btn btn-quiet" type="button" onClick={() => setOpen(false)}>

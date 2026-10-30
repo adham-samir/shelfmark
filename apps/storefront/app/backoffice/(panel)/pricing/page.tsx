@@ -171,7 +171,7 @@ export default async function PricingPage() {
           {pricing.items.length === 0 ? (
             <EmptyState title={t("pricing.empty")} />
           ) : (
-            <div className="inventory-table-wrap">
+            <div className="inventory-table-wrap" tabIndex={0}>
               <table className="inventory-table pricing-table">
                 <thead>
                   <tr>

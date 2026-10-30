@@ -1,0 +1,251 @@
+/* ============================================================================
+   Motion
+   ----------------------------------------------------------------------------
+   Motion explains what changed. It never decorates, never blocks input, and
+   never animates a layout-affecting property.
+
+   Three rules hold everywhere in this app:
+     1. Only `transform` and `opacity` are animated. Nothing that triggers
+        layout or paint-per-frame.
+     2. One continuous animation per viewport at a time. Entrances are staggered
+        and capped so a long list cannot turn into a slot machine.
+     3. `prefers-reduced-motion: reduce` removes movement but never removes
+        information: every animated element still ends in its final state.
+   ========================================================================== */
+
+:root {
+  --dur-instant: 80ms; /* colour and border swaps under the cursor        */
+  --dur-fast: 140ms; /* hover, focus, chip and checkbox toggles          */
+  --dur-base: 220ms; /* disclosure, accordion, tooltip                   */
+  --dur-slow: 320ms; /* entering panels, staggered grids                 */
+  --dur-slower: 480ms; /* dock, drawer, sheet, route-level transitions    */
+
+  --ease-out: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* A single decaying spring, described as sampled points so it is identical
+     in every browser that supports `linear()`. Overshoot stays under 1.5%;
+     anything bouncier reads as playful, which is wrong for an operations tool. */
+  --spring: linear(
+    0,
+    0.009 0.7%,
+    0.038 1.5%,
+    0.148 3.2%,
+    0.338 5.7%,
+    0.577 9%,
+    0.783 12.4%,
+    0.917 15.7%,
+    0.982 19.1%,
+    1.007 23.1%,
+    1.006 27.3%,
+    0.998 34.4%,
+    0.996 48.3%,
+    1 100%
+  );
+
+  /* Stagger step for entering lists. Two values so dense tables can be slower
+     per row than sparse card grids. */
+  --stagger: 45ms;
+  --stagger-dense: 22ms;
+}
+
+/* ------------------------------------------------------------- keyframes --- */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in-end {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-ring {
+  50% {
+    box-shadow: 0 0 0 8px rgb(180 35 24 / 14%);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes grow-bar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes draw-check {
+  from {
+    stroke-dashoffset: var(--check-length, 48);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes count-pop {
+  40% {
+    transform: scale(1.18);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------- helpers --- */
+
+/* `.anim` marks a region whose children enter in sequence. The cap is enforced
+   by `--stagger-max` rather than by counting children, so a long list keeps the
+   same total duration as a short one. */
+.anim > * {
+  animation: fade-up var(--dur-slow) var(--spring) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+  animation-delay: min(calc(var(--i, 0) * var(--stagger)), var(--stagger-cap, 480ms));
+}
+
+.anim-dense > * {
+  animation: fade-in var(--dur-base) var(--ease-out) both;
+  animation-delay: min(calc(var(--i, 0) * var(--stagger-dense)), 320ms);
+}
+
+.anim-fade-in {
+  animation: fade-in var(--dur-slow) var(--ease-out) both;
+}
+
+.anim-scale-in {
+  animation: scale-in var(--dur-base) var(--spring) both;
+}
+
+.anim-slide-up {
+  animation: slide-up-in var(--dur-slower) var(--spring) both;
+}
+
+/* RTL-aware horizontal entrance: the offset flips with the document
+   direction, so a drawer entering from the inline-end edge does not fly in
+   from the wrong side. */
+[dir="rtl"] .anim-slide-in-end {
+  animation-name: slide-in-end-rtl;
+}
+
+@keyframes slide-in-end-rtl {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.anim-slide-in-end {
+  animation: slide-in-end var(--dur-base) var(--ease-out) both;
+}
+
+/* A value that changed after the page was already painted. Used sparingly: a
+   single pulse on a cart badge, not a repeating pulse in a table. */
+.anim-pop {
+  animation: count-pop 260ms var(--spring);
+}
+
+/* Interactive feedback. Kept here rather than in component files so the
+   durations stay consistent across surfaces. */
+.is-interactive {
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* ------------------------------------------------------ reduced motion ----- */
+/* Durations collapse instead of being removed outright: `animationend` and
+   `transitionend` handlers still fire, so nothing that waits on an event hangs.
+   Delays collapse too, so nothing appears late. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .anim > *,
+  .anim-dense > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

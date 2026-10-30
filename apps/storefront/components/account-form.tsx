@@ -69,7 +69,7 @@ export function AccountForm({
         </div>
 
         <div className="form-actions">
-          <button className="btn btn-dark" type="submit" disabled={pending}>
+          <button className="btn btn-primary" type="submit" disabled={pending}>
             {t("account.save")}
           </button>
           <p aria-live="polite" data-tone={state.kind}>

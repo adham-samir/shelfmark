@@ -10,12 +10,12 @@ Constraints: synthetic comp content is labeled; no reviews, discounts, provider 
 
 THESIS: A product-comparison workbench built with the clarity of a service-center diagnostic sheet. It refuses the promotional hero-and-card storefront and begins directly with search, filters, products, and comparable evidence.
 
-OWN-WORLD: Warm instrument paper, graphite rules, amber selection, green availability, red recovery; compact rectangular controls and aligned numeric/spec columns. The interface remains calm under dense information.
+OWN-WORLD: A cool neutral canvas, white product cards on a hairline border, one operating blue for action and current location, and green/red/amber reserved for state. Aligned numeric and spec columns; the interface stays calm under dense information.
 
 STORY: Find a product, narrow the field, place candidates in the comparison tray, understand meaningful differences, then add the selected item to cart with current price and availability visible.
 
-FIRST VIEWPORT: Compact bilingual header and dominant search across the top; category/filter rail left; four-column product field center; two-product comparison tray right. Selection travels into the tray without losing result context.
+FIRST VIEWPORT: A 72px bilingual header with a centred search across the top; a 264px filter rail on the inline-start edge; a three-column product field filling the rest. Comparison is a dock at the foot of the page that appears once a product is selected, so the product field keeps the full width when nothing is being compared.
 
-FORM: Seventh grounded direction from seed `1ea7ceac`: electronics warranty/service diagnostic record adapted to customer comparison. Approved comp: `.impeccable/mocks/comp-a.png`.
+FORM: Shipped as the storefront half of the "Two instruments" system in `DESIGN.md`. The earlier `1ea7ceac` diagnostic-record direction and `.impeccable/mocks/comp-a.png` are retired.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

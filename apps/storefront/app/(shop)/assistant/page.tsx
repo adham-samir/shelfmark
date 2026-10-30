@@ -32,7 +32,7 @@ export default async function AssistantPage() {
         ) : (
           <div style={{ marginBlockStart: 14 }}>
             <EmptyState title={t("auth.requiredForCheckout")}>
-              <Link className="btn btn-dark" href="/login?next=%2Fassistant">
+              <Link className="btn btn-primary" href="/login?next=%2Fassistant">
                 {t("auth.goLogin")}
               </Link>
               <Link className="btn btn-quiet" href="/register?next=%2Fassistant">

@@ -1,9 +1,15 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import type { Locale, Product } from "@/lib/types";
 import { api } from "@/lib/api";
 import { getLocale } from "@/lib/locale";
-import { attributeLabel, categoryLabel, translator } from "@/lib/i18n";
+import {
+  attributeLabel,
+  categoryLabel,
+  facetValueLabel,
+  translator,
+} from "@/lib/i18n";
 import { formatMoney } from "@/lib/format";
 import { plateFor, monogram } from "@/lib/plates";
 import { EmptyState, Notice } from "@/components/states";
@@ -45,6 +51,30 @@ export default async function ComparePage({
 
   const categories = new Set(products.flatMap((product) => product.categories));
 
+  // Rows are grouped so a wide comparison reads as three short lists instead of
+  // one long undifferentiated table.
+  const groups: Array<{ key: string; label: string; keys: string[] }> = [
+    {
+      key: "basic",
+      label: t("compare.basic"),
+      keys: attributeKeys.filter((key) => key === "brand"),
+    },
+    {
+      key: "specs",
+      label: t("compare.bandSpecs"),
+      keys: attributeKeys.filter((key) =>
+        ["screen", "storage", "memory"].includes(key),
+      ),
+    },
+    {
+      key: "other",
+      label: t("product.specsOther"),
+      keys: attributeKeys.filter(
+        (key) => !["brand", "screen", "storage", "memory"].includes(key),
+      ),
+    },
+  ].filter((group) => group.keys.length > 0);
+
   return (
     <main className="page" id="main">
       <CompareSync ids={products.map((product) => product.product_id)} />
@@ -71,7 +101,7 @@ export default async function ComparePage({
         </div>
       ) : (
         <>
-          <div className="compare-scroll" style={{ marginBlockStart: 18 }}>
+          <div className="compare-scroll" tabIndex={0} style={{ marginBlockStart: "var(--space-5)" }}>
             <table className="compare-full">
               <caption className="visually-hidden">{t("compare.pageTitle")}</caption>
               <thead>
@@ -103,16 +133,47 @@ export default async function ComparePage({
                 </tr>
               </thead>
               <tbody>
-                {attributeKeys.map((key) => (
-                  <tr key={key}>
-                    <th scope="row">{attributeLabel(t, key)}</th>
-                    {products.map((product) => (
-                      <td key={product.product_id}>
-                        {product.attributes[key] ?? t("compare.missing")}
-                      </td>
+                <tr className="band">
+                  <th scope="colgroup" colSpan={products.length + 1}>
+                    {t("compare.category")}
+                  </th>
+                </tr>
+                <tr>
+                  <th scope="row">{t("compare.category")}</th>
+                  {products.map((product) => (
+                    <td key={product.product_id}>
+                      {product.categories
+                        .map((category) => categoryLabel(t, category))
+                        .join(t("common.listSep"))}
+                    </td>
+                  ))}
+                </tr>
+                {groups.map((group) => (
+                  <Fragment key={group.key}>
+                    <tr className="band">
+                      <th scope="colgroup" colSpan={products.length + 1}>
+                        {group.label}
+                      </th>
+                    </tr>
+                    {group.keys.map((key) => (
+                      <tr key={key}>
+                        <th scope="row">{attributeLabel(t, key)}</th>
+                        {products.map((product) => (
+                          <td key={product.product_id} dir="ltr">
+                            {product.attributes[key]
+                              ? facetValueLabel(t, product.attributes[key])
+                              : t("compare.missing")}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
-                  </tr>
+                  </Fragment>
                 ))}
+                <tr className="band">
+                  <th scope="colgroup" colSpan={products.length + 1}>
+                    {t("compare.bandPrice")}
+                  </th>
+                </tr>
                 <tr>
                   <th scope="row">{t("compare.price")}</th>
                   {products.map((product) => (
@@ -125,9 +186,18 @@ export default async function ComparePage({
                   <th scope="row">{t("compare.availability")}</th>
                   {products.map((product) => (
                     <td key={product.product_id}>
-                      {product.availability.status === "in_stock"
-                        ? t("card.inStock")
-                        : t("card.outOfStock")}
+                      <span
+                        className="chip"
+                        data-tone={
+                          product.availability.status === "in_stock"
+                            ? "success"
+                            : "neutral"
+                        }
+                      >
+                        {product.availability.status === "in_stock"
+                          ? t("card.inStock")
+                          : t("card.outOfStock")}
+                      </span>
                     </td>
                   ))}
                 </tr>
@@ -145,7 +215,7 @@ export default async function ComparePage({
                   productId={product.product_id}
                   locale={locale}
                   disabled={product.availability.status !== "in_stock"}
-                  className="btn btn-amber"
+                  className="btn btn-primary"
                 />
               </div>
             ))}

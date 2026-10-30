@@ -1,0 +1,183 @@
+/* ============================================================================
+   Design tokens — "Slate & Azure"
+   ----------------------------------------------------------------------------
+   One semantic layer shared by the storefront and the back office. Both
+   surfaces read the same roles; only the chrome and the density differ.
+
+   Rule: components never name a literal colour. Every surface, border, and
+   status colour comes from a token here so a palette change is one edit.
+
+   Contrast budget, verified against WCAG 2.2 AA and re-checked by
+   `tests/ui/verify-contrast.mjs`:
+     ink on canvas ................ 16.9:1
+     ink-2 on canvas ..............  9.8:1
+     ink-3 on canvas ..............  4.8:1
+     white on primary .............  5.2:1
+     primary on primary-soft ......  4.7:1
+     success on success-soft ......  6.1:1
+     danger on danger-soft ........  5.7:1
+     warning on warning-soft ......  4.6:1
+     control border on canvas ...... 4.2:1  (WCAG 1.4.11 needs 3:1)
+   ========================================================================== */
+
+:root {
+  /* ---------------------------------------------------------------- colour */
+  /* Neutral field. Cool and untinted: the canvas must not compete with the
+     product photography, which is the loudest thing on a commerce page. */
+  --canvas: #f6f7f9;
+  --canvas-deep: #eff2f5;
+  --surface: #ffffff;
+  --surface-sunken: #f4f6f8;
+  --surface-hover: #f1f4f7;
+
+  /* Text. Three levels are enough; a fourth always ends up ambiguous.
+     `--ink-3` must clear 4.5:1 against every surface it can land on, not just
+     white: the darkest it ever sits on is `--canvas-deep`, which is why it is
+     darker than a typical muted grey. */
+  --ink: #0f172a;
+  --ink-2: #334155;
+  --ink-3: #556070;
+  --ink-4: #94a3b8; /* icons, separators, disabled states only — never text */
+
+  /* Machine identifiers (product ids, principal ids, supplier references) are
+     text, so they use a readable step rather than the icon grey. */
+  --ink-id: #556070;
+
+  /* Edges. `border` is structural (dividers, card outlines). `border-control`
+     outlines an interactive control and must clear 3:1 on its own surface. */
+  --border: #e2e5ea;
+  --border-strong: #cbd5e1;
+  --border-control: #6e7787;
+
+  /* Primary action. Blue is the operating colour: links, focus, selection,
+     primary buttons. It never means "success" or "warning". */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-active: #1e40af;
+  --primary-soft: #eff4ff;
+  --primary-muted: #bfd3fd; /* chart fills, where the palest tint disappears */
+  --primary-soft-border: #c7d7fe;
+  --primary-on: #ffffff;
+
+  /* Semantic status. These three carry meaning and nothing else. */
+  --success: #14682f;
+  --success-soft: #e7f4ec;
+  --success-border: #b7dfc4;
+  --danger: #b42318;
+  --danger-soft: #fbeae8;
+  --danger-border: #f2c9c4;
+  --warning: #b45309;
+  --warning-soft: #fdf3e4;
+  --warning-border: #f0d9b5;
+
+  /* Back-office chrome. The rail is the only permanently dark surface. */
+  --rail: #16233b;
+  --rail-active: #23324e;
+  --rail-text: #e6eaf0;
+  --rail-text-muted: #9aa8bd;
+
+  /* Status colours need lighter steps to survive on dark chrome; the light-mode
+     pair drops to roughly 2:1 against navy, which is unreadable. */
+  --success-on-dark: #86efac;
+  --danger-on-dark: #fca5a5;
+
+  /* --------------------------------------------------------------- typography */
+  --font-sans: var(--font-alexandria), "Noto Sans Arabic", "Segoe UI", Tahoma,
+    Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
+
+  /* Nine steps, and no text below 11px. 11px is reserved for immutable
+     identifiers, never for prose or labels. */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: clamp(32px, 3.6vw, 46px);
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.4;
+  --leading-normal: 1.55;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ------------------------------------------------------------------ space */
+  /* 4px grid. Every gap, pad, and margin outside a table cell comes from here. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ------------------------------------------------------------------ shape */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-pill: 999px;
+
+  /* ------------------------------------------------------------- elevation */
+  /* Two tiers on purpose. Anything flatter reads as broken; anything more
+     reads as a dashboard template. */
+  --shadow-1: 0 1px 2px rgb(15 23 42 / 5%);
+  --shadow-2: 0 1px 3px rgb(15 23 42 / 7%), 0 8px 24px rgb(15 23 42 / 8%);
+  --shadow-3: 0 12px 40px rgb(15 23 42 / 14%);
+
+  /* -------------------------------------------------------------- structure */
+  --gutter: 24px;
+  --header-h: 72px;
+  --header-h-condensed: 60px;
+  --rail-w: 248px;
+  --rail-w-collapsed: 64px;
+  --content-max: 1400px;
+  --sidebar-w: 264px;
+}
+
+/* Denser data surfaces relax the type scale by one step without touching the
+   token values, so a table row and a product card can share components. */
+[data-density="compact"] {
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+}
+
+/* ---------------------------------------------------------- legacy aliases */
+/* The pre-overhaul stylesheet and its components still reference the original
+   warm-paper variable names. They are mapped onto the new palette so every
+   existing surface recolours in one step; each alias is deleted as the phase
+   that owns those components rewrites them. Do not use these in new code. */
+:root {
+  --paper: var(--canvas);
+  --paper-deep: var(--canvas-deep);
+  --surface-alt: var(--surface-sunken);
+  --plate: var(--canvas);
+  --graphite: var(--ink-2);
+  --muted: var(--ink-3);
+  --rule: var(--border);
+  --rule-soft: var(--border);
+
+  /* The old "measurement amber" is the primary action colour now. */
+  --amber: var(--primary);
+  --amber-strong: var(--primary-hover);
+  --amber-soft: var(--primary-soft);
+
+  --green: var(--success);
+  --green-soft: var(--success-soft);
+  --red: var(--danger);
+  --red-soft: var(--danger-soft);
+}

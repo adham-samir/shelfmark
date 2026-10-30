@@ -120,7 +120,7 @@ export function AddressForm({ locale }: { locale: Locale }) {
         </div>
       </div>
       <div className="row-actions" style={{ marginBlockStart: 12 }}>
-        <button className="btn btn-dark" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? t("addresses.saving") : t("addresses.save")}
         </button>
       </div>
@@ -245,7 +245,7 @@ export function AddressCard({
             </label>
           </div>
           <div className="row-actions">
-            <button className="btn btn-dark" type="submit" disabled={updating}>
+            <button className="btn btn-primary" type="submit" disabled={updating}>
               {updating ? t("addresses.saving") : t("addresses.saveChanges")}
             </button>
             <button

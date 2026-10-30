@@ -2,12 +2,12 @@ import Link from "next/link";
 import type { Locale } from "@/lib/types";
 import { translator } from "@/lib/i18n";
 import { switchLocale } from "@/lib/actions";
+import { HeaderShell } from "./header-shell";
+import { HeaderCart } from "./header-cart";
 import {
   IconAssistant,
   IconCamera,
-  IconCart,
   IconMic,
-  IconPin,
   IconSearch,
   IconUser,
 } from "./icons";
@@ -26,7 +26,7 @@ export function Header({
   const t = translator(locale);
 
   return (
-    <header className="site-header">
+    <HeaderShell>
       <div className="header-inner">
         <Link className="brand" href="/">
           <strong>{t("brand.name")}</strong>
@@ -61,10 +61,14 @@ export function Header({
         </form>
 
         <div className="header-actions">
-          <form action={switchLocale} className="header-action" style={{ paddingInline: 12 }}>
+          <form action={switchLocale}>
             <input type="hidden" name="locale" value={locale === "ar" ? "en" : "ar"} />
             <button type="submit" className="locale-switch" aria-label={t("locale.switch")}>
-              <span aria-hidden="true" lang={locale === "ar" ? "en" : "ar"} dir={locale === "ar" ? "ltr" : "rtl"}>
+              <span
+                aria-hidden="true"
+                lang={locale === "ar" ? "en" : "ar"}
+                dir={locale === "ar" ? "ltr" : "rtl"}
+              >
                 {t("locale.switch")}
               </span>
             </button>
@@ -80,33 +84,20 @@ export function Header({
             <span className="label">{t("nav.assistant")}</span>
           </Link>
 
-          <span className="header-action" title={t("nav.locationLabel")}>
-            <IconPin size={17} />
-            <span className="label">{t("nav.location")}</span>
-          </span>
-
           <Link
             className="header-action"
             href={signedIn ? "/account" : "/login"}
             title={t("nav.accountLabel")}
-            aria-label={t("nav.accountLabel")}
           >
             <IconUser size={17} />
+            {/* The visible name is the accessible name; an aria-label here would
+                replace it and break "label in name". */}
             <span className="label">{accountName ?? t("nav.account")}</span>
           </Link>
 
-          <Link
-            className="header-action"
-            href="/cart"
-            aria-label={t("nav.cartLabel", { count: cartCount })}
-          >
-            <IconCart size={17} />
-            <span className="label">
-              {t("nav.cart")} (<strong>{cartCount}</strong>)
-            </span>
-          </Link>
+          <HeaderCart locale={locale} initialCount={cartCount} />
         </div>
       </div>
-    </header>
+    </HeaderShell>
   );
 }

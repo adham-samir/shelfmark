@@ -1,0 +1,15 @@
+{
+  "name": "smart-ecommerce-ui-capture",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Visual regression and accessibility baseline capture for the storefront and back office.",
+  "scripts": {
+    "capture": "node capture.mjs",
+    "contrast": "node verify-contrast.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.3",
+    "playwright-core": "^1.55.0"
+  }
+}

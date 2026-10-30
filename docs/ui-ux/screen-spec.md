@@ -35,7 +35,11 @@
 
 ## Visual and interaction baseline
 
-The approved storefront comp uses a service-center diagnostic worksheet as an operating metaphor: an instrument-like search bar, filter rail, compact product field, and a persistent comparison tray. Warm paper, graphite rules, amber selection, green availability, and red recovery states make status visible without decorative color. The comparison tray is the signature interaction: selecting a product moves it into aligned specifications while preserving filter context.
+The shipped interface is documented in [`DESIGN.md`](../../DESIGN.md) as two instruments on one foundation: a calm, spacious storefront and a dense operations console, both reading the same semantic colour tokens.
+
+The storefront is a cool neutral canvas with white product cards, a 264px filter rail, a three-column product field, and one operating blue reserved for actions and current location. Green, red, and amber carry state and nothing else, always beside a written label.
+
+Comparison is the signature interaction, and it is a dock rather than a permanent column: selecting a product raises a bar at the foot of the catalog showing what is inside, which expands into a drawer holding the aligned attribute matrix. The previous design reserved a permanent 344px column for comparison, which cost 21% of the desktop width while empty; the dock costs nothing until it is needed.
 
 Product imagery and prices in comps are synthetic. Shipping UI must use generated/public licensed assets with provenance and label demonstration records where a visitor could mistake them for real inventory.
 

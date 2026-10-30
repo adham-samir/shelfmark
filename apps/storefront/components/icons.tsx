@@ -170,6 +170,22 @@ export function IconClose(props: IconProps) {
   );
 }
 
+export function IconCompare(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="M4.4 2.6v10.8M2 5l2.4-2.4L6.8 5M11.6 13.4V2.6M9.2 11l2.4 2.4 2.4-2.4" />
+    </Base>
+  );
+}
+
+export function IconFilter(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="M2.4 3.6h11.2L9.2 8.6v4.1l-2.4 1.3V8.6z" />
+    </Base>
+  );
+}
+
 export function IconPlus(props: IconProps) {
   return (
     <Base {...props}>

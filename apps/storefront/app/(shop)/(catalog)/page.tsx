@@ -9,8 +9,7 @@ import { catalogHref, catalogQuery, parseCatalogState, type CatalogState } from 
 import { FilterRail } from "@/components/filter-rail";
 import { ResultToolbar } from "@/components/result-toolbar";
 import { ProductCard } from "@/components/product-card";
-import { CompareTray } from "@/components/compare-tray";
-import { CompareBar } from "@/components/compare-bar";
+import { CompareDock } from "@/components/compare-dock";
 import { EmptyState, ErrorState } from "@/components/states";
 import { IconArrowBack } from "@/components/icons";
 
@@ -109,9 +108,15 @@ export default async function CatalogPage({
             </div>
 
             {page && page.items.length ? (
-              <div className="product-grid" data-view={state.view}>
-                {page.items.map((product) => (
-                  <ProductCard key={product.product_id} product={product} locale={locale} />
+              <div className="product-grid anim" data-view={state.view}>
+                {page.items.map((product, index) => (
+                  <ProductCard
+                    key={product.product_id}
+                    product={product}
+                    locale={locale}
+                    index={index}
+                    priority={index < 3}
+                  />
                 ))}
               </div>
             ) : (
@@ -174,8 +179,7 @@ export default async function CatalogPage({
         )}
       </section>
 
-      <CompareTray locale={locale} />
-      <CompareBar locale={locale} />
+      <CompareDock locale={locale} />
     </main>
   );
 }

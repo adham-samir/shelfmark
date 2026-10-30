@@ -135,7 +135,7 @@ export default async function RiskPage() {
               hint={t("risk.noReviewsHint")}
             />
           ) : (
-            <div className="inventory-table-wrap">
+            <div className="inventory-table-wrap" tabIndex={0}>
               <table className="inventory-table risk-table">
                 <thead>
                   <tr>

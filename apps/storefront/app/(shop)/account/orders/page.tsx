@@ -62,31 +62,34 @@ export default async function OrdersPage({
       <div style={{ marginBlockStart: 18 }}>
         {orders.items.length === 0 ? (
           <EmptyState title={t("orders.empty")} hint={t("account.emptyOrders")}>
-            <Link className="btn btn-dark" href="/">
+            <Link className="btn btn-primary" href="/">
               {t("cart.browse")}
             </Link>
           </EmptyState>
         ) : (
           <ul className="order-list">
             {orders.items.map((order) => (
-              <li className="panel order-row" key={order.order_id}>
-                <div>
-                  <p className="field-hint" dir="ltr">
-                    {order.order_id}
-                  </p>
-                  <p style={{ fontWeight: 500 }}>
-                    {t("orders.itemCount", { count: order.item_count })} ·{" "}
-                    {formatDateTime(order.created_at, locale)}
+              <li className="order-row" key={order.order_id}>
+                <div className="order-row-id">
+                  <code dir="ltr" title={order.order_id}>
+                    {order.order_id.slice(-12)}
+                  </code>
+                  <p>
+                    {t("orders.itemCount", { count: order.item_count })}
+                    {" · "}
+                    <time dateTime={order.created_at}>
+                      {formatDateTime(order.created_at, locale)}
+                    </time>
                   </p>
                 </div>
                 <div className="order-row-meta">
-                  <span className="price-amount">
-                    {formatMoney(order.subtotal, locale)} {order.currency}
-                  </span>
                   <span className="pill" data-status={order.status}>
                     {statusLabel(t, order.status)}
                   </span>
-                  <Link className="btn" href={`/orders/${order.order_id}`}>
+                  <span className="price-amount">
+                    {formatMoney(order.subtotal, locale)} {order.currency}
+                  </span>
+                  <Link className="btn btn-sm" href={`/orders/${order.order_id}`}>
                     {t("orders.view")}
                   </Link>
                 </div>

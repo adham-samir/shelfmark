@@ -220,7 +220,7 @@ export default async function SegmentsPage({
               {overview.members.length === 0 ? (
                 <EmptyState title={t("segments.noMembers")} />
               ) : (
-                <div className="inventory-table-wrap">
+                <div className="inventory-table-wrap" tabIndex={0}>
                   <table className="inventory-table segments-table">
                     <thead>
                       <tr>

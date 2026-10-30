@@ -33,7 +33,7 @@ export default async function CartPage() {
           </div>
           <div style={{ marginBlockStart: 18 }}>
             <EmptyState title={t("cart.emptyTitle")} hint={t("cart.emptyHint")}>
-              <Link className="btn btn-dark" href="/">
+              <Link className="btn btn-primary" href="/">
                 {t("cart.browse")}
               </Link>
             </EmptyState>
@@ -43,17 +43,19 @@ export default async function CartPage() {
     }
 
     return (
-      <main className="page page-narrow" id="main">
+      <main className="page" id="main">
         <div className="page-head">
           <div>
             <p className="eyebrow">{t("nav.cart")}</p>
             <h1>{t("cart.title")}</h1>
             <p>{t("cart.intro")}</p>
           </div>
-          <span className="pill">{t("cart.priceRecheck")}</span>
+          <span className="chip" data-tone="info">
+            {t("cart.priceRecheck")}
+          </span>
         </div>
 
-        <div style={{ marginBlockStart: 18 }}>
+        <div className="page-split" style={{ marginBlockStart: "var(--space-5)" }}>
           <ul className="cart-lines">
             {cart.items.map((item) => {
               const product = byId.get(item.product_id);
@@ -72,26 +74,24 @@ export default async function CartPage() {
                     )}
                   </span>
 
-                  <div>
-                    <h2 style={{ fontSize: "var(--text-md)", fontWeight: 500 }}>
+                  <div className="line-body">
+                    <h2 className="line-title">
                       <Link href={`/products/${item.product_id}`}>{name}</Link>
                     </h2>
                     <p className="field-hint">
-                      {t("cart.unitPrice")}: {formatMoney(item.unit_price, locale)} {cart.currency}
-                    </p>
-                    <p className="field-hint">
+                      {t("cart.unitPrice")}: {formatMoney(item.unit_price, locale)}{" "}
+                      {cart.currency}
+                      {" · "}
                       {item.available > 0
                         ? t("cart.available", { count: item.available })
                         : t("cart.unavailable")}
                     </p>
-                    <div style={{ marginBlockStart: 8 }}>
-                      <QuantityControl
-                        productId={item.product_id}
-                        quantity={item.quantity}
-                        available={Math.max(1, item.available)}
-                        locale={locale}
-                      />
-                    </div>
+                    <QuantityControl
+                      productId={item.product_id}
+                      quantity={item.quantity}
+                      available={Math.max(1, item.available)}
+                      locale={locale}
+                    />
                   </div>
 
                   <div className="line-total">
@@ -105,9 +105,9 @@ export default async function CartPage() {
             })}
           </ul>
 
-          <div className="split" style={{ marginBlockStart: 18 }}>
-            <div />
+          <aside className="summary-aside">
             <div className="panel">
+              <h2>{t("cart.summary")}</h2>
               <div className="totals">
                 <div>
                   <span>{t("cart.subtotal")}</span>
@@ -123,14 +123,17 @@ export default async function CartPage() {
                 </div>
               </div>
               <Link
-                className="btn btn-dark btn-block"
+                className="btn btn-primary btn-block"
                 href="/checkout"
-                style={{ marginBlockStart: 12 }}
+                style={{ marginBlockStart: "var(--space-4)" }}
               >
                 {t("cart.checkout")}
               </Link>
+              <p className="field-hint" style={{ marginBlockStart: "var(--space-3)" }}>
+                {t("cart.priceRecheck")}
+              </p>
             </div>
-          </div>
+          </aside>
         </div>
       </main>
     );

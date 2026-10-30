@@ -76,7 +76,7 @@ export function PasswordForm({ locale }: { locale: Locale }) {
         </div>
       </div>
       <div className="row-actions" style={{ marginBlockStart: 12 }}>
-        <button className="btn btn-dark" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? t("account.passwordSaving") : t("account.passwordSubmit")}
         </button>
       </div>

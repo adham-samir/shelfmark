@@ -237,7 +237,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
                   onChange={(event) => setTranscript(event.target.value)}
                 />
                 <Link
-                  className="btn btn-dark"
+                  className="btn btn-primary"
                   href={`/?q=${encodeURIComponent(transcript)}`}
                   aria-disabled={!transcript.trim()}
                 >

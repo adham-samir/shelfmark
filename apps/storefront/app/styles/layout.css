@@ -1,0 +1,802 @@
+/* ============================================================================
+   Layout
+   ----------------------------------------------------------------------------
+   Page frames, the storefront header and footer, the catalog workbench, and the
+   back-office shell. Everything here is structure; colour comes from tokens.
+   ========================================================================== */
+
+/* ------------------------------------------------------------- app frame --- */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.page {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter) var(--space-16);
+}
+
+.page-narrow {
+  max-width: 960px;
+}
+
+/* The main column of a two-column page: content plus a sticky aside. */
+.page-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .page-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------- page heading --- */
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-6);
+}
+
+.page-head h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.page-head p {
+  margin-block-start: var(--space-2);
+  max-width: 68ch;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.eyebrow {
+  display: block;
+  margin-block-end: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header-sentinel {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------- storefront header --- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-block-end: 1px solid var(--border);
+  transition: box-shadow var(--dur-base) var(--ease-out);
+}
+
+/* The shadow only appears once the page has scrolled under the header, so the
+   resting header stays flat and the page edge is the only structure. */
+.site-header[data-condensed="true"] {
+  box-shadow: var(--shadow-1);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: var(--content-max);
+  height: var(--header-h);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  transition: height var(--dur-base) var(--ease-out);
+}
+
+.site-header[data-condensed="true"] .header-inner {
+  height: var(--header-h-condensed);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  gap: 1px;
+  line-height: 1.15;
+}
+
+.brand strong {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.brand span {
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Search sits in the optical centre and shrinks before anything else does. */
+.header-search {
+  display: flex;
+  flex: 1 1 320px;
+  align-items: stretch;
+  max-width: 620px;
+  height: 44px;
+  margin-inline: auto;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.header-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.header-search .field {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding-inline-start: var(--space-3);
+  color: var(--ink-4);
+}
+
+.header-search input[type="search"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.header-search input[type="search"]::placeholder {
+  color: var(--ink-3);
+}
+
+.header-search input[type="search"]:focus-visible {
+  outline: none;
+}
+
+/* The camera and microphone are search modes, not separate destinations, so
+   they read as quiet icon buttons inside the field. */
+.search-mode {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  color: var(--ink-3);
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.search-mode:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+
+.search-submit {
+  flex: none;
+  padding-inline: var(--space-5);
+  border-start-end-radius: var(--radius-sm);
+  border-end-end-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--primary-on);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.search-submit:hover {
+  background: var(--primary-hover);
+}
+
+.header-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.header-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.header-action:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+
+.header-action svg {
+  flex: none;
+  color: var(--ink-3);
+}
+
+.header-action:hover svg {
+  color: var(--ink);
+}
+
+/* The cart is the one action that always shows its count. */
+.header-cart {
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.cart-count {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: var(--primary-on);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-count[data-empty="true"] {
+  background: var(--canvas-deep);
+  color: var(--ink-3);
+}
+
+/* Locale switch reads as a single quiet toggle rather than a menu. */
+.locale-switch {
+  min-width: 40px;
+  height: 32px;
+  padding-inline: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.locale-switch:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+@media (max-width: 1180px) {
+  .header-action .label {
+    display: none;
+  }
+  .header-action {
+    padding-inline: var(--space-2);
+  }
+}
+
+@media (max-width: 900px) {
+  /* Two rows: brand and actions share the first, search takes the second. The
+     brand keeps only its wordmark so the action row has room to stay on one
+     line instead of wrapping into a third. */
+  .header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding-block: var(--space-2);
+    row-gap: var(--space-2);
+    column-gap: var(--space-2);
+  }
+  .site-header[data-condensed="true"] .header-inner {
+    height: auto;
+  }
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .brand span {
+    display: none;
+  }
+  .brand strong {
+    overflow: hidden;
+    font-size: var(--text-base);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .header-search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+    height: 44px;
+    margin: 0;
+  }
+  .header-actions {
+    order: 2;
+    flex: none;
+    gap: 0;
+  }
+  .header-action {
+    height: 36px;
+    padding-inline: var(--space-2);
+  }
+  .locale-switch {
+    min-width: 36px;
+    height: 30px;
+  }
+}
+
+/* ------------------------------------------------------- storefront footer --- */
+
+.site-footer {
+  margin-block-start: auto;
+  border-block-start: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.site-footer .inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-8);
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.site-footer a {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.site-footer a:hover {
+  color: var(--ink);
+}
+
+/* -------------------------------------------------------- catalog frame --- */
+
+/* Filters, results, and nothing else. The comparison tray is a dock now, so it
+   no longer reserves a column. */
+.workbench {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter) var(--space-16);
+}
+
+.field-column {
+  min-width: 0;
+}
+
+@media (max-width: 1000px) {
+  .workbench {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+/* --------------------------------------------------------------- breadcrumbs --- */
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-4);
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.crumbs a {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.crumbs a:hover {
+  color: var(--primary);
+}
+
+.crumbs [aria-current="page"] {
+  color: var(--ink);
+  font-weight: var(--weight-medium);
+}
+
+.crumbs .sep {
+  color: var(--ink-4);
+}
+
+/* ------------------------------------------------------------ back office --- */
+
+.bo-shell {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+  background: var(--canvas);
+}
+
+.bo-body {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  flex: 1;
+  align-items: stretch;
+  min-height: 0;
+}
+
+/* The rail is sticky and full-height. `align-items: stretch` on the grid above
+   is what makes the dark column reach the footer instead of stopping short. */
+.bo-rail {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  height: 100vh;
+  height: 100dvh;
+  padding: var(--space-5) var(--space-3);
+  overflow-y: auto;
+  background: var(--rail);
+  color: var(--rail-text);
+}
+
+.bo-rail-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-inline: var(--space-2);
+  color: var(--rail-text);
+}
+
+.bo-rail-brand .mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-on);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.bo-rail-brand .name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.bo-rail-brand strong {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.bo-rail-brand span {
+  color: var(--rail-text-muted);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bo-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.bo-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bo-nav-group h2 {
+  padding: var(--space-2) var(--space-3);
+  color: var(--rail-text-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bo-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 38px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius);
+  color: var(--rail-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.bo-nav a svg {
+  flex: none;
+  opacity: 0.85;
+}
+
+.bo-nav a:hover {
+  background: var(--rail-active);
+  color: var(--rail-text);
+}
+
+/* The active item is a filled pill plus a leading accent bar. Two signals, so
+   it survives forced-colors mode where the fill is dropped. */
+.bo-nav a[aria-current="page"] {
+  position: relative;
+  background: var(--rail-active);
+  color: var(--surface);
+}
+
+.bo-nav a[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 8px;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+}
+
+.bo-nav a[aria-current="page"] svg {
+  opacity: 1;
+}
+
+.bo-rail-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-start: auto;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid rgb(255 255 255 / 10%);
+}
+
+.bo-rail-footer a,
+.bo-rail-footer button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 34px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--rail-text-muted);
+  font-size: var(--text-xs);
+  text-align: start;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.bo-rail-footer a:hover,
+.bo-rail-footer button:hover {
+  background: var(--rail-active);
+  color: var(--rail-text);
+}
+
+.bo-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------- back-office top --- */
+
+.bo-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding: var(--space-3) var(--space-6);
+  border-block-end: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.bo-top-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bo-top-context {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.01em;
+}
+
+.bo-top-note {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.bo-top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Account identity: a name plus a quiet menu that hides the principal id.
+   The id stays available, it just stops being the loudest text on the page. */
+.bo-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.25;
+}
+
+.bo-identity strong {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.bo-identity code {
+  color: var(--ink-id);
+  font-size: var(--text-2xs);
+}
+
+.bo-content > .page {
+  padding-block-start: var(--space-6);
+}
+
+@media (max-width: 1280px) {
+  .bo-body {
+    grid-template-columns: var(--rail-w-collapsed) minmax(0, 1fr);
+  }
+  .bo-rail {
+    padding-inline: var(--space-2);
+    align-items: center;
+  }
+  .bo-rail-brand .name,
+  .bo-nav-group h2,
+  .bo-nav a span,
+  .bo-rail-footer span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .bo-nav a,
+  .bo-rail-footer a,
+  .bo-rail-footer button {
+    justify-content: center;
+    padding-inline: 0;
+    width: 40px;
+  }
+}
+
+@media (max-width: 900px) {
+  .bo-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Below the rail breakpoint the navigation becomes a horizontal strip above
+     the content; it never becomes a hidden drawer, so no landmark disappears. */
+  .bo-rail {
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    height: auto;
+    padding: var(--space-2) var(--gutter);
+    overflow-x: auto;
+  }
+  .bo-nav {
+    flex-direction: row;
+    gap: var(--space-1);
+  }
+  .bo-nav-group {
+    flex-direction: row;
+  }
+  .bo-nav-group h2 {
+    display: none;
+  }
+  .bo-rail-brand {
+    display: none;
+  }
+  /* On a phone the rail is a horizontal strip, so icon-only items would be
+     unlabelled buttons. Labels return and the strip scrolls sideways. */
+  .bo-nav a,
+  .bo-rail-footer a,
+  .bo-rail-footer button {
+    justify-content: flex-start;
+    width: auto;
+    padding-inline: var(--space-3);
+    white-space: nowrap;
+  }
+  .bo-nav a span,
+  .bo-rail-footer span {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: nowrap;
+  }
+  .bo-rail-footer code {
+    display: none;
+  }
+  .bo-nav a[aria-current="page"]::before {
+    inset-block: auto;
+    inset-inline: 8px;
+    inset-block-end: 2px;
+    width: auto;
+    height: 3px;
+  }
+  .bo-rail-footer {
+    flex-direction: row;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-block-start: 0;
+    border-inline-start: 1px solid rgb(255 255 255 / 12%);
+    padding-inline-start: var(--space-3);
+  }
+  .bo-top {
+    padding-inline: var(--gutter);
+  }
+}

@@ -78,9 +78,13 @@ export default async function BackofficeHomePage() {
         </div>
       </div>
 
-      <div className="bo-cards">
-        {cards.map((card) => (
-          <section className="panel bo-card" key={card.href}>
+      <div className="bo-cards anim">
+        {cards.map((card, index) => (
+          <section
+            className="panel bo-card"
+            key={card.href}
+            style={{ "--i": index } as React.CSSProperties}
+          >
             <h2>{card.title}</h2>
             <p className="bo-card-value">
               {card.value === null

@@ -45,6 +45,9 @@ const ar = {
   "filters.priceFrom": "من",
   "filters.priceTo": "إلى",
   "filters.priceApply": "تطبيق السعر",
+  "filters.priceAny": "بلا حد",
+  "filters.searchWithin": "ابحث في {group}",
+  "filters.searchNone": "لا خيارات مطابقة",
   "filters.brand": "العلامة التجارية",
   "filters.type": "نوع المنتج",
   "filters.availability": "حالة التوفر",
@@ -84,6 +87,9 @@ const ar = {
   "card.noImage": "لا توجد صورة",
 
   "compare.title": "مقارنة المنتجات",
+  "compare.selectedCount": "{count} من {limit} محدد للمقارنة",
+  "compare.compare": "قارن",
+  "compare.hide": "إخفاء",
   "compare.slot": "مقارنة",
   "compare.emptyTitle": "لم يتم تحديد منتجات",
   "compare.emptyHint": "حدد منتجين من نتيجة البحث لعرض فروق المواصفات هنا.",
@@ -114,6 +120,9 @@ const ar = {
   "attr.connectivity": "نوع الاتصال",
   "attr.battery": "عمر البطارية",
   "attr.feature": "الميزة",
+  "unit.hours": "{value} ساعة",
+  "unit.inches": "{value} بوصة",
+  "value.notApplicable": "لا ينطبق",
   "attr.category": "الفئة",
 
   "category.phones": "الهواتف الذكية",
@@ -145,6 +154,7 @@ const ar = {
   "product.recommendationsUnavailable": "التوصيات غير متاحة الآن؛ الكتالوج ما زال متاحًا.",
 
   "cart.title": "سلة المشتريات",
+  "cart.summary": "ملخص الطلب",
   "cart.intro": "الأسعار والتوفر يعاد التحقق منهما عند الإضافة وعند بدء الدفع.",
   "cart.emptyTitle": "السلة فارغة",
   "cart.emptyHint": "أضف منتجًا من الكتالوج لبدء الطلب.",
@@ -275,6 +285,7 @@ const ar = {
   "assistant.failed": "تعذر إكمال الطلب",
   "assistant.failedHint": "أعد المحاولة بعد قليل. لا تُعرض بيانات طلبات عملاء آخرين.",
   "assistant.suggestions": "اقتراحات",
+  "assistant.emptyHint": "اختر سؤالًا جاهزًا أو اكتب سؤالك بالعربية أو الإنجليزية.",
   "assistant.suggestionOne": "ما سياسة الإرجاع؟",
   "assistant.suggestionTwo": "أريد هاتفًا بكاميرا جيدة",
   "assistant.suggestionThree": "أين شحنتي للطلب الأخير؟",
@@ -737,6 +748,9 @@ const ar = {
   "admin.gateHint": "سجّل الدخول بحساب مشغّل للوصول إلى لوحة الإدارة.",
   "admin.navLabel": "أقسام لوحة الإدارة",
   "admin.operatorOnly": "هذه المساحة للمشغّلين فقط، وجلستها مستقلة عن جلسة العميل.",
+  "admin.groupOverview": "نظرة عامة",
+  "admin.groupOperations": "العمليات",
+  "admin.groupIntelligence": "التحليلات الذكية",
   "nav.orders": "الطلبات",
   "adminOrders.title": "طلبات المتجر",
   "adminOrders.intro": "كل طلبات العملاء بأحدثها أولًا، مع بيانات العميل والحالة والمبلغ.",
@@ -825,6 +839,10 @@ const ar = {
   "common.optional": "اختياري",
   "common.demo": "بيانات اصطناعية للعرض",
   "common.footerNote": "واجهة تجريبية ببيانات اصطناعية. لا تُعرض أسعار أو تقييمات إنتاجية.",
+  "common.footerNav": "روابط التذييل",
+  "common.listSep": "، ",
+  "common.breadcrumb": "مسار التنقل",
+  "product.specsOther": "تفاصيل أخرى",
   "common.unexpected": "حدث خطأ غير متوقع",
   "common.unexpectedHint": "أعد تحميل الصفحة. لا تُعرض بيانات بديلة مخفية.",
 } as const;
@@ -870,6 +888,9 @@ const en: Record<keyof typeof ar, string> = {
   "filters.priceFrom": "From",
   "filters.priceTo": "To",
   "filters.priceApply": "Apply price",
+  "filters.priceAny": "No limit",
+  "filters.searchWithin": "Search {group}",
+  "filters.searchNone": "No matching options",
   "filters.brand": "Brand",
   "filters.type": "Product type",
   "filters.availability": "Availability",
@@ -909,6 +930,9 @@ const en: Record<keyof typeof ar, string> = {
   "card.noImage": "No image",
 
   "compare.title": "Product comparison",
+  "compare.selectedCount": "{count} of {limit} selected to compare",
+  "compare.compare": "Compare",
+  "compare.hide": "Hide",
   "compare.slot": "Compare",
   "compare.emptyTitle": "No products selected",
   "compare.emptyHint": "Select two products from the results to see specification differences here.",
@@ -939,6 +963,9 @@ const en: Record<keyof typeof ar, string> = {
   "attr.connectivity": "Connectivity",
   "attr.battery": "Battery life",
   "attr.feature": "Feature",
+  "unit.hours": "{value} h",
+  "unit.inches": "{value} in",
+  "value.notApplicable": "Not applicable",
   "attr.category": "Category",
 
   "category.phones": "Phones",
@@ -970,6 +997,7 @@ const en: Record<keyof typeof ar, string> = {
   "product.recommendationsUnavailable": "Recommendations are unavailable right now; the catalog remains available.",
 
   "cart.title": "Shopping cart",
+  "cart.summary": "Order summary",
   "cart.intro": "Prices and availability are rechecked when items are added and when checkout starts.",
   "cart.emptyTitle": "Your cart is empty",
   "cart.emptyHint": "Add a product from the catalog to start an order.",
@@ -1100,6 +1128,7 @@ const en: Record<keyof typeof ar, string> = {
   "assistant.failed": "The request could not be completed",
   "assistant.failedHint": "Try again shortly. Other customers' order data is never exposed.",
   "assistant.suggestions": "Suggestions",
+  "assistant.emptyHint": "Pick a ready question or write your own in Arabic or English.",
   "assistant.suggestionOne": "What is the return policy?",
   "assistant.suggestionTwo": "I want a phone with a good camera",
   "assistant.suggestionThree": "Where is my latest shipment?",
@@ -1562,6 +1591,9 @@ const en: Record<keyof typeof ar, string> = {
   "admin.gateHint": "Sign in with an operator account to reach the back office.",
   "admin.navLabel": "Back-office sections",
   "admin.operatorOnly": "This area is for operators only; its session is independent of any customer session.",
+  "admin.groupOverview": "Overview",
+  "admin.groupOperations": "Operations",
+  "admin.groupIntelligence": "Intelligence",
   "nav.orders": "Orders",
   "adminOrders.title": "Store orders",
   "adminOrders.intro": "Every customer order, newest first, with the customer, status, and amount.",
@@ -1650,6 +1682,10 @@ const en: Record<keyof typeof ar, string> = {
   "common.optional": "optional",
   "common.demo": "Synthetic demonstration data",
   "common.footerNote": "Demonstration interface with synthetic data. No production prices or reviews are shown.",
+  "common.footerNav": "Footer links",
+  "common.listSep": ", ",
+  "common.breadcrumb": "Breadcrumb",
+  "product.specsOther": "Other details",
   "common.unexpected": "Something went wrong",
   "common.unexpectedHint": "Reload the page. No hidden substitute data is shown.",
 };
@@ -1691,6 +1727,30 @@ const attributeKeys: Record<string, MessageKey> = {
 
 export function attributeLabel(t: Translate, key: string): string {
   return attributeKeys[key] ? t(attributeKeys[key]) : key;
+}
+
+/**
+ * Facet option values are stored data ("24 h", "Not applicable", "Bluetooth
+ * 5.3"), so most of them stay exactly as recorded — inventing a translation for
+ * a brand or a connectivity standard would misrepresent the catalog.
+ *
+ * Two exceptions are safe and worth doing:
+ *   - "Not applicable" is an absence marker, not a product fact.
+ *   - a unit suffix ("24 h", "15.6 in", "128 GB") reads better localised while
+ *     the number and the identifier stay Latin and bidi-isolated.
+ */
+const valueUnits: Array<{ pattern: RegExp; key: MessageKey }> = [
+  { pattern: /^(\d+(?:\.\d+)?)\s*h$/i, key: "unit.hours" },
+  { pattern: /^(\d+(?:\.\d+)?)\s*in$/i, key: "unit.inches" },
+];
+
+export function facetValueLabel(t: Translate, value: string): string {
+  if (value === "Not applicable") return t("value.notApplicable");
+  for (const { pattern, key } of valueUnits) {
+    const match = value.match(pattern);
+    if (match) return t(key, { value: match[1] });
+  }
+  return value;
 }
 
 export function statusLabel(

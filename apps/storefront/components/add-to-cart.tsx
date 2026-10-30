@@ -1,19 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { Locale } from "@/lib/types";
 import { translator } from "@/lib/i18n";
 import { useSession } from "./session-provider";
+
+type AddState = "idle" | "busy" | "done" | "error";
 
 export function AddToCartButton({
   productId,
   locale,
   label,
   disabled = false,
-  className = "btn btn-block",
+  className = "btn btn-primary",
 }: {
   productId: string;
   locale: Locale;
@@ -24,17 +25,14 @@ export function AddToCartButton({
   const t = translator(locale);
   const router = useRouter();
   const pathname = usePathname();
-  const { signedIn } = useSession();
-  const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
+  const { signedIn, incrementCart } = useSession();
+  const [state, setState] = useState<AddState>("idle");
   const [message, setMessage] = useState<string>("");
 
   if (!signedIn) {
     return (
       <span className="add-to-cart">
-        <Link
-          className={className}
-          href={`/login?next=${encodeURIComponent(pathname)}`}
-        >
+        <Link className={className} href={`/login?next=${encodeURIComponent(pathname)}`}>
           {t("cart.signInToAdd")}
         </Link>
       </span>
@@ -58,6 +56,9 @@ export function AddToCartButton({
       }
       setState("done");
       setMessage(t("card.added"));
+      // The badge moves immediately rather than waiting for `router.refresh()`,
+      // which would repaint the whole page for a single counter.
+      incrementCart(1);
       void fetch("/api/events", {
         method: "POST",
         headers: { "content-type": "application/json" },

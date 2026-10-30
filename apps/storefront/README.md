@@ -69,7 +69,7 @@ Loading, empty, error, invalid-upload, microphone-denied, and provider-missing s
 
 - Product plates are synthetic demonstration assets and are labeled as such in the UI.
 - The catalog composes the active fixture set (13 synthetic products) before filtering/pagination; indexed search is required before the 100,000-product target.
-- The approved comp `.impeccable/mocks/comp-a.png` is LTR while this storefront is deliberately Arabic-first RTL. The user accepted preserving the RTL composition as a documented visual exception. The recorded 58.53% comparison did not pass its original 72% numerical target and is not represented as having done so.
+- `.impeccable/mocks/comp-a.png` is a retired composition. The UI was rebuilt to the "Two instruments" system described in `DESIGN.md`; the comp, its 58.53% score, and the earlier warm-paper palette no longer describe the interface and are kept only as historical artifacts. The current gate is `tests/ui/verify-contrast.mjs` plus `tests/accessibility/check.mjs`.
 - BO-01 uses the operator session cookie for local demonstration. The demo identity harness (DEC-017) is not a production identity provider; production deployment still requires a reviewed provider, TLS, secret rotation, and revocation policy.
 - BO-02 uses imported synthetic competitor costs (DEC-007) and a synthetic dated season calendar; the interface verifies policy behavior, not real pricing quality.
 - BO-03 uses synthetic order history; the interface verifies RFM calculation and policy behavior, not segmentation quality on real customers.

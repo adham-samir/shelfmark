@@ -1,0 +1,1391 @@
+/* ============================================================================
+   Back office — operator surfaces
+   ----------------------------------------------------------------------------
+   Dense, auditable, and deliberately quieter than the storefront: the data is
+   the subject, the chrome is not. These rules style the shared class vocabulary
+   used by inventory, pricing, segments, risk, orders, and analytics.
+   ========================================================================== */
+
+/* --------------------------------------------------------- command block --- */
+
+/* The one large dark surface in the product. It states what the screen does and
+   offers the single operational action, so an operator arriving cold knows
+   where they are and what the button will do. */
+.inventory-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  align-items: end;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+  border-radius: var(--radius-lg);
+  background: var(--rail);
+  color: var(--rail-text);
+}
+
+.inventory-command h1 {
+  max-width: 20ch;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.inventory-command > div > p {
+  max-width: 72ch;
+  margin-block-start: var(--space-3);
+  color: var(--rail-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.inventory-command-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-block-start: var(--space-4);
+  color: var(--rail-text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-command-meta span {
+  color: #93b4fd;
+}
+
+.inventory-run {
+  display: grid;
+  gap: var(--space-2);
+  align-content: end;
+}
+
+.inventory-run-button {
+  min-height: 46px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-on);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.inventory-run-button:hover {
+  background: var(--primary-hover);
+}
+
+.inventory-run p {
+  min-height: 32px;
+  color: var(--rail-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+}
+
+.inventory-run p[data-tone="success"] {
+  color: var(--success-on-dark);
+}
+
+.inventory-run p[data-tone="error"] {
+  color: var(--danger-on-dark);
+}
+
+/* ---------------------------------------------------------------- ledger --- */
+
+/* Four counts, directly under the command block. Tonal rather than bordered so
+   they read as one strip, not four competing cards. */
+.inventory-ledger {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-block-start: var(--space-4);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.inventory-ledger > div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-height: 72px;
+  padding: var(--space-4) var(--space-5);
+  border-inline-start: 1px solid var(--border);
+}
+
+.inventory-ledger > div:first-child {
+  border-inline-start: 0;
+}
+
+.inventory-ledger strong {
+  color: var(--ink);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-ledger span {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+/* ---------------------------------------------------------------- layout --- */
+
+.inventory-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: var(--space-6);
+  margin-block-start: var(--space-6);
+}
+
+/* ----------------------------------------------------------------- sheet --- */
+
+.inventory-sheet {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.inventory-sheet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.inventory-sheet-head h2 {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.inventory-sheet-head span {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-table-wrap {
+  overflow-x: auto;
+}
+
+/* Tables stay dense but never below 13px, and the first column is the only one
+   allowed to wrap onto a second line. */
+.inventory-table {
+  width: 100%;
+  min-width: 980px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.inventory-table th,
+.inventory-table td {
+  padding: var(--space-3);
+  border-block-end: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+  line-height: var(--leading-snug);
+}
+
+.inventory-table tr:last-child th,
+.inventory-table tr:last-child td {
+  border-block-end: 0;
+}
+
+.inventory-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-sunken);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Six columns: product, current stock, 14-day forecast, reorder point,
+   pending replenishment, status. The status column needs the most room because
+   it carries the supplier note; the two numeric columns need the least. */
+.inventory-table thead th:nth-child(1) {
+  width: 19%;
+}
+.inventory-table thead th:nth-child(2) {
+  width: 14%;
+}
+.inventory-table thead th:nth-child(3) {
+  width: 20%;
+}
+.inventory-table thead th:nth-child(4) {
+  width: 10%;
+}
+.inventory-table thead th:nth-child(5) {
+  width: 11%;
+}
+.inventory-table thead th:nth-child(6) {
+  width: 26%;
+}
+
+.inventory-table tbody th {
+  font-weight: var(--weight-medium);
+}
+
+.inventory-table tbody th a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.inventory-table tbody th a:hover {
+  color: var(--primary);
+}
+
+.inventory-table tbody th code {
+  display: block;
+  margin-block-start: 3px;
+  color: var(--ink-id);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-regular);
+}
+
+/* Row tints carry attention state, always alongside a labelled chip. */
+.inventory-table tr[data-status="supplier_failed"] {
+  background: var(--danger-soft);
+}
+
+.inventory-table tr[data-status="reorder_pending"] {
+  background: var(--warning-soft);
+}
+
+.inventory-table tbody tr {
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.stock-stack {
+  display: grid;
+  gap: 2px;
+}
+
+.stock-stack > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.stock-stack dt {
+  color: var(--ink-3);
+}
+
+.stock-stack dd,
+.number-cell,
+.forecast-cell strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.forecast-cell {
+  display: grid;
+  gap: 2px;
+}
+
+.forecast-cell strong {
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.forecast-cell span,
+.forecast-cell small,
+.number-cell small,
+.reorder-note span,
+.no-reorder {
+  display: block;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.number-cell {
+  color: var(--ink);
+  font-size: var(--text-md) !important;
+  font-weight: var(--weight-semibold);
+}
+
+.number-cell small {
+  margin-block-start: 3px;
+  font-weight: var(--weight-regular);
+}
+
+.missing-data {
+  display: block;
+  max-width: 22ch;
+  color: var(--ink-3);
+}
+
+/* ------------------------------------------------------------ status chip --- */
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding-inline: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--canvas-deep);
+  color: var(--ink-2);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.status-chip[data-status="planned"],
+.status-chip[data-status="fresh"],
+.status-chip[data-status="updated"],
+.status-chip[data-status="would_update"],
+.status-chip[data-status="champions"],
+.status-chip[data-status="loyal"],
+.status-chip[data-status="confirmed"],
+.status-chip[data-status="delivered"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.status-chip[data-status="reorder_pending"],
+.status-chip[data-status="stale"],
+.status-chip[data-status="stale_input"],
+.status-chip[data-status="unchanged"],
+.status-chip[data-status="constraint_blocked"],
+.status-chip[data-status="already_applied"],
+.status-chip[data-status="review"],
+.status-chip[data-status="pending_risk"],
+.status-chip[data-status="pending_payment"],
+.status-chip[data-status="potential"],
+.status-chip[data-status="new"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.status-chip[data-status="supplier_failed"],
+.status-chip[data-status="missing"],
+.status-chip[data-status="missing_input"],
+.status-chip[data-status="conflict"],
+.status-chip[data-status="assessment_failed"],
+.status-chip[data-status="at_risk"],
+.status-chip[data-status="cancelled"],
+.status-chip[data-status="payment_failed"] {
+  border-color: var(--danger-border);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.reorder-note {
+  display: grid;
+  gap: 2px;
+  margin-block-start: var(--space-2);
+}
+
+.reorder-note strong {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+/* ------------------------------------------------------------- evidence --- */
+
+/* The evidence column explains the policy behind the numbers. It is reference
+   material, so it sits on the page background rather than in a card. */
+.inventory-evidence {
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-4));
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.inventory-evidence section {
+  padding-block: var(--space-3);
+  border-block-end: 1px solid var(--border);
+}
+
+.inventory-evidence section:first-child {
+  padding-block-start: 0;
+}
+
+.inventory-evidence section:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+.inventory-evidence h2 {
+  margin-block-end: var(--space-3);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.inventory-evidence ol {
+  display: grid;
+  counter-reset: policy;
+}
+
+.inventory-evidence ol li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  border-block-end: 1px solid var(--border);
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  counter-increment: policy;
+}
+
+.inventory-evidence ol li:last-child {
+  border-block-end: 0;
+}
+
+.inventory-evidence ol li::before {
+  content: counter(policy);
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-evidence dl {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.inventory-evidence dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.inventory-evidence dt {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.inventory-evidence dd {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-evidence p {
+  margin-block-start: var(--space-3);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+}
+
+@media (max-width: 1180px) {
+  .inventory-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .inventory-evidence {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+  .inventory-evidence section {
+    border-block-end: 0;
+    padding-block: 0;
+  }
+}
+
+@media (max-width: 1000px) {
+  .inventory-command {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-5);
+  }
+  .inventory-run {
+    grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+    align-items: center;
+  }
+  .inventory-ledger {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .inventory-ledger > div:nth-child(3) {
+    border-block-start: 1px solid var(--border);
+    border-inline-start: 0;
+  }
+  .inventory-ledger > div:nth-child(4) {
+    border-block-start: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 760px) {
+  .inventory-command h1 {
+    font-size: var(--text-xl);
+  }
+  .inventory-run {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .inventory-evidence {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Below this width the table becomes labelled cards rather than a horizontal
+     scroller: an operator on a phone still needs every field. */
+  .inventory-table-wrap {
+    overflow: visible;
+  }
+  .inventory-table,
+  .inventory-table tbody {
+    display: block;
+    min-width: 0;
+  }
+  .inventory-table thead {
+    display: none;
+  }
+  .inventory-table tbody {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+  .inventory-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .inventory-table tbody th,
+  .inventory-table tbody td {
+    display: block;
+    min-width: 0;
+    padding: var(--space-3);
+    border-block-end: 1px solid var(--border);
+  }
+  .inventory-table tbody th {
+    grid-column: 1 / -1;
+    background: var(--surface-sunken);
+    font-size: var(--text-sm);
+  }
+  .inventory-table tbody td:nth-of-type(2),
+  .inventory-table tbody td:last-child {
+    grid-column: 1 / -1;
+  }
+  .inventory-table tbody td:nth-last-child(-n + 2) {
+    border-block-end: 0;
+  }
+  .inventory-table tbody td::before {
+    display: block;
+    margin-block-end: var(--space-2);
+    color: var(--ink-3);
+    content: attr(data-label);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-semibold);
+  }
+}
+
+/* -------------------------------------------------------- shared tables --- */
+
+/* Every operator table shares this shell so column widths and header treatment
+   are consistent across orders, risk, pricing, segments, and analytics. */
+.pricing-table,
+.risk-table,
+.orders-table,
+.segments-table,
+.analytics-table {
+  font-size: var(--text-sm);
+}
+
+.pricing-table tbody th code,
+.risk-table tbody th code,
+.orders-table tbody th code,
+.segments-table tbody th code,
+.analytics-table tbody th code {
+  display: block;
+  margin-block-start: 3px;
+  color: var(--ink-id);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-regular);
+}
+
+.risk-table tbody th small,
+.orders-table td small {
+  display: block;
+  margin-block-start: 3px;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-regular);
+}
+
+.price-cell {
+  display: grid;
+  gap: 2px;
+}
+
+.price-cell strong {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-cell small {
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.input-stack {
+  display: grid;
+  gap: 2px;
+}
+
+.input-stack > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.input-stack dt {
+  color: var(--ink-3);
+}
+
+.input-stack dd {
+  font-variant-numeric: tabular-nums;
+}
+
+.input-stack small {
+  margin-block-start: 3px;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.proposal-cell {
+  display: grid;
+  gap: 2px;
+}
+
+.proposal-cell strong,
+.proposal-cell span {
+  font-variant-numeric: tabular-nums;
+}
+
+.proposal-cell span {
+  color: var(--primary);
+  font-weight: var(--weight-semibold);
+}
+
+.proposal-cell small {
+  display: block;
+  margin-block-start: 3px;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.audit-list {
+  display: grid;
+}
+
+.audit-list li {
+  display: grid;
+  gap: 2px;
+  padding-block: var(--space-2);
+  border-block-end: 1px solid var(--border);
+  font-size: var(--text-xs);
+}
+
+.audit-list li:last-child {
+  border-block-end: 0;
+}
+
+.audit-list strong {
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.audit-list small {
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.audit-list li > span {
+  overflow-wrap: anywhere;
+}
+
+.change-line {
+  font-size: var(--text-2xs);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------- pricing form --- */
+
+.pricing-form {
+  margin-block-start: var(--space-6);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.pricing-form-head {
+  padding: var(--space-4) var(--space-5);
+  border-block-end: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.pricing-form-head h2 {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.pricing-form-head p {
+  margin-block-start: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.pricing-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.pricing-field {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.pricing-field > span {
+  color: var(--ink-3);
+  font-weight: var(--weight-medium);
+}
+
+.pricing-field input,
+.pricing-field select {
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.pricing-field input:focus-visible,
+.pricing-field select:focus-visible {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.pricing-field-wide {
+  grid-column: span 2;
+}
+
+.pricing-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-5) var(--space-5);
+}
+
+.pricing-form-actions p {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.pricing-form-actions p[data-tone="success"] {
+  color: var(--success);
+}
+
+.pricing-form-actions p[data-tone="error"] {
+  color: var(--danger);
+}
+
+.pricing-page .inventory-evidence,
+.segments-page .inventory-evidence,
+.risk-page .inventory-evidence,
+.analytics-page .inventory-evidence {
+  position: static;
+}
+
+@media (max-width: 900px) {
+  .pricing-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .pricing-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pricing-field-wide {
+    grid-column: auto;
+  }
+}
+
+/* -------------------------------------------------------------- segments --- */
+
+.segments-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-block-start: var(--space-5);
+}
+
+/* Segment cards are selectable filters, so the selected one is filled, not just
+   outlined. */
+.segment-card {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: inherit;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.segment-card:hover {
+  border-color: var(--border-control);
+}
+
+.segment-card[aria-current="page"] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.segment-card strong {
+  color: var(--ink);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.segment-card span {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.segment-card[aria-current="page"] span {
+  color: var(--primary-active);
+}
+
+.segments-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.segments-export {
+  min-height: 36px;
+  font-size: var(--text-xs);
+}
+
+.metric-value {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  margin-block-start: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--canvas-deep);
+  color: var(--ink-2);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-chip[data-score="4"],
+.score-chip[data-score="5"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.score-chip[data-score="3"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.score-chip[data-score="1"],
+.score-chip[data-score="2"] {
+  border-color: var(--danger-border);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.segments-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-block-start: 1px solid var(--border);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.segments-pager nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.segments-pager nav a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.segments-pager nav span[aria-disabled="true"] {
+  color: var(--ink-4);
+}
+
+.segments-rules strong {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.segments-rules code {
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+@media (max-width: 1180px) {
+  .segments-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .segments-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------ risk --- */
+
+.risk-reasons {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-snug);
+}
+
+.risk-decisions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.risk-decisions p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.risk-decisions p[data-tone="success"] {
+  color: var(--success);
+}
+
+.risk-decisions p[data-tone="error"] {
+  color: var(--danger);
+}
+
+.risk-allow {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.risk-allow:hover {
+  border-color: var(--success);
+  background: var(--success);
+  color: var(--surface);
+}
+
+.risk-decline {
+  border-color: var(--danger-border);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.risk-decline:hover {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--surface);
+}
+
+/* --------------------------------------------------------------- orders --- */
+
+.orders-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+  margin-block: var(--space-4);
+}
+
+.orders-filter .input {
+  inline-size: min(280px, 100%);
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lifecycle-control {
+  display: grid;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+}
+
+.lifecycle-control .input {
+  inline-size: min(320px, 100%);
+}
+
+.lifecycle-control p,
+.lifecycle-inline p {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.lifecycle-control p[data-tone="success"],
+.lifecycle-inline p[data-tone="success"] {
+  color: var(--success);
+}
+
+.lifecycle-control p[data-tone="error"],
+.lifecycle-inline p[data-tone="error"] {
+  color: var(--danger);
+}
+
+.lifecycle-inline {
+  display: grid;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+}
+
+/* ------------------------------------------------------------ analytics --- */
+
+.analytics-page .inventory-command {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+}
+
+.analytics-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  align-content: end;
+}
+
+.analytics-filters label {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-2xs);
+}
+
+.analytics-filters label > span {
+  color: var(--rail-text-muted);
+}
+
+.analytics-filters input,
+.analytics-filters select {
+  min-height: 38px;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--rail-active);
+  border-radius: var(--radius-sm);
+  background: var(--rail-active);
+  color: var(--rail-text);
+  font-size: var(--text-xs);
+}
+
+.analytics-filters input:focus-visible,
+.analytics-filters select:focus-visible {
+  outline: 2px solid #93b4fd;
+  outline-offset: 1px;
+}
+
+.analytics-filters .btn {
+  grid-column: 1 / -1;
+  min-height: 40px;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-on);
+  font-weight: var(--weight-semibold);
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-block-start: var(--space-5);
+}
+
+.analytics-panel {
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.analytics-panel h2 {
+  margin-block-end: var(--space-3);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.analytics-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-4);
+}
+
+.analytics-kpis dt {
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.analytics-kpis dd {
+  margin-block-start: 2px;
+  color: var(--ink);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.analytics-sub {
+  margin-block-end: var(--space-3);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.analytics-note {
+  margin-block-start: var(--space-3);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+
+.analytics-note[data-tone="warn"] {
+  color: var(--warning);
+}
+
+.analytics-note[data-tone="error"] {
+  color: var(--danger);
+}
+
+/* Bars grow from the baseline once on paint; the reduced-motion contract
+   collapses that to an instant appearance. */
+.analytics-trend {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 160px;
+  margin: 0;
+  padding: 0 0 var(--space-1);
+  list-style: none;
+  border-block-end: 1px solid var(--border);
+}
+
+.analytics-trend li {
+  display: flex;
+  flex: 1 1 0;
+  align-items: flex-end;
+  min-width: 0;
+  height: 100%;
+}
+
+.analytics-bar {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 2px;
+  border-radius: 2px 2px 0 0;
+  /* A mid-tint, not the palest one: `primary-soft` against a white panel reads
+     as an empty chart at this height. */
+  background: var(--primary-muted);
+  transform-origin: bottom;
+  animation: grow-bar var(--dur-slow) var(--ease-out) both;
+  /* Bars grow in reading order, capped so a 30-day series still finishes
+     inside a second. */
+  animation-delay: min(calc(var(--i, 0) * 18ms), 380ms);
+}
+
+.analytics-bar[data-orders="true"]::after {
+  content: "";
+  position: absolute;
+  inset-block-start: -3px;
+  inset-inline: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+
+.analytics-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-block-start: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+.analytics-legend span::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-inline-end: var(--space-2);
+  border-radius: 2px;
+  vertical-align: -1px;
+  background: var(--primary-muted);
+}
+
+.analytics-legend span[data-kind="orders"]::before {
+  background: var(--primary);
+}
+
+.analytics-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: start;
+  gap: var(--space-4);
+  margin-block-start: var(--space-4);
+}
+
+.analytics-side {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.analytics-recon {
+  width: 100%;
+  font-size: var(--text-2xs);
+}
+
+.analytics-recon th,
+.analytics-recon td {
+  padding: var(--space-2) var(--space-1);
+  border-block-end: 1px solid var(--border);
+  text-align: start;
+  font-variant-numeric: tabular-nums;
+}
+
+.analytics-recon thead th {
+  color: var(--ink-3);
+  font-weight: var(--weight-semibold);
+}
+
+.analytics-recon tbody th {
+  font-weight: var(--weight-medium);
+}
+
+@media (max-width: 1180px) {
+  .analytics-page .inventory-command {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .analytics-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .analytics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .analytics-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analytics-trend {
+    height: 120px;
+  }
+}
+
+/* ------------------------------------------------------------- dashboard --- */
+
+.bo-home .bo-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-block-start: var(--space-5);
+}
+
+.bo-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bo-card h2 {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bo-card-value {
+  color: var(--ink);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.bo-card .btn {
+  align-self: flex-start;
+  margin-block-start: auto;
+}
+
+@media (max-width: 1180px) {
+  .bo-home .bo-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .bo-home .bo-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
