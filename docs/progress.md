@@ -76,7 +76,7 @@ Stage 1 satisfies its repository completion evidence. Functional implementation 
 | Item | Status | Evidence / note |
 |---|---|---|
 | UI/UX screens, states, and flows | Implemented | `docs/ui-ux/` covers all customer and back-office functions, loading/empty/error/auth/insufficient-data states, microphone denial, and invalid images. |
-| Visual direction | Implemented | Approved storefront composition `.impeccable/mocks/comp-a.png`, with two comparison studies. These are design artifacts, not a working UI. |
+| Visual direction | Implemented | Shipped as the "Two instruments" system in `DESIGN.md`: a calm storefront on a slate/azure token layer and a dense dark-rail operator console. The pre-overhaul `.impeccable/mocks/comp-a.png` warm-paper composition is retired and no longer a specification. |
 | Figma deliverable | Pending external access | The plan explicitly permits an implementable screen/interaction specification when Figma is unavailable; no unrelated screenshot is called a Figma prototype. |
 | Stable identity and field ownership | Verified | One canonical UUID across stores; PostgreSQL owns operational data and MongoDB owns descriptive catalog content. |
 | Structured logging | Verified | Every request emits one JSON line carrying the same `request_id` returned in `x-request-id` and in error bodies, so a reported ID is traceable. 4xx logs at WARNING without a traceback, 5xx at ERROR with one, uvicorn's duplicate access log is silenced while `uvicorn.error` still reports crashes, and `SMART_ECOMMERCE_LOG_FORMAT=text` switches to readable output. A test asserts no credential, cookie, or contact detail appears in any record. |

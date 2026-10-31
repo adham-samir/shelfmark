@@ -17,16 +17,14 @@
  */
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { chromium } from "playwright-core";
+import { BROWSER, engineLabel, launchBrowser } from "../accessibility/engine.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = await readFile(require.resolve("axe-core/axe.min.js"), "utf8");
 
 const BASE_URL = process.env.STOREFRONT_BASE_URL ?? "http://127.0.0.1:3000";
 const API_URL = process.env.SMART_ECOMMERCE_API_URL ?? "http://127.0.0.1:8000";
-const LABEL = process.env.CAPTURE_LABEL ?? "current";
-const EXECUTABLE =
-  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ?? "/usr/bin/chromium";
+const LABEL = engineLabel(process.env.CAPTURE_LABEL ?? "current");
 const PRODUCT_ID = "10000000-0000-4000-8000-000000000001";
 const OUT_DIR = new URL(`./shots/${LABEL}/`, import.meta.url);
 
@@ -130,13 +128,11 @@ if (operatorOrders.ok) {
 
 await mkdir(OUT_DIR, { recursive: true });
 
-const browser = await chromium.launch({
-  executablePath: EXECUTABLE,
-  args: ["--no-sandbox"],
-});
+const browser = await launchBrowser();
 
 const summary = {
   label: LABEL,
+  browser: BROWSER,
   baseUrl: BASE_URL,
   capturedAt: new Date().toISOString(),
   pages: [],

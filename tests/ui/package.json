@@ -6,7 +6,8 @@
   "description": "Visual regression and accessibility baseline capture for the storefront and back office.",
   "scripts": {
     "capture": "node capture.mjs",
-    "contrast": "node verify-contrast.mjs"
+    "contrast": "node verify-contrast.mjs",
+    "vitals": "node vitals.mjs"
   },
   "devDependencies": {
     "axe-core": "^4.10.3",

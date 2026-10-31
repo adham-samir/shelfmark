@@ -13,15 +13,13 @@
  */
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { chromium } from "playwright-core";
+import { BROWSER, launchBrowser } from "./engine.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = await readFile(require.resolve("axe-core/axe.min.js"), "utf8");
 
 const BASE_URL = process.env.STOREFRONT_BASE_URL ?? "http://127.0.0.1:3000";
 const API_URL = process.env.SMART_ECOMMERCE_API_URL ?? "http://127.0.0.1:18000";
-const EXECUTABLE =
-  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ?? "/usr/bin/chromium";
 const PRODUCT_ID = "10000000-0000-4000-8000-000000000001";
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
@@ -184,10 +182,7 @@ async function keyboardSmoke(page) {
   return `${state.tag}:${state.name}`;
 }
 
-const browser = await chromium.launch({
-  executablePath: EXECUTABLE,
-  args: ["--no-sandbox"],
-});
+const browser = await launchBrowser();
 
 const failures = [];
 let checked = 0;
@@ -269,7 +264,7 @@ try {
   await browser.close();
 }
 
-console.log(`\n${checked} pages checked, ${failures.length} blocking violations`);
+console.log(`\n${checked} pages checked in ${BROWSER}, ${failures.length} blocking violations`);
 if (failures.length > 0) {
   for (const failure of failures) console.error(` - ${failure}`);
   process.exit(1);

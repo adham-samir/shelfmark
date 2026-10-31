@@ -41,6 +41,42 @@ The harness waits for `domcontentloaded` rather than `networkidle`: the
 back-office rail prefetches every sibling route, so the network never goes idle
 and `networkidle` times out on those pages.
 
+## Rendering performance
+
+```bash
+cd tests/ui
+STOREFRONT_BASE_URL=http://127.0.0.1:3001 \
+  SMART_ECOMMERCE_API_URL=http://127.0.0.1:8000 \
+  npm run vitals
+```
+
+Measures LCP, CLS, and total blocking time on the eight heaviest routes across
+both locales and two viewports — 32 measurements — and fails when any exceeds
+the Core Web Vitals "good" thresholds (2500 ms, 0.1, 200 ms). The numbers are
+collected in the page with `PerformanceObserver`; the app carries no
+instrumentation and no API contract changes.
+
+`longtask` is Chromium-only. Under `BROWSER=firefox` TBT is reported as `n/a`
+rather than `0`, because a zero there would be an absent measurement read as a
+perfect score. Writes `shots/vitals-<engine>.json`.
+
+## Other engines
+
+Both harnesses accept `BROWSER=chromium|firefox|webkit` (see
+`tests/accessibility/engine.mjs`). The default stays the system Chromium.
+
+Playwright patches the browsers it drives, so a system Firefox is not a
+substitute. Install the bundled engines once:
+
+```bash
+cd tests/accessibility
+node node_modules/playwright-core/cli.js install firefox webkit
+```
+
+WebKit additionally needs host libraries (`libicu`, `libxml2`, `libflite1`) that
+require root to install; without them `BROWSER=webkit` fails at launch rather
+than silently passing.
+
 ## The blocking gate
 
 `tests/accessibility/check.mjs` remains the gate that can fail a release. It
