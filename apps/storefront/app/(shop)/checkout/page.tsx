@@ -36,7 +36,7 @@ export default async function CheckoutPage() {
               <h1>{t("checkout.title")}</h1>
             </div>
           </div>
-          <div style={{ marginBlockStart: 18 }}>
+          <div className="stack-4">
             <EmptyState title={t("checkout.emptyCart")} hint={t("cart.emptyHint")}>
               <Link className="btn btn-primary" href="/">
                 {t("cart.browse")}
@@ -59,9 +59,9 @@ export default async function CheckoutPage() {
             {t("cart.title")}
           </Link>
         </div>
-        <div style={{ marginBlockStart: "var(--space-5)" }}>
+        <div className="stack-5">
           <Notice tone="warn">{t("checkout.riskNote")}</Notice>
-          <div style={{ height: "var(--space-4)" }} />
+          <div className="spacer-4" />
           <CheckoutForm
             locale={locale}
             cart={cart}

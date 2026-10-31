@@ -24,7 +24,7 @@ export default async function VoiceSearchPage() {
           {t("voice.textFallback")}
         </Link>
       </div>
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <Notice tone="info">{t("voice.intro")}</Notice>
         <VoiceSearchPanel locale={locale} />
       </div>

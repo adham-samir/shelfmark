@@ -105,8 +105,7 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
         </div>
 
         <div
-          className="dropzone"
-          style={{ marginBlockStart: 14 }}
+          className="dropzone stack-4"
           onClick={() => inputRef.current?.click()}
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
@@ -140,7 +139,7 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
         />
 
         {phase.kind === "preview" ? (
-          <div className="preview" style={{ marginBlockStart: 14 }}>
+          <div className="preview stack-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={phase.url} alt={t("image.preview")} />
             <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
@@ -160,7 +159,7 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase.kind === "working" ? (
-          <div className="preview" style={{ marginBlockStart: 14 }} aria-busy="true">
+          <div className="preview stack-4"  aria-busy="true">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={phase.url} alt={t("image.preview")} />
             <p role="status" style={{ textAlign: "center" }}>
@@ -170,7 +169,7 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase.kind === "error" ? (
-          <div className="state" data-tone="error" role="alert" style={{ marginBlockStart: 14 }}>
+          <div className="state stack-4" data-tone="error" role="alert">
             <h2>{phase.title}</h2>
             <p>{phase.hint}</p>
             {phase.detail ? <p className="field-hint">{phase.detail}</p> : null}
@@ -187,10 +186,10 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
       </div>
 
       {phase.kind === "results" ? (
-        <section style={{ marginBlockStart: 18 }} aria-labelledby="image-results">
+        <section className="stack-4" aria-labelledby="image-results">
           <div className="page-head">
             <div>
-              <h2 id="image-results" style={{ fontSize: "var(--text-lg)", fontWeight: 600 }}>
+              <h2 className="section-title" id="image-results">
                 {t("image.results")}
               </h2>
               <p>{t("image.model", { model: phase.model })}</p>
@@ -203,7 +202,7 @@ export function ImageSearchPanel({ locale }: { locale: Locale }) {
               {phase.items.map((entry) => (
                 <div key={entry.product.product_id} style={{ position: "relative" }}>
                   <ProductCard product={entry.product} locale={locale} />
-                  <p className="pill" style={{ marginBlockStart: 6 }}>
+                  <p className="pill stack-2">
                     {t("image.score")}: {entry.score.toFixed(3)}
                   </p>
                 </div>

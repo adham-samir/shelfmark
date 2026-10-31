@@ -463,3 +463,12 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.bubble .hint {
+  margin-block-end: var(--space-1);
+  font-weight: var(--weight-semibold);
+}
+
+.voice-status {
+  font-weight: var(--weight-medium);
+}

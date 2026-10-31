@@ -135,6 +135,26 @@
   --shadow-2: 0 1px 3px rgb(15 23 42 / 7%), 0 8px 24px rgb(15 23 42 / 8%);
   --shadow-3: 0 12px 40px rgb(15 23 42 / 14%);
 
+  /* Overlays that lift off the bottom edge carry their own direction. */
+  --shadow-up-1: 0 -6px 24px rgb(15 23 42 / 8%);
+  --shadow-up-2: 0 -12px 40px rgb(15 23 42 / 14%);
+
+  /* ------------------------------------------------------------- materials */
+  /* Translucent surfaces and hairlines. They live here because a veil tuned
+     against one background is invisible against another, and the only way to
+     keep that decision in one place is to name it once. */
+  --veil-surface: rgb(255 255 255 / 92%);
+  --veil-highlight: rgb(255 255 255 / 70%);
+  --hairline-on-dark: rgb(255 255 255 / 10%);
+  --hairline-on-dark-strong: rgb(255 255 255 / 12%);
+
+  /* The focus ring is one decision in three contexts. On light surfaces it is
+     the primary blue; on the dark rail that blue drops under 3:1, so the rail
+     uses the lighter step, and dark-blue panels use the same one. */
+  --focus-ring: var(--primary);
+  --focus-ring-on-dark: #93b4fd;
+  --danger-halo: rgb(180 35 24 / 14%);
+
   /* -------------------------------------------------------------- structure */
   --gutter: 24px;
   --header-h: 72px;
@@ -156,28 +176,3 @@
   --space-6: 20px;
 }
 
-/* ---------------------------------------------------------- legacy aliases */
-/* The pre-overhaul stylesheet and its components still reference the original
-   warm-paper variable names. They are mapped onto the new palette so every
-   existing surface recolours in one step; each alias is deleted as the phase
-   that owns those components rewrites them. Do not use these in new code. */
-:root {
-  --paper: var(--canvas);
-  --paper-deep: var(--canvas-deep);
-  --surface-alt: var(--surface-sunken);
-  --plate: var(--canvas);
-  --graphite: var(--ink-2);
-  --muted: var(--ink-3);
-  --rule: var(--border);
-  --rule-soft: var(--border);
-
-  /* The old "measurement amber" is the primary action colour now. */
-  --amber: var(--primary);
-  --amber-strong: var(--primary-hover);
-  --amber-soft: var(--primary-soft);
-
-  --green: var(--success);
-  --green-soft: var(--success-soft);
-  --red: var(--danger);
-  --red-soft: var(--danger-soft);
-}

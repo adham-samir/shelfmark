@@ -116,7 +116,7 @@
 
 @keyframes pulse-ring {
   50% {
-    box-shadow: 0 0 0 8px rgb(180 35 24 / 14%);
+    box-shadow: 0 0 0 8px var(--danger-halo);
   }
 }
 

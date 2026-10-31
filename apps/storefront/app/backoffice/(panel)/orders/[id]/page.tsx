@@ -70,7 +70,7 @@ export default async function BackofficeOrderPage({
           <p className="eyebrow">{t("adminOrders.detailEyebrow")}</p>
           <h1>{t("adminOrders.detailTitle")}</h1>
           <p>{t("adminOrders.detailIntro")}</p>
-          <p className="field-hint" style={{ marginBlockStart: 6 }} dir="ltr">
+          <p className="field-hint stack-2"  dir="ltr">
             {order.order_id}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default async function BackofficeOrderPage({
         </span>
       </div>
 
-      <div className="row-actions" style={{ marginBlock: 14 }}>
+      <div className="row-actions stack-band">
         <Link className="btn btn-quiet" href="/backoffice/orders">
           {t("adminOrders.back")}
         </Link>
@@ -116,7 +116,7 @@ export default async function BackofficeOrderPage({
             </div>
           </dl>
 
-          <h2 style={{ marginBlockStart: 22 }}>{t("adminOrders.shipping")}</h2>
+          <h2 className="stack-6">{t("adminOrders.shipping")}</h2>
           {order.shipping ? (
             <dl className="detail-specs">
               <div>
@@ -156,7 +156,7 @@ export default async function BackofficeOrderPage({
               </li>
             ))}
           </ul>
-          <div className="totals" style={{ marginBlockStart: 12 }}>
+          <div className="totals stack-3">
             <div className="grand">
               <span>{t("adminOrders.subtotal")}</span>
               <span>
@@ -183,7 +183,7 @@ export default async function BackofficeOrderPage({
         </section>
       </div>
 
-      <section className="panel" aria-labelledby="operator-shipment" style={{ marginBlockStart: 18 }}>
+      <section className="panel stack-4" aria-labelledby="operator-shipment">
         <h2 id="operator-shipment">{t("adminOrders.shipment")}</h2>
         {order.shipment ? (
           <>
@@ -214,9 +214,9 @@ export default async function BackofficeOrderPage({
       </section>
 
       <section
-        className="panel"
+        className="panel stack-4"
         aria-labelledby="operator-adjustments"
-        style={{ marginBlockStart: 18 }}
+
       >
         <h2 id="operator-adjustments">{t("adminOrders.adjustments")}</h2>
         {order.adjustments.length === 0 ? (
@@ -276,9 +276,9 @@ export default async function BackofficeOrderPage({
       </section>
 
       <section
-        className="panel"
+        className="panel stack-4"
         aria-labelledby="operator-lifecycle"
-        style={{ marginBlockStart: 18 }}
+
       >
         <h2 id="operator-lifecycle">{t("orderLifecycle.section")}</h2>
         <p className="field-hint">{t("orderLifecycle.hint")}</p>
@@ -291,7 +291,7 @@ export default async function BackofficeOrderPage({
           />
         ) : null}
 
-        <div className="row-actions" style={{ marginBlockStart: 12 }}>
+        <div className="row-actions stack-3">
           {cancellable ? (
             <OrderCancelControl locale={locale} orderId={order.order_id} />
           ) : null}

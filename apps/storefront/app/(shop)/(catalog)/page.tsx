@@ -120,7 +120,7 @@ export default async function CatalogPage({
                 ))}
               </div>
             ) : (
-              <div style={{ paddingBlockStart: 16 }}>
+              <div className="pad-block-4">
                 <EmptyState
                   title={t("listing.noResults")}
                   hint={

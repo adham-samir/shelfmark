@@ -111,14 +111,14 @@ textarea {
 /* One ring, everywhere, always visible. It is deliberately not animated: a
    focus ring that fades in is a focus ring that is invisible for 140ms. */
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
 /* Keyboard users get a stronger ring on dark chrome, where blue disappears. */
 [data-surface="rail"] :focus-visible {
-  outline-color: #93b4fd;
+  outline-color: var(--focus-ring-on-dark);
 }
 
 .visually-hidden {

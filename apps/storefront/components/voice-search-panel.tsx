@@ -135,7 +135,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
           >
             <IconMic size={30} />
           </button>
-          <p aria-live="polite" style={{ fontWeight: 500 }}>
+          <p className="voice-status" aria-live="polite">
             {phase === "recording"
               ? `${t("voice.recording")} ${t("voice.seconds", { seconds })}`
               : phase === "processing"
@@ -151,7 +151,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         </div>
 
         {phase === "unsupported" ? (
-          <div className="state" data-tone="warn" style={{ marginBlockStart: 14 }}>
+          <div className="state stack-4" data-tone="warn">
             <h2>{t("voice.unsupported")}</h2>
             <p>{t("voice.unsupportedHint")}</p>
             <div className="actions">
@@ -163,7 +163,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase === "denied" ? (
-          <div className="state" data-tone="error" role="alert" style={{ marginBlockStart: 14 }}>
+          <div className="state stack-4" data-tone="error" role="alert">
             <h2>{t("voice.denied")}</h2>
             <p>{t("voice.deniedHint")}</p>
             <div className="actions">
@@ -178,7 +178,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase === "empty" ? (
-          <div className="state" data-tone="warn" role="alert" style={{ marginBlockStart: 14 }}>
+          <div className="state stack-4" data-tone="warn" role="alert">
             <h2>{t("voice.empty")}</h2>
             <p>{t("voice.emptyHint")}</p>
             <div className="actions">
@@ -193,7 +193,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase === "provider_missing" ? (
-          <div className="state" data-tone="warn" role="alert" style={{ marginBlockStart: 14 }}>
+          <div className="state stack-4" data-tone="warn" role="alert">
             <h2>{t("voice.providerMissing")}</h2>
             <p>{t("voice.providerMissingHint")}</p>
             {detail ? <p className="field-hint">{detail}</p> : null}
@@ -209,7 +209,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase === "failed" ? (
-          <div className="state" data-tone="error" role="alert" style={{ marginBlockStart: 14 }}>
+          <div className="state stack-4" data-tone="error" role="alert">
             <h2>{t("voice.failed")}</h2>
             <p>{detail || t("voice.failed")}</p>
             <div className="actions">
@@ -224,7 +224,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         ) : null}
 
         {phase === "transcript" ? (
-          <div style={{ marginBlockStart: 14 }}>
+          <div className="stack-4">
             <div className="form-row">
               <label className="field-label" htmlFor="voice-transcript">
                 {t("voice.transcript")}
@@ -253,9 +253,9 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
       </div>
 
       {phase === "transcript" ? (
-        <section style={{ marginBlockStart: 18 }} aria-labelledby="voice-results">
+        <section className="stack-4" aria-labelledby="voice-results">
           <div className="page-head">
-            <h2 id="voice-results" style={{ fontSize: "var(--text-lg)", fontWeight: 600 }}>
+            <h2 className="section-title" id="voice-results">
               {t("image.results")}
             </h2>
           </div>

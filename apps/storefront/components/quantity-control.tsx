@@ -67,8 +67,7 @@ export function QuantityControl({
       </div>
       <button
         type="button"
-        className="btn btn-quiet"
-        style={{ minHeight: 28, paddingInline: 0, marginBlockStart: 4 }}
+        className="btn btn-quiet btn-compact stack-1"
         onClick={() => update(0)}
         disabled={busy}
       >

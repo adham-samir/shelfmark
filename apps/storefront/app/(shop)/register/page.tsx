@@ -31,7 +31,7 @@ export default async function RegisterPage({
           <p>{t("auth.registerIntro")}</p>
         </div>
       </div>
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <AuthForm locale={locale} mode="register" next={next} />
       </div>
     </main>

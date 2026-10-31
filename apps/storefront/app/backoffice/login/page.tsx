@@ -32,9 +32,9 @@ export default async function BackofficeLoginPage({
           <p>{t("auth.operatorIntro")}</p>
         </div>
       </div>
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <AuthForm locale={locale} mode="operator" next={next} />
-        <p className="auth-switch" style={{ marginBlockStart: 14 }}>
+        <p className="auth-switch stack-4">
           <Link href="/">{t("admin.viewStorefront")}</Link>
         </p>
       </div>

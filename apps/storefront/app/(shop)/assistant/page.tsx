@@ -23,14 +23,14 @@ export default async function AssistantPage() {
           <p>{t("assistant.intro")}</p>
         </div>
       </div>
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <Notice tone="info">{t("assistant.disclaimer")}</Notice>
         {account ? (
           <div className="panel">
             <AssistantChat locale={locale} />
           </div>
         ) : (
-          <div style={{ marginBlockStart: 14 }}>
+          <div className="stack-4">
             <EmptyState title={t("auth.requiredForCheckout")}>
               <Link className="btn btn-primary" href="/login?next=%2Fassistant">
                 {t("auth.goLogin")}

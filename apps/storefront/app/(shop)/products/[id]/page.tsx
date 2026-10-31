@@ -206,10 +206,10 @@ export default async function ProductPage({
 
           <div className="panel">
             <h2>{t("product.description")}</h2>
-            <p dir="auto" style={{ color: "var(--ink-2)" }}>
+            <p className="body-copy" dir="auto">
               {product.description}
             </p>
-            <div style={{ marginBlockStart: 12 }}>
+            <div className="stack-3">
               <Notice tone="info">
                 {t("card.synthetic")} · {t("common.demo")}
               </Notice>
@@ -218,10 +218,10 @@ export default async function ProductPage({
         </section>
       </div>
 
-      <section style={{ marginBlockStart: "var(--space-10)" }} aria-labelledby="recommendations-heading">
+      <section className="stack-10" aria-labelledby="recommendations-heading">
         <div className="page-head">
           <div>
-            <h2 id="recommendations-heading" style={{ fontSize: "var(--text-lg)" }}>
+            <h2 className="section-title" id="recommendations-heading">
               {t("product.recommendations")}
             </h2>
             <p>{t("product.recommendationsHint")}</p>
@@ -281,7 +281,7 @@ export default async function ProductPage({
         )}
       </section>
 
-      <div style={{ marginBlockStart: "var(--space-6)" }}>
+      <div className="stack-6">
         <Link className="btn btn-quiet" href="/">
           <IconArrowBack size={14} />
           {t("product.back")}

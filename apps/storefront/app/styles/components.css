@@ -437,7 +437,7 @@ button.chip:hover {
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(255 255 255 / 70%),
+    var(--veil-highlight),
     transparent
   );
   animation: shimmer 1.4s ease-in-out infinite;
@@ -791,4 +791,78 @@ button.chip:hover {
 
 .scroller > * {
   scroll-snap-align: start;
+}
+
+/* --------------------------------------------------------- vertical rhythm --- */
+
+/* A page section that follows another needs one spacing decision. That decision
+   belongs to the scale, not to whichever file happens to render the section, so
+   it is a class rather than an inline `marginBlockStart`. The number is the
+   scale step: `stack-4` is `--space-4`. */
+.stack-0 {
+  margin-block-start: 0;
+}
+.stack-1 {
+  margin-block-start: var(--space-1);
+}
+.stack-2 {
+  margin-block-start: var(--space-2);
+}
+.stack-3 {
+  margin-block-start: var(--space-3);
+}
+.stack-4 {
+  margin-block-start: var(--space-4);
+}
+.stack-5 {
+  margin-block-start: var(--space-5);
+}
+.stack-6 {
+  margin-block-start: var(--space-6);
+}
+.stack-8 {
+  margin-block-start: var(--space-8);
+}
+.stack-10 {
+  margin-block-start: var(--space-10);
+}
+
+/* A band needs space above and below; a link needs space beside it. Both are
+   the same decision as `stack-*`, just on another axis, so they are named once
+   here rather than written inline wherever they happen to be needed. */
+.stack-band {
+  margin-block: var(--space-4);
+}
+.pad-block-4 {
+  padding-block-start: var(--space-4);
+}
+.inline-loose {
+  margin-inline-start: var(--space-2);
+}
+.grid-stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* Three text roles the pages kept re-declaring by hand. */
+.body-copy {
+  color: var(--ink-2);
+}
+.section-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+.lead {
+  font-weight: var(--weight-medium);
+}
+
+/* A quiet button that sits under a control rather than beside it. */
+.btn-compact {
+  min-height: 28px;
+  padding-inline: 0;
+}
+
+/* An explicit gap between two blocks that are not siblings in one stack. */
+.spacer-4 {
+  height: var(--space-4);
 }

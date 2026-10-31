@@ -119,11 +119,11 @@ export function AssistantChat({ locale }: { locale: Locale }) {
 
         {messages.map((message) => (
           <div className="bubble" data-role={message.role} key={message.id}>
-            <strong style={{ display: "block", fontSize: "var(--text-2xs)", color: "var(--muted)" }}>
+            <strong className="meta">
               {message.role === "user" ? t("assistant.you") : t("assistant.assistant")}
             </strong>
             {message.errorHint ? (
-              <p style={{ fontWeight: 600, marginBlockEnd: 4 }}>{message.errorHint}</p>
+              <p className="hint">{message.errorHint}</p>
             ) : null}
             <p style={{ margin: 0 }}>{message.text}</p>
             {message.sources?.length ? (

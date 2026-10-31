@@ -31,7 +31,7 @@ export default async function CartPage() {
               <p>{t("cart.intro")}</p>
             </div>
           </div>
-          <div style={{ marginBlockStart: 18 }}>
+          <div className="stack-4">
             <EmptyState title={t("cart.emptyTitle")} hint={t("cart.emptyHint")}>
               <Link className="btn btn-primary" href="/">
                 {t("cart.browse")}
@@ -55,7 +55,7 @@ export default async function CartPage() {
           </span>
         </div>
 
-        <div className="page-split" style={{ marginBlockStart: "var(--space-5)" }}>
+        <div className="page-split stack-5">
           <ul className="cart-lines">
             {cart.items.map((item) => {
               const product = byId.get(item.product_id);
@@ -123,13 +123,12 @@ export default async function CartPage() {
                 </div>
               </div>
               <Link
-                className="btn btn-primary btn-block"
+                className="btn btn-primary btn-block stack-4"
                 href="/checkout"
-                style={{ marginBlockStart: "var(--space-4)" }}
               >
                 {t("cart.checkout")}
               </Link>
-              <p className="field-hint" style={{ marginBlockStart: "var(--space-3)" }}>
+              <p className="field-hint stack-3">
                 {t("cart.priceRecheck")}
               </p>
             </div>

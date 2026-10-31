@@ -603,7 +603,7 @@
   gap: var(--space-2);
   margin-block-start: auto;
   padding-block-start: var(--space-4);
-  border-block-start: 1px solid rgb(255 255 255 / 10%);
+  border-block-start: 1px solid var(--hairline-on-dark);
 }
 
 .bo-rail-footer a,
@@ -793,7 +793,7 @@
     margin-block-start: 0;
     padding-block-start: 0;
     border-block-start: 0;
-    border-inline-start: 1px solid rgb(255 255 255 / 12%);
+    border-inline-start: 1px solid var(--hairline-on-dark-strong);
     padding-inline-start: var(--space-3);
   }
   .bo-top {

@@ -39,7 +39,7 @@ export default async function OrdersPage({
             <p>{t("orders.intro")}</p>
           </div>
         </div>
-        <div style={{ marginBlockStart: 18 }}>
+        <div className="stack-4">
           <Notice tone="error">{t("account.failed")}</Notice>
         </div>
       </main>
@@ -59,7 +59,7 @@ export default async function OrdersPage({
         <span className="pill">{t("orders.count", { count: orders.total })}</span>
       </div>
 
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         {orders.items.length === 0 ? (
           <EmptyState title={t("orders.empty")} hint={t("account.emptyOrders")}>
             <Link className="btn btn-primary" href="/">

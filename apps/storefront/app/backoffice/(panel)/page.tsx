@@ -103,7 +103,7 @@ export default async function BackofficeHomePage() {
         ))}
       </div>
 
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <Notice tone="info">{t("admin.gateHint")}</Notice>
       </div>
     </main>

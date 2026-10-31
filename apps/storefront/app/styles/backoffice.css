@@ -49,7 +49,7 @@
 }
 
 .inventory-command-meta span {
-  color: #93b4fd;
+  color: var(--focus-ring-on-dark);
 }
 
 .inventory-run {
@@ -126,16 +126,6 @@
 .inventory-ledger span {
   color: var(--ink-3);
   font-size: var(--text-xs);
-}
-
-/* ---------------------------------------------------------------- layout --- */
-
-.inventory-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  align-items: start;
-  gap: var(--space-6);
-  margin-block-start: var(--space-6);
 }
 
 /* ----------------------------------------------------------------- sheet --- */
@@ -405,11 +395,9 @@
 
 /* ------------------------------------------------------------- evidence --- */
 
-/* The evidence column explains the policy behind the numbers. It is reference
+/* The evidence band explains the policy behind the numbers. It is reference
    material, so it sits on the page background rather than in a card. */
 .inventory-evidence {
-  position: sticky;
-  top: calc(var(--header-h) + var(--space-4));
   padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -493,22 +481,6 @@
   color: var(--ink-3);
   font-size: var(--text-xs);
   line-height: var(--leading-snug);
-}
-
-@media (max-width: 1180px) {
-  .inventory-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .inventory-evidence {
-    position: static;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
-  }
-  .inventory-evidence section {
-    border-block-end: 0;
-    padding-block: 0;
-  }
 }
 
 @media (max-width: 1000px) {
@@ -971,45 +943,38 @@ td[data-label] > .metric-value {
   color: var(--danger);
 }
 
-.pricing-page .inventory-evidence,
-.segments-page .inventory-evidence,
-.risk-page .inventory-evidence,
-.analytics-page .inventory-evidence {
-  position: static;
-}
+/* All four data pages put their sheet on the full width and their reference
+   evidence underneath. A 300px evidence column beside a six-column table
+   pushes the last column — often the control an operator needs — behind a
+   horizontal scroll, so the evidence band is not a column at all.
 
-/* Pricing carries six columns including a four-value input stack, so the sheet
-   takes the full width and the policy/audit evidence moves below it. The audit
-   trail runs as a two-column ledger under the policy strip: it is reference
-   material, not a column that competes with the decision table. */
-.inventory-full,
-.pricing-layout,
-.risk-layout {
+   One frame, one class: the evidence sections flow on `auto-fit` so a
+   two-section panel pairs up and a three-section panel forms thirds without a
+   per-page declaration. */
+.ledger-layout {
   display: grid;
   gap: var(--space-6);
   margin-block-start: var(--space-6);
 }
 
-.pricing-layout .inventory-evidence {
+.ledger-layout > .inventory-evidence {
+  position: static;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-5) var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-6);
 }
 
-.pricing-layout .inventory-evidence section {
+.ledger-layout > .inventory-evidence section {
   padding-block: 0;
   border-block-end: 0;
 }
 
-.pricing-layout .inventory-evidence section:last-child {
+/* The pricing audit trail is a third section and owns the full row: it is a
+   ledger of before/after amounts, not a paragraph of policy. */
+.ledger-layout > .inventory-evidence section[data-span="full"] {
   grid-column: 1 / -1;
   padding-block-start: var(--space-4);
   border-block-start: 1px solid var(--border);
-}
-
-.pricing-layout .audit-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--space-6);
 }
 
 /* The audit entries inherit the numbered policy list; here each entry is a
@@ -1035,72 +1000,35 @@ td[data-label] > .metric-value {
   grid-column: 1 / -1;
 }
 
-.pricing-layout .audit-list li:nth-last-child(-n + 2) {
+.ledger-layout .audit-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-6);
+}
+
+.ledger-layout .audit-list li:nth-last-child(-n + 2) {
   border-block-end: 0;
 }
 
 @media (max-width: 900px) {
-  .pricing-layout .inventory-evidence,
-  .pricing-layout .audit-list {
+  .ledger-layout > .inventory-evidence,
+  .ledger-layout .audit-list {
     grid-template-columns: minmax(0, 1fr);
   }
-  .pricing-layout .audit-list li:nth-last-child(2) {
+  .ledger-layout .audit-list li:nth-last-child(2) {
     border-block-end: 1px solid var(--border);
   }
-}
-
-/* Inventory's six-column sheet needs the full width too: its status column
-   carries the adjust control, so it must never sit behind a horizontal scroll.
-   The policy and model evidence sit side by side underneath. */
-.inventory-full .inventory-evidence {
-  position: static;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-6);
-}
-
-.inventory-full .inventory-evidence section {
-  padding-block: 0;
-  border-block-end: 0;
-}
-
-@media (max-width: 900px) {
-  .inventory-full .inventory-evidence {
-    grid-template-columns: minmax(0, 1fr);
+  .ledger-layout > .inventory-evidence {
     gap: 0;
   }
-  .inventory-full .inventory-evidence section {
+  .ledger-layout > .inventory-evidence section {
     padding-block: var(--space-3);
     border-block-end: 1px solid var(--border);
   }
-  .inventory-full .inventory-evidence section:last-child {
+  .ledger-layout > .inventory-evidence section:last-child {
     border-block-end: 0;
   }
-}
-
-/* The review table is the primary surface on this page, so it takes the full
-   width and the model evidence sits below it. A 300px evidence column beside a
-   980px table pushes the decision buttons behind a horizontal scroll, which is
-   the one control an operator actually needs to reach. */
-.risk-layout .inventory-evidence {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-6);
-}
-
-.risk-layout .inventory-evidence section {
-  padding-block: 0;
-  border-block-end: 0;
-}
-
-@media (max-width: 900px) {
-  .risk-layout .inventory-evidence {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-  .risk-layout .inventory-evidence section {
-    padding-block: var(--space-3);
-    border-block-end: 1px solid var(--border);
+  .ledger-layout > .inventory-evidence section[data-span="full"] {
+    padding-block-start: var(--space-4);
   }
 }
 
@@ -1289,20 +1217,24 @@ td[data-label] > .metric-value {
 
 .risk-reasons {
   display: grid;
-  gap: 2px;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
   color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
   line-height: var(--leading-snug);
 }
 
-/* Underscore-joined identifiers such as `order_velocity_24h_high` have no
-   natural break point. With the table now at full width the column is wide
-   enough to hold them; `anywhere` is the safety net for an unusually long one
-   rather than the normal case. */
 .risk-reasons li {
+  display: grid;
+  gap: 1px;
+}
+
+/* Underscore-joined identifiers such as `order_velocity_24h_high` have no
+   natural break point. `anywhere` is the safety net for an unusually long one. */
+.risk-reasons code {
+  color: var(--ink-id);
+  font-size: var(--text-2xs);
   overflow-wrap: anywhere;
 }
 
@@ -1446,7 +1378,7 @@ td[data-label] > .metric-value {
 
 .analytics-filters input:focus-visible,
 .analytics-filters select:focus-visible {
-  outline: 2px solid #93b4fd;
+  outline: 2px solid var(--focus-ring-on-dark);
   outline-offset: 1px;
 }
 

@@ -92,7 +92,7 @@ export default async function ComparePage({
       {stale ? <Notice tone="warn">{t("compare.stale")}</Notice> : null}
 
       {products.length === 0 ? (
-        <div style={{ marginBlockStart: 18 }}>
+        <div className="stack-4">
           <EmptyState title={t("compare.emptyPage")} hint={t("compare.emptyHint")}>
             <Link className="btn" href="/">
               {t("product.back")}
@@ -101,7 +101,7 @@ export default async function ComparePage({
         </div>
       ) : (
         <>
-          <div className="compare-scroll" tabIndex={0} style={{ marginBlockStart: "var(--space-5)" }}>
+          <div className="compare-scroll stack-5" tabIndex={0}>
             <table className="compare-full">
               <caption className="visually-hidden">{t("compare.pageTitle")}</caption>
               <thead>

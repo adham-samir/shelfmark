@@ -50,13 +50,13 @@ export default async function AccountPage() {
         </form>
       </div>
 
-      <div className="split" style={{ marginBlockStart: 18 }}>
+      <div className="split stack-4">
         <AccountForm locale={locale} profile={profile} />
 
         <div>
           <section className="panel" aria-labelledby="account-summary">
             <h2 id="account-summary">{t("account.title")}</h2>
-            <dl className="detail-specs" style={{ marginBlockStart: 0 }}>
+            <dl className="detail-specs stack-0">
               <div>
                 <dt>{t("account.email")}</dt>
                 <dd dir="ltr">{profile.email}</dd>
@@ -71,9 +71,9 @@ export default async function AccountPage() {
               </div>
             </dl>
             <Link
-              className="btn btn-quiet btn-block"
+              className="btn btn-quiet btn-block stack-3"
               href="/account/addresses"
-              style={{ marginBlockStart: 12 }}
+
             >
               {t("account.addresses")}
             </Link>
@@ -111,9 +111,9 @@ export default async function AccountPage() {
                   ))}
                 </ul>
                 <Link
-                  className="btn btn-block"
+                  className="btn btn-block stack-3"
                   href="/account/orders"
-                  style={{ marginBlockStart: 12 }}
+
                 >
                   {t("account.viewAll")}
                 </Link>
@@ -123,7 +123,7 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <div className="split" style={{ marginBlockStart: 18 }}>
+      <div className="split stack-4">
         <PasswordForm locale={locale} />
       </div>
     </main>

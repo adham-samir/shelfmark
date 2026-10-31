@@ -26,7 +26,7 @@ export function PasswordForm({ locale }: { locale: Locale }) {
     <form className="panel" action={action} noValidate>
       <h2>{t("account.security")}</h2>
       <p className="field-hint">{t("account.passwordHint")}</p>
-      <div className="form-grid" style={{ marginBlockStart: 12 }}>
+      <div className="form-grid stack-3">
         <div className="form-row">
           <label className="field-label" htmlFor="current-password">
             {t("account.currentPassword")} <span className="req">*</span>
@@ -75,7 +75,7 @@ export function PasswordForm({ locale }: { locale: Locale }) {
           </div>
         </div>
       </div>
-      <div className="row-actions" style={{ marginBlockStart: 12 }}>
+      <div className="row-actions stack-3">
         <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? t("account.passwordSaving") : t("account.passwordSubmit")}
         </button>

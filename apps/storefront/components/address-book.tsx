@@ -35,7 +35,7 @@ export function AddressForm({ locale }: { locale: Locale }) {
   return (
     <form className="panel" action={action} noValidate>
       <h2>{t("addresses.add")}</h2>
-      <div className="form-grid" style={{ marginBlockStart: 12 }}>
+      <div className="form-grid stack-3">
         <div className="form-row two">
           <div className="form-row">
             <label className="field-label" htmlFor="address-label">
@@ -119,7 +119,7 @@ export function AddressForm({ locale }: { locale: Locale }) {
           </label>
         </div>
       </div>
-      <div className="row-actions" style={{ marginBlockStart: 12 }}>
+      <div className="row-actions stack-3">
         <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? t("addresses.saving") : t("addresses.save")}
         </button>
@@ -157,7 +157,7 @@ export function AddressCard({
     return (
       <section className="panel" aria-label={address.label}>
         <h2>{t("addresses.edit")}</h2>
-        <form action={updateAction} className="form-grid" style={{ marginBlockStart: 12 }}>
+        <form action={updateAction} className="form-grid stack-3">
           <input type="hidden" name="address_id" value={address.address_id} />
           <div className="form-row two">
             <div className="form-row">
@@ -274,13 +274,13 @@ export function AddressCard({
         <h2>
           {address.label}
           {address.is_default ? (
-            <span className="pill" data-status="confirmed" style={{ marginInlineStart: 8 }}>
+            <span className="pill inline-loose" data-status="confirmed">
               {t("addresses.default")}
             </span>
           ) : null}
         </h2>
       </div>
-      <dl className="detail-specs" style={{ marginBlockStart: 10 }}>
+      <dl className="detail-specs stack-3">
         <div>
           <dt>{t("addresses.recipient")}</dt>
           <dd>{address.recipient_name}</dd>
@@ -298,7 +298,7 @@ export function AddressCard({
           <dd>{address.address_line}</dd>
         </div>
       </dl>
-      <div className="row-actions" style={{ marginBlockStart: 12 }}>
+      <div className="row-actions stack-3">
         <button className="btn btn-quiet" type="button" onClick={() => setEditing(true)}>
           {t("addresses.edit")}
         </button>

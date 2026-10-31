@@ -36,7 +36,7 @@ export function CancelOrderControl({
   }
 
   return (
-    <form action={action} className="lifecycle-control" style={{ marginBlockStart: 0 }}>
+    <form action={action} className="lifecycle-control stack-0">
       <input type="hidden" name="order_id" value={orderId} />
       <label className="field-label" htmlFor={`cancel-reason-${orderId}`}>
         {t("cancel.reason")}

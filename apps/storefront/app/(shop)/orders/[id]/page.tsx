@@ -69,7 +69,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           <p className="eyebrow">{t("order.title")}</p>
           <h1>{t("order.title")}</h1>
           <p>{t("order.intro")}</p>
-          <p className="field-hint" style={{ marginBlockStart: 6 }}>
+          <p className="field-hint stack-2">
             <span dir="ltr">{order.order_id}</span>
           </p>
         </div>
@@ -83,7 +83,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
       {order.status === "payment_failed" ? <Notice tone="error">{t("checkout.orderFailed")}</Notice> : null}
       {order.status === "cancelled" ? <Notice tone="error">{t("checkout.orderCancelled")}</Notice> : null}
 
-      <div className="split" style={{ marginBlockStart: 18 }}>
+      <div className="split stack-4">
         <section className="panel" aria-labelledby="order-items">
           <h2 id="order-items">{t("order.items")}</h2>
           <ul className="summary-lines">
@@ -98,7 +98,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               </li>
             ))}
           </ul>
-          <div className="totals" style={{ marginBlockStart: 12 }}>
+          <div className="totals stack-3">
             <div>
               <span>{t("order.created")}</span>
               <span>{formatDateTime(order.created_at, locale)}</span>
@@ -136,28 +136,28 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </>
           ) : (
             <div>
-              <p style={{ fontWeight: 500 }}>{t("order.shipmentUnavailable")}</p>
+              <p className="lead">{t("order.shipmentUnavailable")}</p>
               <p className="field-hint">{t("order.shipmentUnavailableHint")}</p>
             </div>
           )}
         </section>
       </div>
 
-      <section className="panel" aria-labelledby="order-reorder" style={{ marginBlockStart: 18 }}>
+      <section className="panel stack-4" aria-labelledby="order-reorder">
         <h2 id="order-reorder">{t("reorder.section")}</h2>
         <p className="field-hint">{t("reorder.sectionHint")}</p>
         <ReorderControl locale={locale} orderId={order.order_id} />
       </section>
 
       {cancellable ? (
-        <section className="panel" aria-labelledby="order-cancel" style={{ marginBlockStart: 18 }}>
+        <section className="panel stack-4" aria-labelledby="order-cancel">
           <h2 id="order-cancel">{t("cancel.section")}</h2>
           <p className="field-hint">{t("cancel.sectionHint")}</p>
           <CancelOrderControl locale={locale} orderId={order.order_id} />
         </section>
       ) : null}
 
-      <div style={{ marginBlockStart: 18, display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <div className="stack-4 row-actions">
         <Link className="btn" href="/">
           {t("cart.browse")}
         </Link>

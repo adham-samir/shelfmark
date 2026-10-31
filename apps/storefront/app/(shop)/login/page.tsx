@@ -31,7 +31,7 @@ export default async function LoginPage({
           <p>{t("auth.loginIntro")}</p>
         </div>
       </div>
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <AuthForm locale={locale} mode="login" next={next} />
       </div>
     </main>

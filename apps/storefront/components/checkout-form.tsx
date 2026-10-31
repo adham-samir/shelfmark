@@ -263,7 +263,7 @@ export function CheckoutForm({
             </li>
           ))}
         </ul>
-        <div className="totals" style={{ marginBlockStart: 12 }}>
+        <div className="totals stack-3">
           <div className="grand">
             <span>{t("checkout.total")}</span>
             <span>
@@ -273,7 +273,7 @@ export function CheckoutForm({
         </div>
 
         {failure ? (
-          <div className="notice" data-tone="error" role="alert" style={{ marginBlockStart: 12 }}>
+          <div className="notice stack-3" data-tone="error" role="alert">
             <div>
               <strong>{t("checkout.failed")}</strong>
               <p style={{ margin: 0 }}>{failure.message}</p>
@@ -284,14 +284,13 @@ export function CheckoutForm({
 
         <button
           type="submit"
-          className="btn btn-primary btn-block"
-          style={{ marginBlockStart: 14 }}
+          className="btn btn-primary btn-block stack-4"
           disabled={busy}
           aria-busy={busy}
         >
           {busy ? t("checkout.submitting") : t("checkout.submit")}
         </button>
-        <p className="field-hint" style={{ marginBlockStart: 8 }}>
+        <p className="field-hint stack-2">
           {t("checkout.riskNote")}
         </p>
         </div>

@@ -24,7 +24,7 @@ export default async function ImageSearchPage() {
           {t("image.fallback")}
         </Link>
       </div>
-      <div style={{ marginBlockStart: 18 }}>
+      <div className="stack-4">
         <Notice tone="info">{t("image.syntheticNote")}</Notice>
         <ImageSearchPanel locale={locale} />
       </div>

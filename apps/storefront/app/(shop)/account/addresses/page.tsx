@@ -36,14 +36,14 @@ export default async function AddressesPage() {
       </div>
 
       {book === null ? (
-        <div style={{ marginBlockStart: 18 }}>
+        <div className="stack-4">
           <EmptyState
             title={t("addresses.loadFailed")}
             hint={t("addresses.loadFailedHint")}
           />
         </div>
       ) : (
-        <div style={{ marginBlockStart: 18, display: "grid", gap: 18 }}>
+        <div className="stack-4 grid-stack">
           {book.items.length === 0 ? (
             <EmptyState
               title={t("addresses.empty")}

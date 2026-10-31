@@ -456,7 +456,8 @@
   padding-inline: var(--space-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
-  background: rgb(255 255 255 / 92%);
+  background: var(--veil-surface);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   color: var(--ink-2);
   font-size: var(--text-xs);
@@ -536,7 +537,7 @@
   padding: 2px var(--space-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: rgb(255 255 255 / 92%);
+  background: var(--veil-surface);
   color: var(--ink-3);
   font-size: var(--text-2xs);
   font-weight: var(--weight-medium);

@@ -12,7 +12,7 @@
   z-index: 45;
   border-block-start: 1px solid var(--border);
   background: var(--surface);
-  box-shadow: 0 -6px 24px rgb(15 23 42 / 8%);
+  box-shadow: var(--shadow-up-1);
   animation: slide-up-in var(--dur-slow) var(--ease-out) both;
 }
 
@@ -125,7 +125,7 @@
   overflow-y: auto;
   border-block-start: 1px solid var(--border);
   background: var(--surface);
-  box-shadow: 0 -12px 40px rgb(15 23 42 / 14%);
+  box-shadow: var(--shadow-up-2);
   animation: slide-up-in var(--dur-slow) var(--ease-out) both;
   /* Sits behind the dock bar, which stays usable while the drawer is open. */
   padding-block-end: 74px;

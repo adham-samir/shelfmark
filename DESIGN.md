@@ -301,6 +301,12 @@ Static structure comes from the border and the tonal step between `canvas`,
 **The Two-Tier Rule.** A surface is either flat on the canvas, raised one tier,
 or floating. There is no third resting elevation and no decorative glow.
 
+**The One-Literal Rule.** `tokens.css` is the only stylesheet that contains a
+colour literal. The focus ring, the translucent veil under floating controls,
+the hairline on the dark rail, and the pulse halo are all named tokens, so
+changing one decision means editing one file. A hex value outside `tokens.css`
+is a bug, not a shortcut.
+
 ## Shapes
 
 Controls use a 6px radius, panels 8px, cards 10px, and feature surfaces 14px.

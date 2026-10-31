@@ -198,7 +198,7 @@ export default async function SegmentsPage({
             ))}
           </section>
 
-          <div className="inventory-layout">
+          <div className="ledger-layout">
             <section className="inventory-sheet" aria-labelledby="segments-table-title">
               <div className="inventory-sheet-head">
                 <h2 id="segments-table-title">{selectedLabel}</h2>

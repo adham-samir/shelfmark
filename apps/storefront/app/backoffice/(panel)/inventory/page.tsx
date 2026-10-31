@@ -125,7 +125,7 @@ export default async function InventoryPage() {
         ))}
       </section>
 
-      <div className="inventory-full">
+      <div className="ledger-layout">
         <section className="inventory-sheet" aria-labelledby="inventory-table-title">
           <div className="inventory-sheet-head">
             <h2 id="inventory-table-title">{t("inventory.product")}</h2>
@@ -238,7 +238,7 @@ export default async function InventoryPage() {
                           ) : (
                             <small className="no-reorder">{t("inventory.noReorder")}</small>
                           )}
-                          <div style={{ marginBlockStart: 10 }}>
+                          <div className="stack-3">
                             <InventoryAdjustControl
                               locale={locale}
                               productId={item.product_id}

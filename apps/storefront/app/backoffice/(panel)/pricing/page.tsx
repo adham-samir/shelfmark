@@ -190,7 +190,7 @@ export default async function PricingPage() {
         ))}
       </section>
 
-      <div className="pricing-layout">
+      <div className="ledger-layout">
         <section className="inventory-sheet" aria-labelledby="pricing-table-title">
           <div className="inventory-sheet-head">
             <h2 id="pricing-table-title">{t("pricing.product")}</h2>
@@ -364,7 +364,7 @@ export default async function PricingPage() {
             </dl>
             <p>{t("pricing.synthetic")}</p>
           </section>
-          <section>
+          <section data-span="full">
             <h2>{t("pricing.audit")}</h2>
             {pricing.recent_changes.length === 0 ? (
               <p>{t("pricing.noChanges")}</p>
