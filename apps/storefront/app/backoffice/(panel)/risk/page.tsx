@@ -123,7 +123,7 @@ export default async function RiskPage() {
         ))}
       </section>
 
-      <div className="inventory-layout">
+      <div className="risk-layout">
         <section className="inventory-sheet" aria-labelledby="risk-table-title">
           <div className="inventory-sheet-head">
             <h2 id="risk-table-title">{t("risk.pending")}</h2>

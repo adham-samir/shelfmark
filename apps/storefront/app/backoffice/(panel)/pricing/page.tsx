@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { api, ApiError } from "@/lib/api";
 import { formatDate, formatDateTime, formatMoney, formatNumber } from "@/lib/format";
-import { translator } from "@/lib/i18n";
+import { translator, type MessageKey, type Translate } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale";
 import type { Locale, PricingInputStatus, PricingOverviewItem } from "@/lib/types";
 import { PricingObservationForm } from "@/components/pricing-observation-form";
@@ -47,6 +47,34 @@ function inputStatusKey(status: PricingInputStatus) {
     default:
       return "pricing.missingStatus" as const;
   }
+}
+
+/**
+ * The API explains blocked rows in English. Those explanations are part of the
+ * response contract, so the UI maps the known strings to localised copy rather
+ * than echoing English into the Arabic page.
+ */
+const detailKeys: Record<string, MessageKey> = {
+  "No pricing observation is recorded.": "pricing.detail.missing",
+  "The observation timestamp is in the future.": "pricing.detail.future",
+  "The observation is older than the 24-hour freshness limit.":
+    "pricing.detail.stale",
+  "The recorded cost floor exceeds the maximum permitted increase.":
+    "pricing.detail.floorExceeds",
+  "The recorded cost floor raised the proposed price.":
+    "pricing.detail.floorRaised",
+  "The cost floor and the change cap cannot both be satisfied.":
+    "pricing.detail.floorCap",
+  "The calculated price equals the current price.": "pricing.detail.equal",
+  "This observation has already produced a price change.":
+    "pricing.detail.already",
+  "Another writer changed the price first; the run left it untouched.":
+    "pricing.detail.conflict",
+};
+
+function detailLabel(t: Translate, detail: string): string {
+  const key = detailKeys[detail];
+  return key ? t(key) : detail;
 }
 
 function deltaLabel(item: PricingOverviewItem): string | null {
@@ -162,7 +190,7 @@ export default async function PricingPage() {
         ))}
       </section>
 
-      <div className="inventory-layout">
+      <div className="pricing-layout">
         <section className="inventory-sheet" aria-labelledby="pricing-table-title">
           <div className="inventory-sheet-head">
             <h2 id="pricing-table-title">{t("pricing.product")}</h2>
@@ -277,7 +305,7 @@ export default async function PricingPage() {
                             "constraint_blocked",
                             "conflict",
                           ].includes(item.outcome) ? (
-                            <small>{item.detail}</small>
+                            <small>{detailLabel(t, item.detail)}</small>
                           ) : null}
                         </td>
                         <td data-label={t("pricing.lastChange")}>

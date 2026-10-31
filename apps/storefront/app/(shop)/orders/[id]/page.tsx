@@ -5,7 +5,7 @@ import type { Locale, Order, Shipment } from "@/lib/types";
 import { api, ApiError } from "@/lib/api";
 import { getOrder } from "@/lib/data";
 import { getLocale } from "@/lib/locale";
-import { statusLabel, translator } from "@/lib/i18n";
+import { shipmentStatusLabel, statusLabel, translator } from "@/lib/i18n";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { ErrorState, Notice } from "@/components/states";
 import { requireCustomer } from "@/lib/session";
@@ -116,8 +116,8 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           <h2 id="order-shipment">{t("order.shipment")}</h2>
           {shipment ? (
             <>
-              <p className="pill" data-status={order.status}>
-                {shipment.status}
+              <p className="pill" data-status={shipment.status}>
+                {shipmentStatusLabel(t, shipment.status)}
               </p>
               <ol className="timeline">
                 {events.map((event, index) => (
@@ -125,7 +125,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                     <span className="dot" aria-hidden="true" />
                     <div>
                       <h3>{locale === "ar" ? event.description_ar : event.description_en}</h3>
-                      <p>{event.status}</p>
+                      <p>{shipmentStatusLabel(t, event.status)}</p>
                       <time dateTime={event.occurred_at}>
                         {formatDateTime(event.occurred_at, locale)}
                       </time>

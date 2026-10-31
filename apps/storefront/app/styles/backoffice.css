@@ -213,25 +213,29 @@
   white-space: nowrap;
 }
 
-/* Six columns: product, current stock, 14-day forecast, reorder point,
-   pending replenishment, status. The status column needs the most room because
-   it carries the supplier note; the two numeric columns need the least. */
-.inventory-table thead th:nth-child(1) {
+/* The inventory sheet is the only table using the base column set. It has six
+   columns: product, current stock, 14-day forecast, reorder point, pending
+   replenishment, status. Status takes the most room because it carries the
+   supplier note; the two numeric columns take the least.
+
+   Scoped to the page so the variant tables below can declare their own
+   proportions without fighting these. */
+.stock-table thead th:nth-child(1) {
   width: 19%;
 }
-.inventory-table thead th:nth-child(2) {
+.stock-table thead th:nth-child(2) {
   width: 14%;
 }
-.inventory-table thead th:nth-child(3) {
+.stock-table thead th:nth-child(3) {
   width: 20%;
 }
-.inventory-table thead th:nth-child(4) {
+.stock-table thead th:nth-child(4) {
   width: 10%;
 }
-.inventory-table thead th:nth-child(5) {
+.stock-table thead th:nth-child(5) {
   width: 11%;
 }
-.inventory-table thead th:nth-child(6) {
+.stock-table thead th:nth-child(6) {
   width: 26%;
 }
 
@@ -596,19 +600,170 @@
 
 /* -------------------------------------------------------- shared tables --- */
 
-/* Every operator table shares this shell so column widths and header treatment
-   are consistent across orders, risk, pricing, segments, and analytics. */
+/* Every operator table shares this shell so header treatment is consistent
+   across orders, risk, pricing, segments, and analytics. Column proportions
+   differ per table and are declared with it, below. */
 .pricing-table,
 .risk-table,
 .orders-table,
+.adjustments-table,
 .segments-table,
 .analytics-table {
   font-size: var(--text-sm);
 }
 
+@media (min-width: 761px) {
+  .pricing-table {
+    min-width: 1040px;
+  }
+  .risk-table {
+    min-width: 1040px;
+  }
+  .orders-table {
+    min-width: 980px;
+  }
+  .segments-table {
+    min-width: 780px;
+  }
+  .analytics-table {
+    min-width: 640px;
+  }
+  .adjustments-table {
+    min-width: 720px;
+  }
+}
+
+/* Pricing: product, current price, inputs, input status, proposal, last change. */
+.pricing-table thead th:nth-child(1) {
+  width: 17%;
+}
+.pricing-table thead th:nth-child(2) {
+  width: 15%;
+}
+.pricing-table thead th:nth-child(3) {
+  width: 22%;
+}
+.pricing-table thead th:nth-child(4) {
+  width: 10%;
+}
+.pricing-table thead th:nth-child(5) {
+  width: 18%;
+}
+.pricing-table thead th:nth-child(6) {
+  width: 18%;
+}
+
+/* Risk: order, subtotal, score, outcome, reasons, decision. The reasons and
+   decision columns take the majority of the width because reason identifiers
+   are the longest strings on the page and the decision is two buttons wide. */
+.risk-table thead th:nth-child(1) {
+  width: 15%;
+}
+.risk-table thead th:nth-child(2) {
+  width: 11%;
+}
+.risk-table thead th:nth-child(3) {
+  width: 8%;
+}
+.risk-table thead th:nth-child(4) {
+  width: 11%;
+}
+.risk-table thead th:nth-child(5) {
+  width: 33%;
+}
+.risk-table thead th:nth-child(6) {
+  width: 22%;
+}
+
+/* Money must never wrap onto a second line: `20,079.86 / EGP` reads as two
+   values. Every currency cell keeps its amount and code together. */
+.metric-value,
+.price-cell strong,
+.number-cell strong,
+td[data-label] > .metric-value {
+  white-space: nowrap;
+}
+
+/* Orders: order id, customer, status, items, subtotal, created, actions. */
+.orders-table thead th:nth-child(1) {
+  width: 15%;
+}
+.orders-table thead th:nth-child(2) {
+  width: 21%;
+}
+.orders-table thead th:nth-child(3) {
+  width: 11%;
+}
+.orders-table thead th:nth-child(4) {
+  width: 6%;
+}
+.orders-table thead th:nth-child(5) {
+  width: 15%;
+}
+.orders-table thead th:nth-child(6) {
+  width: 20%;
+}
+.orders-table thead th:nth-child(7) {
+  width: 12%;
+}
+
+/* The action button hugs the outer edge of the row instead of floating in the
+   middle of an oversized cell. */
+.orders-table tbody td:last-child {
+  text-align: end;
+}
+
+/* Segments: customer, recency, frequency, monetary, segment. */
+.segments-table thead th:nth-child(1) {
+  width: 33%;
+}
+.segments-table thead th:nth-child(2) {
+  width: 14%;
+}
+.segments-table thead th:nth-child(3) {
+  width: 14%;
+}
+.segments-table thead th:nth-child(4) {
+  width: 22%;
+}
+.segments-table thead th:nth-child(5) {
+  width: 17%;
+}
+
+/* Analytics: product, views, carts, units, revenue. */
+.analytics-table thead th:nth-child(1) {
+  width: 38%;
+}
+.analytics-table thead th:nth-child(2),
+.analytics-table thead th:nth-child(3),
+.analytics-table thead th:nth-child(4) {
+  width: 14%;
+}
+.analytics-table thead th:nth-child(5) {
+  width: 20%;
+}
+
+/* Order-detail adjustments: kind, amount, reason, actor, time. */
+.adjustments-table thead th:nth-child(1) {
+  width: 20%;
+}
+.adjustments-table thead th:nth-child(2) {
+  width: 16%;
+}
+.adjustments-table thead th:nth-child(3) {
+  width: 32%;
+}
+.adjustments-table thead th:nth-child(4) {
+  width: 16%;
+}
+.adjustments-table thead th:nth-child(5) {
+  width: 16%;
+}
+
 .pricing-table tbody th code,
 .risk-table tbody th code,
 .orders-table tbody th code,
+.adjustments-table tbody th code,
 .segments-table tbody th code,
 .analytics-table tbody th code {
   display: block;
@@ -619,7 +774,8 @@
 }
 
 .risk-table tbody th small,
-.orders-table td small {
+.orders-table td small,
+.adjustments-table td small {
   display: block;
   margin-block-start: 3px;
   color: var(--ink-3);
@@ -822,6 +978,132 @@
   position: static;
 }
 
+/* Pricing carries six columns including a four-value input stack, so the sheet
+   takes the full width and the policy/audit evidence moves below it. The audit
+   trail runs as a two-column ledger under the policy strip: it is reference
+   material, not a column that competes with the decision table. */
+.inventory-full,
+.pricing-layout,
+.risk-layout {
+  display: grid;
+  gap: var(--space-6);
+  margin-block-start: var(--space-6);
+}
+
+.pricing-layout .inventory-evidence {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-6);
+}
+
+.pricing-layout .inventory-evidence section {
+  padding-block: 0;
+  border-block-end: 0;
+}
+
+.pricing-layout .inventory-evidence section:last-child {
+  grid-column: 1 / -1;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border);
+}
+
+.pricing-layout .audit-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-6);
+}
+
+/* The audit entries inherit the numbered policy list; here each entry is a
+   name, its before/after amounts, and a timestamp, so the counter and its 20px
+   marker column are dropped and the amounts sit opposite the product name. */
+.inventory-evidence .audit-list li {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  counter-increment: none;
+}
+
+.inventory-evidence .audit-list li::before {
+  content: none;
+}
+
+.inventory-evidence .audit-list strong {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.inventory-evidence .audit-list small {
+  grid-column: 1 / -1;
+}
+
+.pricing-layout .audit-list li:nth-last-child(-n + 2) {
+  border-block-end: 0;
+}
+
+@media (max-width: 900px) {
+  .pricing-layout .inventory-evidence,
+  .pricing-layout .audit-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pricing-layout .audit-list li:nth-last-child(2) {
+    border-block-end: 1px solid var(--border);
+  }
+}
+
+/* Inventory's six-column sheet needs the full width too: its status column
+   carries the adjust control, so it must never sit behind a horizontal scroll.
+   The policy and model evidence sit side by side underneath. */
+.inventory-full .inventory-evidence {
+  position: static;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.inventory-full .inventory-evidence section {
+  padding-block: 0;
+  border-block-end: 0;
+}
+
+@media (max-width: 900px) {
+  .inventory-full .inventory-evidence {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .inventory-full .inventory-evidence section {
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--border);
+  }
+  .inventory-full .inventory-evidence section:last-child {
+    border-block-end: 0;
+  }
+}
+
+/* The review table is the primary surface on this page, so it takes the full
+   width and the model evidence sits below it. A 300px evidence column beside a
+   980px table pushes the decision buttons behind a horizontal scroll, which is
+   the one control an operator actually needs to reach. */
+.risk-layout .inventory-evidence {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.risk-layout .inventory-evidence section {
+  padding-block: 0;
+  border-block-end: 0;
+}
+
+@media (max-width: 900px) {
+  .risk-layout .inventory-evidence {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .risk-layout .inventory-evidence section {
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--border);
+  }
+}
+
 @media (max-width: 900px) {
   .pricing-form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -975,6 +1257,20 @@
 .segments-rules code {
   color: var(--ink-3);
   font-size: var(--text-2xs);
+  overflow-wrap: anywhere;
+}
+
+/* The band matrix reuses the policy list, but each row is a name above its
+   rule rather than a numbered paragraph. Without this the policy counter and
+   the 20px marker column squeeze the rule into a one-character-wide strip. */
+.inventory-evidence .segments-rules li {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  counter-increment: none;
+}
+
+.inventory-evidence .segments-rules li::before {
+  content: none;
 }
 
 @media (max-width: 1180px) {
@@ -1000,6 +1296,14 @@
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
   line-height: var(--leading-snug);
+}
+
+/* Underscore-joined identifiers such as `order_velocity_24h_high` have no
+   natural break point. With the table now at full width the column is wide
+   enough to hold them; `anywhere` is the safety net for an unusually long one
+   rather than the normal case. */
+.risk-reasons li {
+  overflow-wrap: anywhere;
 }
 
 .risk-decisions {
@@ -1371,6 +1675,13 @@
   font-size: var(--text-2xl);
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
+}
+
+/* A date is a state, not a count: it reads at label size rather than as a
+   headline number that fills the card. */
+.bo-card-value[data-kind="date"] {
+  color: var(--ink-2);
+  font-size: var(--text-lg);
 }
 
 .bo-card .btn {

@@ -735,10 +735,26 @@ button.chip:hover {
 }
 
 .pill[data-status="cancelled"],
-.pill[data-status="payment_failed"] {
+.pill[data-status="payment_failed"],
+.pill[data-status="exception"] {
   border-color: var(--danger-border);
   background: var(--danger-soft);
   color: var(--danger);
+}
+
+/* Shipment states share the badge with order states but use their own
+   vocabulary, so they carry their own tones. */
+.pill[data-status="pending"],
+.pill[data-status="ready"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.pill[data-status="in_transit"] {
+  border-color: var(--primary-soft-border);
+  background: var(--primary-soft);
+  color: var(--primary-active);
 }
 
 /* ------------------------------------------------------------------ misc --- */

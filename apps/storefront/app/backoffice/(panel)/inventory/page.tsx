@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { api, ApiError } from "@/lib/api";
 import { formatDate, formatDateTime, formatNumber } from "@/lib/format";
-import { translator } from "@/lib/i18n";
+import { translator, type Translate } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale";
 import type { InventoryPlanningItem, Locale } from "@/lib/types";
 import { InventoryRunControl } from "@/components/inventory-run-control";
@@ -25,6 +25,17 @@ function statusKey(item: InventoryPlanningItem) {
     default:
       return "inventory.forecastMissing" as const;
   }
+}
+
+/**
+ * The simulator writes one fixed English acknowledgement into the reorder
+ * record. Localise that known sentence; any other detail is API text and is
+ * shown as received.
+ */
+const SUPPLIER_ACK = "Acknowledged by the synthetic supplier simulator.";
+
+function statusDetail(t: Translate, detail: string): string {
+  return detail === SUPPLIER_ACK ? t("inventory.supplierAck") : detail;
 }
 
 export default async function InventoryPage() {
@@ -114,7 +125,7 @@ export default async function InventoryPage() {
         ))}
       </section>
 
-      <div className="inventory-layout">
+      <div className="inventory-full">
         <section className="inventory-sheet" aria-labelledby="inventory-table-title">
           <div className="inventory-sheet-head">
             <h2 id="inventory-table-title">{t("inventory.product")}</h2>
@@ -124,7 +135,7 @@ export default async function InventoryPage() {
             <EmptyState title={t("inventory.empty")} />
           ) : (
             <div className="inventory-table-wrap" tabIndex={0}>
-              <table className="inventory-table">
+              <table className="inventory-table stock-table">
                 <thead>
                   <tr>
                     <th>{t("inventory.product")}</th>
@@ -219,7 +230,9 @@ export default async function InventoryPage() {
                                 </span>
                               ) : null}
                               {item.latest_reorder.status_detail ? (
-                                <span>{item.latest_reorder.status_detail}</span>
+                                <span>
+                                  {statusDetail(t, item.latest_reorder.status_detail)}
+                                </span>
                               ) : null}
                             </div>
                           ) : (

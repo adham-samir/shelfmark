@@ -108,6 +108,10 @@ export default async function AnalyticsPage({
   );
   const mismatches = report.reconciliation.filter((check) => !check.matches);
   const money = (value: string) => formatMoney(value, locale);
+  // Revenue is an aggregate of exact decimal line totals and can carry six
+  // decimal places; operators read money at two, so the ledger rounds for
+  // display only.
+  const revenue = (value: string) => money(Number(value).toFixed(2));
   const unfilteredHref = `/backoffice/analytics?from=${from}&to=${to}`;
 
   return (
@@ -315,7 +319,7 @@ export default async function AnalyticsPage({
                             {formatNumber(item.units, locale)}
                           </td>
                           <td data-label={t("analytics.revenue")} dir="ltr">
-                            {money(item.revenue)}
+                            {revenue(item.revenue)}
                           </td>
                         </tr>
                       ))}

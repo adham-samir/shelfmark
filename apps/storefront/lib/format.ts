@@ -45,11 +45,15 @@ export function formatDateTime(value: string, _locale: Locale): string {
 export function formatDate(value: string, locale: Locale): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-GB", {
+  const formatted = new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-GB", {
     dateStyle: "medium",
     timeZone: CAIRO,
     numberingSystem: "latn",
   }).format(date);
+  // Arabic numeric dates carry RLM marks between their segments, which flip the
+  // day and year when the surrounding paragraph is RTL. Strip the marks and
+  // isolate the result so the date always reads in logical order.
+  return `\u2066${formatted.replace(/[\u200e\u200f\u061c]/g, "")}\u2069`;
 }
 
 export function formatNumber(value: number, _locale: Locale): string {

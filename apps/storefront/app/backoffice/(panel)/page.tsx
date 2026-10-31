@@ -86,7 +86,10 @@ export default async function BackofficeHomePage() {
             style={{ "--i": index } as React.CSSProperties}
           >
             <h2>{card.title}</h2>
-            <p className="bo-card-value">
+            <p
+              className="bo-card-value"
+              data-kind={typeof card.value === "string" ? "date" : "count"}
+            >
               {card.value === null
                 ? "—"
                 : typeof card.value === "string"

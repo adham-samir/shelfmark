@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTime, formatMoney, sumMoney } from "@/lib/format";
-import { statusLabel, translator } from "@/lib/i18n";
+import { shipmentStatusLabel, statusLabel, translator } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale";
 import type { Locale, OperatorOrderDetail } from "@/lib/types";
 import { ErrorState } from "@/components/states";
@@ -187,8 +187,8 @@ export default async function BackofficeOrderPage({
         <h2 id="operator-shipment">{t("adminOrders.shipment")}</h2>
         {order.shipment ? (
           <>
-            <p className="pill" data-status={order.status}>
-              {order.shipment.status}
+            <p className="pill" data-status={order.shipment.status}>
+              {shipmentStatusLabel(t, order.shipment.status)}
             </p>
             <ol className="timeline">
               {shippedEvents.map((event, index) => (
@@ -199,7 +199,7 @@ export default async function BackofficeOrderPage({
                   <span className="dot" aria-hidden="true" />
                   <div>
                     <h3>{locale === "ar" ? event.description_ar : event.description_en}</h3>
-                    <p>{event.status}</p>
+                    <p>{shipmentStatusLabel(t, event.status)}</p>
                     <time dateTime={event.occurred_at}>
                       {formatDateTime(event.occurred_at, locale)}
                     </time>
@@ -230,7 +230,7 @@ export default async function BackofficeOrderPage({
             role="region"
             aria-label={t("adminOrders.adjustments")}
           >
-            <table className="inventory-table orders-table">
+            <table className="inventory-table adjustments-table">
               <thead>
                 <tr>
                   <th scope="col">{t("adminOrders.adjustmentKind")}</th>

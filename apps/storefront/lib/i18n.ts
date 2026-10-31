@@ -226,6 +226,11 @@ const ar = {
   "order.statusShipped": "تم الشحن",
   "order.statusDelivered": "تم التوصيل",
   "order.statusRefunded": "مسترد",
+  "shipment.statusPending": "قيد التجهيز",
+  "shipment.statusReady": "جاهزة للشحن",
+  "shipment.statusInTransit": "في الطريق",
+  "shipment.statusDelivered": "مسلَّمة",
+  "shipment.statusException": "استثناء",
   "order.backToCart": "العودة إلى السلة",
   "cancel.section": "إلغاء الطلب",
   "reorder.section": "أعد الطلب",
@@ -380,6 +385,7 @@ const ar = {
   "inventory.policyTarget": "إعادة الطلب حتى تغطية ٢١ يومًا",
   "inventory.evidence": "دليل النموذج",
   "inventory.synthetic": "التاريخ ومحاكي المورد اصطناعيان. تثبت النتائج سلوك السلسلة ولا تثبت جودة توقع على بيانات تشغيلية حقيقية.",
+  "inventory.supplierAck": "أقرّها محاكي المورد الاصطناعي.",
   "inventory.loadFailed": "تعذر تحميل تخطيط المخزون",
   "inventory.loadFailedHint": "تحقق من نموذج التوقع وترحيل قاعدة البيانات وصلاحية inventory:write.",
   "inventory.unauthorized": "جلسة المشغّل غير متاحة",
@@ -439,6 +445,15 @@ const ar = {
   "pricing.weights": "الأوزان (الطلب / المنافس)",
   "pricing.rounding": "التقريب (جنيه)",
   "pricing.synthetic": "تكاليف المنافسين قيم مستوردة اصطناعية (DEC-007)، وليست تغذية حقيقية. تثبت النتائج سلوك السياسة فقط.",
+  "pricing.detail.missing": "لا توجد ملاحظة تسعير مسجلة.",
+  "pricing.detail.future": "وقت رصد الملاحظة في المستقبل.",
+  "pricing.detail.stale": "الملاحظة أقدم من حد الحداثة البالغ ٢٤ ساعة.",
+  "pricing.detail.floorExceeds": "حد التكلفة المسجلة يتجاوز أقصى زيادة مسموح بها.",
+  "pricing.detail.floorRaised": "رفع حد التكلفة المسجلة السعر المقترح.",
+  "pricing.detail.floorCap": "تعذّر تحقيق حد التكلفة وسقف التغيير معًا.",
+  "pricing.detail.equal": "السعر المحتسب يساوي السعر الحالي.",
+  "pricing.detail.already": "أنتجت هذه الملاحظة تغيير سعر بالفعل.",
+  "pricing.detail.conflict": "غيّر كاتب آخر السعر أولًا؛ فتركه التشغيل دون تغيير.",
   "pricing.import": "استيراد ملاحظة تسعير",
   "pricing.importHint": "سجّل العرض والطلب والتكلفة وتكلفة المنافس لمنتج نشط؛ تُستخدم في التشغيل التالي.",
   "pricing.importProduct": "المنتج",
@@ -1069,6 +1084,11 @@ const en: Record<keyof typeof ar, string> = {
   "order.statusShipped": "Shipped",
   "order.statusDelivered": "Delivered",
   "order.statusRefunded": "Refunded",
+  "shipment.statusPending": "Pending",
+  "shipment.statusReady": "Ready to ship",
+  "shipment.statusInTransit": "In transit",
+  "shipment.statusDelivered": "Delivered",
+  "shipment.statusException": "Exception",
   "order.backToCart": "Back to cart",
   "cancel.section": "Cancel this order",
   "reorder.section": "Order again",
@@ -1223,6 +1243,7 @@ const en: Record<keyof typeof ar, string> = {
   "inventory.policyTarget": "Reorder to 21 days of cover",
   "inventory.evidence": "Model evidence",
   "inventory.synthetic": "The history and supplier are synthetic. Results verify pipeline behavior, not forecast quality on real operational data.",
+  "inventory.supplierAck": "Acknowledged by the synthetic supplier simulator.",
   "inventory.loadFailed": "Inventory planning could not be loaded",
   "inventory.loadFailedHint": "Check the forecast artifact, database migration, and inventory:write capability.",
   "inventory.unauthorized": "Operator session unavailable",
@@ -1282,6 +1303,15 @@ const en: Record<keyof typeof ar, string> = {
   "pricing.weights": "Weights (demand / competitor)",
   "pricing.rounding": "Rounding (EGP)",
   "pricing.synthetic": "Competitors' costs are synthetic imported values (DEC-007), not a real feed. Results verify policy behavior only.",
+  "pricing.detail.missing": "No pricing observation is recorded.",
+  "pricing.detail.future": "The observation timestamp is in the future.",
+  "pricing.detail.stale": "The observation is older than the 24-hour freshness limit.",
+  "pricing.detail.floorExceeds": "The recorded cost floor exceeds the maximum permitted increase.",
+  "pricing.detail.floorRaised": "The recorded cost floor raised the proposed price.",
+  "pricing.detail.floorCap": "The cost floor and the change cap cannot both be satisfied.",
+  "pricing.detail.equal": "The calculated price equals the current price.",
+  "pricing.detail.already": "This observation has already produced a price change.",
+  "pricing.detail.conflict": "Another writer changed the price first; the run left it untouched.",
   "pricing.import": "Import pricing observation",
   "pricing.importHint": "Record supply, demand, recorded cost, and competitor cost for an active product; the next run uses them.",
   "pricing.importProduct": "Product",
@@ -1776,6 +1806,21 @@ export function statusLabel(
     shipped: "order.statusShipped",
     delivered: "order.statusDelivered",
     refunded: "order.statusRefunded",
+  };
+  return t(keys[status]);
+}
+
+/** Shipment states are their own vocabulary; they are not order states. */
+export function shipmentStatusLabel(
+  t: Translate,
+  status: "pending" | "ready" | "in_transit" | "delivered" | "exception",
+): string {
+  const keys: Record<typeof status, MessageKey> = {
+    pending: "shipment.statusPending",
+    ready: "shipment.statusReady",
+    in_transit: "shipment.statusInTransit",
+    delivered: "shipment.statusDelivered",
+    exception: "shipment.statusException",
   };
   return t(keys[status]);
 }
