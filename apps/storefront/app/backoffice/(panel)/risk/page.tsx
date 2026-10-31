@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTime, formatMoney } from "@/lib/format";
-import { translator } from "@/lib/i18n";
+import { translator, type MessageKey, type Translate } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale";
 import type { FraudModelSummary, Locale, ReviewQueueItem } from "@/lib/types";
 import { RiskDecisionForm } from "@/components/risk-decision-form";
@@ -23,6 +23,29 @@ function outcomeKey(outcome: ReviewQueueItem["outcome"]) {
   return outcome === "assessment_failed"
     ? ("risk.failedOutcome" as const)
     : ("risk.reviewOutcome" as const);
+}
+
+/**
+ * The fraud model emits stable reason identifiers. Operators get the plain
+ * sentence; the identifier stays underneath as the reference that matches the
+ * logs and the model artifact.
+ */
+const reasonKeys: Record<string, MessageKey> = {
+  amount_above_customer_norm: "risk.reason.amountAboveNorm",
+  order_velocity_24h_high: "risk.reason.orderVelocity",
+  prior_failed_attempts: "risk.reason.priorFailures",
+  new_shipping_address: "risk.reason.newAddress",
+  payment_token_reuse: "risk.reason.tokenReuse",
+  unusual_order_hour: "risk.reason.unusualHour",
+  first_order: "risk.reason.firstOrder",
+  fraud_model_unavailable: "risk.reason.modelUnavailable",
+  model_score_at_or_above_threshold: "risk.reason.scoreAbove",
+  model_score_below_threshold: "risk.reason.scoreBelow",
+};
+
+function reasonLabel(t: Translate, reason: string): string {
+  const key = reasonKeys[reason];
+  return key ? t(key) : reason;
 }
 
 export default async function RiskPage() {
@@ -123,7 +146,7 @@ export default async function RiskPage() {
         ))}
       </section>
 
-      <div className="risk-layout">
+      <div className="ledger-layout">
         <section className="inventory-sheet" aria-labelledby="risk-table-title">
           <div className="inventory-sheet-head">
             <h2 id="risk-table-title">{t("risk.pending")}</h2>
@@ -185,8 +208,9 @@ export default async function RiskPage() {
                       <td data-label={t("risk.reasons")}>
                         <ul className="risk-reasons">
                           {review.reasons.map((reason) => (
-                            <li key={reason} dir="ltr">
-                              {reason}
+                            <li key={reason}>
+                              <span>{reasonLabel(t, reason)}</span>
+                              <code dir="ltr">{reason}</code>
                             </li>
                           ))}
                         </ul>
