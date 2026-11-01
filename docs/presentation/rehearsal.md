@@ -1,19 +1,26 @@
 # Demo rehearsal log
 
-Date: 2026-11-01 (re-run after the "Two instruments" UI overhaul)
+Date: 2026-11-01 (second re-run: after the assistant, catalog-spec and shipment work)
 Script: [`docs/demo-script.md`](../demo-script.md)
 Runner: `tests/accessibility/rehearsal.mjs` (Playwright + Chromium, drives the real UI)
 
-This run reconciles the runner with the overhauled markup (defects 16–17) and
-recaptures every deck screen from the current interface. The 2026-10-30 numbers
-and the defects that run found are preserved below in the drift history.
+This run recaptures every deck screen after the assistant gained conversation
+memory, order attachment and its own personality; after the catalog fixtures
+gained camera/OS/battery specs; and after the demo seed gained real shipment
+rows, so the order page now shows a tracking timeline. The runner needed no
+selector changes (0 drift): the markup it targets was untouched.
+
+Seed-baseline counts are unchanged from the previous run — 13 products, 12
+reorders, 38 classified customers, 226 browsing events, 15 purchases — so the
+screens are comparable rather than merely fresh. Earlier runs and the defects
+they found are preserved below in the drift history.
 
 ## Environment
 
 | Item | Value |
 |---|---|
 | Stack | Isolated Docker Compose project `demo-rehearsal` (fresh volumes, synthetic seed applied) |
-| API | PostgreSQL 18.6 + MongoDB 8.0.34, container image `services/api` |
+| API | PostgreSQL 18.6 + MongoDB 8.2 (the pinned version; earlier runs measured 8.0.34), container image `services/api` |
 | Storefront | Next.js 16.4.3 production build, pointed at the isolated API |
 | Identities | Demo accounts from the seed: `customer@example.invalid` / `demo-customer-1`, `operator@example.invalid` / `demo-operator-1` (DEC-017) |
 | Reset | `docker compose … down -v && up -d` re-seeds the stack between attempts |
@@ -23,40 +30,43 @@ Each attempt starts from a re-seeded stack, so seed-baseline counts (12 reorders
 accumulated. New registrations would raise the segmentation baseline, so the
 demo stays on the seeded accounts.
 
-The 2026-11-01 run used the same logical stack on a host where the Docker bridge
-network is unavailable: PostgreSQL and MongoDB ran as host-network containers,
-the API and the production storefront as host processes. The application is
-identical; only the process/network placement differs.
+The first 2026-11-01 run used this same logical stack on a host where the Docker
+bridge network was unavailable: PostgreSQL and MongoDB ran as host-network
+containers, the API and the production storefront as host processes. The
+application is identical; only the process/network placement differs. This
+re-run used the ordinary isolated compose project. The API container loads the
+repo-root `.env`, so the assistant steps run against the live provider
+(OpenRouter + `deepseek/deepseek-v4.1-flash`).
 
 ## Result
 
-**0 drift, 31 captured screens, 26.4 s of automated interaction** (a narrated
+**0 drift, 31 captured screens, 30.8 s of automated interaction** (a narrated
 presentation of the same script runs about 12 minutes).
 
 | Step | Seconds | Observed |
 |---|---|---|
-| 0. Demo sign-in — ID-01 | 1.3 | Customer signed in at `/login` → `/account`; operator at `/backoffice/login` → `/backoffice`; both sessions present at once |
-| 0b. Password rotation — COM-10 | 1.0 | Changed with the current password; the old value then returned 401, the new one 200. The seeded value was restored so later steps keep working |
-| 0c. Saved addresses — COM-12 | 3.0 | Created, promoted to default through the edit form, then deleted; the first address was default without being asked |
-| 1. Storefront discovery — COM-01, SF-03 | 0.9 | 13 products at page size 24; Phones + `storage 128 GB` narrowed the grid and the facets |
-| 1b. Image search — SF-03 | 0.8 | With the Phones filter, X1 Phone ranked first; a text file renamed `.png` was rejected with the reason |
-| 1c. Voice search — SF-03 | 0.4 | Microphone denial state shown, with the text-search fallback |
+| 0. Demo sign-in — ID-01 | 3.1 | Customer signed in at `/login` → `/account`; operator at `/backoffice/login` → `/backoffice`; both sessions present at once |
+| 0b. Password rotation — COM-10 | 1.4 | Changed with the current password; the old value then returned 401, the new one 200. The seeded value was restored so later steps keep working |
+| 0c. Saved addresses — COM-12 | 3.2 | Created, promoted to default through the edit form, then deleted; the first address was default without being asked |
+| 1. Storefront discovery — COM-01, SF-03 | 1.2 | 13 products at page size 24; Phones + `storage 128 GB` narrowed the grid and the facets |
+| 1b. Image search — SF-03 | 0.9 | With the Phones filter, X1 Phone ranked first; a text file renamed `.png` was rejected with the reason |
+| 1c. Voice search — SF-03 | 0.5 | Microphone denial state shown, with the text-search fallback |
 | 2. Recommendations — SF-01 | 0.4 | `strategy: hybrid`, 226 browsing events, 15 purchased items, no seen item returned |
-| 3a. Cart + safe checkout — COM-02/03/04 | 1.0 | Order confirmed, shipment created, price snapshot 8,900 EGP |
-| 3b. High-risk checkout — BO-04 | 0.7 | Order in review, shipment correctly absent |
+| 3a. Cart + safe checkout — COM-02/03/04 | 1.2 | Order confirmed, shipment created, price snapshot 8,900 EGP |
+| 3b. High-risk checkout — BO-04 | 0.8 | Order in review, shipment correctly absent |
 | 3c. Risk review allow — BO-04 | 0.9 | Operator allow confirmed the order and created the shipment |
-| 3d. Assessment failure — BO-04 | 0.6 | `assessment_failed` routed to review, no completion |
+| 3d. Assessment failure — BO-04 | 0.8 | `assessment_failed` routed to review, no completion |
 | 3e. Model card — BO-04 | 0.3 | Threshold 0.699, recall 83.3%, FPR 7.8%, limitations listed |
-| 3f. Buy again — COM-13 | 0.3 | Reorder refilled the empty cart at the **current** price, not the checkout snapshot |
-| 3g. Operator lifecycle — COM-09 | 7.0 | `ready` → `in_transit` moved the order to `shipped`; a 100 EGP partial refund left the subtotal unchanged and appeared in the adjustment history with the operator's identity |
-| 4. Predictive inventory — BO-01 | 2.6 | 13 forecasts, 12 new reorders, 0 reused; the rerun created 0 |
-| 5a. Dynamic pricing run — BO-02 | 1.2 | 12 prices updated, 1 stale input, 0 blocked |
+| 3f. Buy again — COM-13 | 0.5 | Reorder refilled the empty cart at the **current** price, not the checkout snapshot |
+| 3g. Operator lifecycle — COM-09 | 7.2 | `ready` → `in_transit` moved the order to `shipped`; a 100 EGP partial refund left the subtotal unchanged and appeared in the adjustment history with the operator's identity |
+| 4. Predictive inventory — BO-01 | 2.9 | 13 forecasts, 12 new reorders, 0 reused; the rerun created 0 |
+| 5a. Dynamic pricing run — BO-02 | 0.5 | 12 prices updated, 1 stale input, 0 blocked |
 | 5b. Price propagation + snapshot — BO-02 | 0.6 | Storefront showed 10,039.93; the earlier order still showed 8,900 |
-| 5c. Observation import + bounded rerun — BO-02 | 0.7 | 10,039.93 → 12,047.91 (+19.98%, inside the ±20% cap) |
-| 6. RFM segmentation — BO-03 | 0.7 | 38 classified, 2 without history, 6 segments, CSV export matched the filtered group |
+| 5c. Observation import + bounded rerun — BO-02 | 0.9 | 10,039.93 → 12,047.91 (+19.98%, inside the ±20% cap) |
+| 6. RFM segmentation — BO-03 | 0.8 | 38 classified, 2 without history, 6 segments, CSV export matched the filtered group |
 | 7. BI dashboards — BI-01 | 1.0 | Date/category filters recomputed; both reconciliation checks matched |
-| 8. English LTR parity | 0.7 | `lang="en" dir="ltr"` with the same capabilities and both session cookies |
-| 9. Failure states | 0.3 | Unknown product returns HTTP 404; the assistant shows its provider state |
+| 8. English LTR parity | 1.2 | `lang="en" dir="ltr"` with the same capabilities and both session cookies |
+| 9. Failure states | 0.5 | Unknown product returns HTTP 404; the assistant page renders its live chat, suggestion chips and order picker |
 | 10. Evidence check | 0.0 | Inventory and model evidence persisted and readable |
 
 Browser console during the final run: exactly two errors, both intentional — the
@@ -130,7 +140,8 @@ denial, product detail with the exhausted recommendation state, cart, checkout,
 confirmed order, order in review, risk queue, model card, inventory run, pricing
 run, storefront price after repricing, order price snapshot, observation import,
 pricing after import, segmentation run and filtered segment, analytics (Arabic
-and English), unknown product, the assistant surface, the password-change
+and English), unknown product, the live assistant surface (chat, suggestion
+chips and order picker), the password-change
 confirmation, the address book, buy-again, and the operator order detail with the
 refund in its adjustment history.
 
@@ -148,5 +159,15 @@ npm run verify-deck     # checks the deck layout at 1440 / 960 / 700
 `rehearse.mjs` needs `DEMO_UI` and `DEMO_API` if the stack is not on the default
 ports. Point `DEMO_SHOTS` at a scratch directory first: the runner overwrites the
 committed assets, so compare the new captures before copying them in. The run
-recorded above used an isolated compose project seeded by the migration runner,
-with the API on 18040 and the storefront on 3100.
+recorded above used an isolated compose project (`-p demo-rehearsal`) seeded by
+the migration runner, published on the default ports 3000 and 8000, with the
+repo-root `.env` supplying the live provider key. To reproduce it without
+touching your own stack, stop it, then bring the isolated one up:
+
+```bash
+docker compose -f infra/compose.yaml down
+docker compose -p demo-rehearsal -f infra/compose.yaml up -d --build
+DEMO_UI=http://127.0.0.1:3000 DEMO_API=http://127.0.0.1:8000 npm run rehearse
+docker compose -p demo-rehearsal -f infra/compose.yaml down -v
+docker compose -f infra/compose.yaml up -d
+```

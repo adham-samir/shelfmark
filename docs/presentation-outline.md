@@ -32,7 +32,7 @@ Walk the seven modules with one screenshot each and one measured number:
 | Module | Evidence to show |
 |---|---|
 | SF-01 recommendations | nDCG@10 1.0 vs 0.690 popularity baseline; exhausted-state rail when all four artifact items are seen |
-| SF-02 assistant | grounded FAQ + catalog + owned shipments; isolation proven |
+| SF-02 assistant | grounded FAQ + catalog + owned orders/shipments, conversation memory, attach-an-order questions; isolation proven; live through OpenRouter + DeepSeek |
 | SF-03 search | image retrieval 1.0 top-1; voice adapter; dynamic facets |
 | BO-01 inventory | 3.35% MAPE; 12 reorders created, 0 duplicates on rerun |
 | BO-02 pricing | ±20% cap, cost+5% floor, audit trail, storefront propagation |

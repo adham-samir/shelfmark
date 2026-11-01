@@ -215,4 +215,4 @@ specific message when it is missing.
 | “Permission required” | The operator lacks the page's capability | Grant the listed capability |
 | “Dependency unavailable” (503) | A database or model artifact is missing | Check `/health/ready` and the artifact paths |
 | Empty analytics or segment page | No records in the selected range | Widen the range or run the corresponding job |
-| Assistant or voice “provider unavailable” | No `OPENAI_API_KEY` | Set the key to enable those surfaces |
+| Assistant or voice “provider unavailable” | No `OPENAI_API_KEY` | Put a key in `.env` (the example defaults to OpenRouter) and restart |

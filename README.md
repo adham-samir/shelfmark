@@ -171,17 +171,24 @@ docker compose -f infra/compose.yaml down
 ## Turn on the AI assistant (optional)
 
 The assistant and voice-search pages work but show a friendly "provider
-unavailable" message until you give the app an OpenAI API key. Everything else
-works without it.
+unavailable" message until you give the app a key. Everything else works without
+one.
+
+The example settings already point at OpenRouter and a cheap DeepSeek model, so
+you only need to add your own key:
 
 1. In the project folder, make your own settings file from the example.
    - **Windows (PowerShell):** `copy .env.example .env`
    - **Linux:** `cp .env.example .env`
-2. Open `.env` in a text editor (Notepad is fine) and set the key:
+2. Open `.env` in a text editor (Notepad is fine) and paste your key:
 
    ```text
-   OPENAI_API_KEY=sk-your-key-here
+   OPENAI_API_KEY=sk-or-v1-your-key-here
    ```
+
+   The variable keeps the OpenAI SDK's name whatever gateway sits behind it. To
+   use OpenAI instead, clear `SMART_ECOMMERCE_OPENAI_BASE_URL` and set OpenAI
+   model ids; any other OpenAI-compatible gateway works the same way.
 
 3. Save the file, then restart the app:
 
@@ -231,7 +238,7 @@ the **Step 4** start command again.
 | Area | Highlights |
 |---|---|
 | Customer storefront | Catalog with filters, product detail, comparison, cart, retry-safe checkout, order history, saved addresses |
-| AI shopping assistant | Answers questions, suggests products, and reports your own shipment status |
+| AI shopping assistant | Answers questions, suggests products, keeps the thread of the conversation, and can attach one of your own orders to ask about it |
 | Smart search | Photo search, voice search, and dynamic filters |
 | Predictive inventory (BO-01) | 14-day demand forecast and automatic reorder through a supplier simulator |
 | Dynamic pricing (BO-02) | Bounded price changes from supply, demand, cost, and season |
@@ -278,7 +285,10 @@ Stages 1–4 are complete and documented; Stage 5 packaging, deployment guidance
 the user manual, the demo script, and the presentation are delivered. The
 remaining work needs outside access and is stated honestly rather than implied:
 
-- No live OpenAI provider proof — set `OPENAI_API_KEY` to exercise it.
+- The assistant is proven live through OpenRouter with
+  `deepseek/deepseek-v4.1-flash` — grounded answers, own-order lookup, and
+  conversation memory. Voice transcription is still exercised with an injected
+  provider only; no real speech sample has been run through it.
 - No cloud deployment — AWS placement needs an account.
 - Accessibility is verified by automated axe-core checks; no manual
   screen-reader pass has been run.

@@ -572,7 +572,7 @@
     <div class="cols">
       <div>
         <ul>
-          <li><strong>No live AI provider proof.</strong> The assistant and voice surfaces are verified with an injected provider; no <code>OPENAI_API_KEY</code> was available, so both return a typed 503 by design.</li>
+          <li><strong>AI provider proof is partial.</strong> The assistant is proven live through OpenRouter with <code>deepseek/deepseek-v4.1-flash</code> — grounded answers, own-order lookup, conversation memory. Voice transcription is still verified with an injected provider only: no real speech sample has been run through it.</li>
           <li><strong>Synthetic data only.</strong> Every model, dashboard, and evaluation uses synthetic or sandbox records. Nothing here is a commercial claim.</li>
           <li><strong>No cloud deployment.</strong> Docker packaging and the deployment runbook are verified; the AWS placement needs account access and has not been executed.</li>
         </ul>
