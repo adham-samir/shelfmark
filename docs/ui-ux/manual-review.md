@@ -48,8 +48,9 @@ version, plus a link to any recording. A failure becomes an issue against
 
 These 43 strings were added during the UI overhaul and have not been read by a
 native speaker. Placeholders in braces are substituted at render time and must
-survive translation. Egyptian consumer-electronics register is intended: plain
-Modern Standard Arabic, no dialect, no marketing superlatives.
+survive translation. The product reads in plain Modern Standard Arabic — no
+dialect, no marketing superlatives. The assistant surface is the deliberate
+exception and is listed separately in 2b.
 
 | Key | Arabic (as shipped) | English (reference) |
 |---|---|---|
@@ -68,7 +69,7 @@ Modern Standard Arabic, no dialect, no marketing superlatives.
 | `shipment.statusInTransit` | في الطريق | In transit |
 | `shipment.statusDelivered` | مسلَّمة | Delivered |
 | `shipment.statusException` | استثناء | Exception |
-| `assistant.emptyHint` | اختر سؤالًا جاهزًا أو اكتب سؤالك بالعربية أو الإنجليزية. | Pick a ready question or write your own in Arabic or English. |
+| `assistant.emptyHint` | اختار سؤال من دول أو اكتب سؤالك براحتك. | Pick one of these, or just type your question. (assistant surface — Egyptian colloquial, see 2b) |
 | `inventory.supplierAck` | أقرّها محاكي المورد الاصطناعي. | Acknowledged by the synthetic supplier simulator. |
 | `pricing.detail.missing` | لا توجد ملاحظة تسعير مسجلة. | No pricing observation is recorded. |
 | `pricing.detail.future` | وقت رصد الملاحظة في المستقبل. | The observation timestamp is in the future. |
@@ -97,6 +98,89 @@ Modern Standard Arabic, no dialect, no marketing superlatives.
 | `common.breadcrumb` | مسار التنقل | Breadcrumb |
 | `product.specsOther` | تفاصيل أخرى | Other details |
 
+### 2b. Assistant and voice surface (added or rewritten since the UI overhaul)
+
+The assistant was rebuilt after the overhaul — it gained a name, a warmer
+voice, conversation memory, an order picker, and a live transcript path — and
+the voice surface gained its rejected-recording state. None of these have been
+read by a native speaker yet. **Egyptian colloquial is intentional here**; the
+rest of the product stays Modern Standard Arabic. Placeholders in braces are
+substituted at render time and must survive translation.
+
+#### Assistant
+
+| Key | Arabic (as shipped) | English (reference) |
+|---|---|---|
+| `assistant.assistant` | نور | Nour |
+| `assistant.disclaimer` | بجاوب من بيانات المتجر، وبيانات طلبات باقي العملاء محمية. ولو حاجة مش متوفرة هقولك بصراحة. | I answer from store data, and other customers' orders stay private. If something isn't available, I'll say so. |
+| `assistant.failed` | حصلت مشكلة بسيطة | Something went wrong |
+| `assistant.failedHint` | جرّب تاني بعد لحظات، ولو المشكلة كمّلت كلّم الدعم. | Give it another try in a moment; if it keeps happening, contact support. |
+| `assistant.intro` | أهلاً! أنا نور، مساعدة المتجر. اسألني عن أي منتج، أو التوصيل والاسترجاع، أو اطلب حالة طلب من طلباتك. | Hi! I'm Nour, your shop assistant. Ask me about any product, delivery and returns, or the status of your orders. |
+| `assistant.orderAskCancel` | أقدر ألغيه؟ | Can I cancel it? |
+| `assistant.orderAskItems` | إيه اللي في الطلب ده؟ | What's in this order? |
+| `assistant.orderAskStatus` | وصل فين؟ | Where is it? |
+| `assistant.orderAttach` | اسأل عن الطلب | Ask about this order |
+| `assistant.orderAttached` | بتسأل عن طلب {id} | Asking about {id} |
+| `assistant.orderDetach` | إزالة الطلب | Remove order |
+| `assistant.orderEmpty` | لسه مفيش طلبات في حسابك. | You don't have any orders yet. |
+| `assistant.orderPanel` | اسأل عن طلب معيّن | Ask about an order |
+| `assistant.orderViewAll` | كل الطلبات | All orders |
+| `assistant.placeholder` | اكتب سؤالك… مثلاً: عايز سماعات في حدود ٢٠٠٠ جنيه | Type your question… e.g. headphones under EGP 2,000 |
+| `assistant.providerMissing` | المساعد مش متاح دلوقتي | The assistant is unavailable right now |
+| `assistant.providerMissingHint` | مش قادر أرد دلوقتي، جرّب تاني بعد شويّة. | I can't reply at the moment — please try again in a little while. |
+| `assistant.send` | إرسال | Send |
+| `assistant.sending` | ثانية واحدة… | Sending… |
+| `assistant.sourceFaq` | سؤال شائع | Common question |
+| `assistant.sourceProduct` | منتج | Product |
+| `assistant.sourceShipment` | طلبك | Your order |
+| `assistant.sources` | معلومات ذات صلة | Related info |
+| `assistant.suggestionOne` | إيه سياسة الاسترجاع؟ | What's your return policy? |
+| `assistant.suggestionThree` | إيه الطلبات اللي عندي؟ | What orders do I have? |
+| `assistant.suggestionTwo` | عايز موبايل كاميرته حلوة | I want a phone with a good camera |
+| `assistant.suggestions` | تقدر تسألني مثلاً | You can ask me things like |
+| `assistant.title` | نور | Nour |
+| `assistant.you` | أنت | You |
+
+#### Voice search
+
+| Key | Arabic (as shipped) | English (reference) |
+|---|---|---|
+| `voice.denied` | تم رفض إذن الميكروفون | Microphone permission denied |
+| `voice.deniedHint` | اسمح بالوصول من إعدادات المتصفح، أو استخدم البحث النصي. | Allow access in the browser settings, or use text search. |
+| `voice.empty` | لم يُسمع أي كلام | No speech detected |
+| `voice.emptyHint` | أعد التسجيل بصوت أوضح أو اكتب البحث. | Record again more clearly or type the search. |
+| `voice.failed` | تعذر إكمال البحث الصوتي | The voice search could not be completed |
+| `voice.intro` | اضغط للتسجيل ثم اسمع/راجع النص قبل البحث. يبقى البحث النصي متاحًا دائمًا. | Press to record, then review the transcript before searching. Text search stays available. |
+| `voice.noResults` | لم تُعثر نتائج للنص المُستخرج | No results for the transcript |
+| `voice.processing` | جارٍ التحويل… | Transcribing… |
+| `voice.providerMissing` | التحويل الصوتي مش متاح دلوقتي | Transcription isn't available right now |
+| `voice.providerMissingHint` | مش قادر أسمع التسجيل دلوقتي، جرّب تاني بعد شويّة. | I can't transcribe that at the moment — please try again in a little while. |
+| `voice.recording` | جارٍ التسجيل… | Recording… |
+| `voice.rejected` | تعذر استخدام هذا التسجيل | That recording could not be used |
+| `voice.rejectedHint` | جرّب التسجيل مرة أخرى، أو استخدم البحث النصي. | Try recording again, or use text search. |
+| `voice.rerecord` | إعادة التسجيل | Record again |
+| `voice.searchTranscript` | ابحث بهذا النص | Search this transcript |
+| `voice.seconds` | {seconds} ثانية | {seconds} seconds |
+| `voice.start` | بدء التسجيل | Start recording |
+| `voice.stop` | إيقاف التسجيل | Stop recording |
+| `voice.textFallback` | اكتب البحث بدلًا من الصوت | Type the search instead |
+| `voice.title` | البحث بالصوت | Search by voice |
+| `voice.transcript` | النص المُستخرج (قابل للتعديل) | Transcript (editable) |
+| `voice.unsupported` | المتصفح لا يدعم تسجيل الصوت | This browser cannot record audio |
+| `voice.unsupportedHint` | استخدم البحث النصي أو متصفحًا يدعم MediaRecorder. | Use text search or a browser that supports MediaRecorder. |
+
+#### New attribute labels
+
+| Key | Arabic (as shipped) | English (reference) |
+|---|---|---|
+| `attr.camera` | الكاميرا | Camera |
+| `attr.os` | نظام التشغيل | Operating system |
+| `attr.gpu` | كرت الرسومات | Graphics |
+| `attr.weight` | الوزن | Weight |
+| `attr.refresh_rate` | معدل تحديث الشاشة | Refresh rate |
+| `attr.microphone` | الميكروفون | Microphone |
+| `attr.drivers` | مكبرات الصوت | Drivers |
+
 ### What to look for
 
 1. **Register.** Does each sentence sound like a shop or an operations tool, not
@@ -118,7 +202,7 @@ Modern Standard Arabic, no dialect, no marketing superlatives.
 | Item | Owner | Date | Outcome |
 |---|---|---|---|
 | Screen-reader walkthrough (13 checks) | | | |
-| Arabic review (43 strings) | | | |
+| Arabic review (43 strings + the assistant and voice surface) | | | |
 
 Until both rows have a name and a date, the interface is verified by automation
 only, and `docs/test-report.md` continues to list manual accessibility as a

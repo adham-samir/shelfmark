@@ -63,7 +63,7 @@ Every server API read uses `cache: "no-store"` (`lib/api.ts`). Catalog price and
 
 ## States
 
-Loading, empty, error, invalid-upload, microphone-denied, and provider-missing states are implemented. BO-01 additionally exposes forecast-missing, supplier-failure, and permission failures through the shared error boundary; BO-02 exposes fresh/stale/missing inputs, would-update/unchanged/constraint-blocked proposals, and import validation; BO-03 exposes no-snapshot, stale-snapshot, empty-segment, and insufficient-history states; BO-04 exposes an empty queue, decision conflicts, and a missing-model state while keeping the queue usable; BI-01 exposes no-events, no-eligible-orders, empty-category, mismatch, and profit-omitted states. Assistant and voice search return the provider-missing state until a real `OPENAI_API_KEY` reaches the API service; that live-provider proof remains pending.
+Loading, empty, error, invalid-upload, microphone-denied, and provider-missing states are implemented. BO-01 additionally exposes forecast-missing, supplier-failure, and permission failures through the shared error boundary; BO-02 exposes fresh/stale/missing inputs, would-update/unchanged/constraint-blocked proposals, and import validation; BO-03 exposes no-snapshot, stale-snapshot, empty-segment, and insufficient-history states; BO-04 exposes an empty queue, decision conflicts, and a missing-model state while keeping the queue usable; BI-01 exposes no-events, no-eligible-orders, empty-category, mismatch, and profit-omitted states. Assistant and voice search show the provider-missing state until a key reaches the API service; both are verified live against OpenRouter, and the voice panel also reports a rejected recording in the reader's own language.
 
 ## Limitations
 

@@ -310,7 +310,9 @@ remaining work needs outside access and is stated honestly rather than implied:
 - No cloud deployment — AWS placement needs an account.
 - Accessibility is verified by automated axe-core checks; no manual
   screen-reader pass has been run.
-- 43 Arabic strings await a native-speaker review.
+- The Arabic copy has not had a native-speaker pass: the 43 strings from the UI
+  overhaul, plus the assistant and voice surface rewritten since. Both lists are
+  in [docs/ui-ux/manual-review.md](docs/ui-ux/manual-review.md).
 - Recommendation, forecast, segmentation, pricing, and fraud models are trained
   and evaluated on labelled synthetic data; the results show the pipeline works,
   not real-world quality.

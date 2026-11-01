@@ -1,6 +1,6 @@
 # Stage 2 data architecture and Stage 3 catalog slice
 
-Status: the physical schema, validators, seeds, and API design are verified. The Stage 3 service implements catalog, commerce, SF-01–03, the BO-01 forecast/reorder workflow, the BO-02 pricing workflow, BO-03 RFM segmentation snapshots, BO-04 trained risk assessments with audited review decisions, and BI-01 analytics aggregates. Stage 3 is complete except for live OpenAI provider proof.
+Status: the physical schema, validators, seeds, and API design are verified. The Stage 3 service implements catalog, commerce, SF-01–03, the BO-01 forecast/reorder workflow, the BO-02 pricing workflow, BO-03 RFM segmentation snapshots, BO-04 trained risk assessments with audited review decisions, and BI-01 analytics aggregates. Stage 3 is complete, including live assistant and voice-provider proof; the open exception is catalog search quality, not the provider.
 
 The data layer supports the full planned commerce and smart-module baseline. This does not claim that order, payment, risk, forecasting, pricing, segmentation, or model behavior is implemented at the application layer.
 

@@ -43,7 +43,7 @@ exception**, **Simulated**, **Blocked**.
 | Customer/back-office authorization | **Passed** | The order, inventory, pricing, segments, risk, and analytics routes return 403 for a customer token and 200 for the operator; anonymous access returns 401. An operator token remains excluded from customer-owned `/v1/orders` reads. Every order-lifecycle and stock-adjustment mutation requires `orders:write` or `inventory:write`, which a customer session never holds. |
 | Customer order/shipment isolation | **Passed** | A foreign customer receives 404 with a generic message and no order data. |
 | Malicious and invalid uploads | **Passed** | Unsupported media returns 415, oversized payload 413, non-image bytes 422, mislabeled image 422, valid PNG 200; responses never echo uploaded content. |
-| Chatbot access boundary | **Passed with declared exception** | Without a provider the endpoint returns a typed 503. With an injected provider, cross-customer shipment lookup is denied and other customers' records never appear. No live model was available to test prompt-injection resistance. |
+| Chatbot access boundary | **Passed with declared exception** | Without a provider the endpoint returns a typed 503. Live and injected checks deny cross-customer shipment lookup and never surface another customer's records. Prompt-injection resistance is still untested against a live model: the guard is covered by injected tests only, and no adversarial prompt has been sent to the live endpoint. |
 | Secrets not committed or sent to the browser | **Passed** | `.env*` is gitignored; sandbox tokens are read only in server-side modules (`lib/api.ts` is server-only); no key is rendered in any page. |
 | Payment data handling | **Passed** | Only `tok_sandbox_*` token references are stored; no card number or CVV field exists in the schema or API. |
 | Demo identity harness | **Passed for the declared demo scope** | Argon2id password verification, SHA-256 session-token storage, seven-day sliding expiry, sign-out revocation, customer/operator surface isolation, and self-service password rotation are covered by API route tests and live browser checks. A password change requires the current value, rejects reuse, ends every other session of the principal, and keeps the calling session valid. Ten failed logins return `429 rate_limited`. No production identity claim is made: there is no email verification, email-based password reset, MFA, OAuth/OIDC, or coordinated multi-instance throttle (DEC-017). |
@@ -196,7 +196,8 @@ rather than silently passing.
 5. **Manual accessibility** — WCAG 2.2 AA is verified by automated axe-core
    checks and a keyboard smoke test only; no screen-reader session was run. The
    script for that session is `docs/ui-ux/manual-review.md`, which also lists the
-   43 new Arabic strings awaiting a native speaker.
+   43 new Arabic strings, plus the assistant and voice surface added since,
+   awaiting a native speaker.
 6. **WebKit** — the cross-engine gate runs on Chromium and Firefox. WebKit is
    wired through the same `BROWSER` switch but cannot launch here: three of its
    system libraries need root to install. The stylesheet carries the
