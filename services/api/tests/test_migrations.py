@@ -231,14 +231,28 @@ def test_seed_runs_once_and_refuses_a_populated_database():
         runner = MigrationRunner(dsn, MIGRATIONS, SEEDS)
         runner.apply()
         first = runner.seed()
-        assert first.applied == ["0001_synthetic_demo"]
+        assert first.applied == ["0001_synthetic_demo", "0002_shipment_demo"]
         assert first.skipped is None
 
         with psycopg.connect(dsn) as connection:
             products = connection.execute(
                 "SELECT count(*) FROM product_registry"
             ).fetchone()[0]
+            # One shipment per fulfilled order, and no shipments for the
+            # cancelled or failed-payment orders (which never got a parcel).
+            shipments, events, unfulfilled = connection.execute(
+                """
+                SELECT (SELECT count(*) FROM shipments),
+                       (SELECT count(*) FROM shipment_events),
+                       (SELECT count(*) FROM orders
+                         WHERE status IN ('cancelled', 'payment_failed')
+                           AND order_id IN (SELECT order_id FROM shipments))
+                """
+            ).fetchone()
         assert products == 13
+        assert shipments > 0
+        assert events >= shipments
+        assert unfulfilled == 0
 
         # A second run (which compose performs on every `up`) writes nothing and
         # still succeeds, because failing here would block the API from starting.

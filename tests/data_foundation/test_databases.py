@@ -361,9 +361,11 @@ class DatabaseFoundationTests(unittest.TestCase):
         seed_database = "seed_test"
         run("docker", "exec", self.postgres, "createdb", "-h", "127.0.0.1", "-U", "postgres", seed_database)
         try:
+            # Every migration and every seed, so a new seed file is covered here
+            # without having to remember to add it.
             for path in [
                 *sorted((ROOT / "database/relational/migrations").glob("*.sql")),
-                ROOT / "database/relational/seeds/0001_synthetic_demo.sql",
+                *sorted((ROOT / "database/relational/seeds").glob("*.sql")),
             ]:
                 result = run(
                     "docker", "exec", "-i", self.postgres, "psql", "-h", "127.0.0.1",
@@ -438,6 +440,25 @@ class DatabaseFoundationTests(unittest.TestCase):
                 "('browsing_events_occurred_idx', 'order_items_product_idx');",
             )
             self.assertEqual(index_count.stdout.strip(), "2")
+            # Shipment fixtures: every fulfilled order gets one shipment with a
+            # timeline; cancelled and failed-payment orders get none, and no
+            # shipment is left without events.
+            shipment_counts = run(
+                "docker", "exec", self.postgres, "psql", "-h", "127.0.0.1", "-U", "postgres",
+                "-d", seed_database, "-X", "-A", "-t", "-c",
+                "SELECT (SELECT count(*) FROM shipments) > 0, "
+                "(SELECT count(*) FROM shipments s JOIN orders o USING (order_id) "
+                " WHERE o.status IN ('cancelled', 'payment_failed')), "
+                "(SELECT count(*) FROM orders o "
+                " WHERE o.status IN ('confirmed', 'shipped', 'delivered', 'refunded') "
+                "   AND o.completed_at IS NOT NULL "
+                "   AND NOT EXISTS (SELECT 1 FROM shipments s WHERE s.order_id = o.order_id)), "
+                "(SELECT count(*) FROM shipments s "
+                " WHERE NOT EXISTS (SELECT 1 FROM shipment_events e "
+                "                    WHERE e.shipment_id = s.shipment_id)), "
+                "(SELECT count(*) FROM shipment_events) > 0;",
+            )
+            self.assertEqual(shipment_counts.stdout.strip(), "t|0|0|0|t")
         finally:
             run("docker", "exec", self.postgres, "dropdb", "-h", "127.0.0.1", "-U", "postgres", "--force", seed_database, check=False)
 
