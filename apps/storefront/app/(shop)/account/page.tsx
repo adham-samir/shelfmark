@@ -91,22 +91,25 @@ export default async function AccountPage() {
               </EmptyState>
             ) : (
               <>
-                <ul className="summary-lines">
+                <ul className="mini-order-list">
                   {recent.items.map((order) => (
-                    <li key={order.order_id}>
-                      <span>
+                    <li className="mini-order" key={order.order_id}>
+                      <div className="mini-order-head">
                         <Link href={`/orders/${order.order_id}`}>
-                          <span dir="ltr">{order.order_id.slice(0, 8)}</span>
+                          <code dir="ltr">{order.order_id.slice(0, 8)}</code>
                         </Link>
-                        {" · "}
-                        {formatDateTime(order.created_at, locale)}
-                      </span>
-                      <span className="price-amount">
-                        {formatMoney(order.subtotal, locale)} {order.currency}
-                      </span>
-                      <span className="pill" data-status={order.status}>
-                        {statusLabel(t, order.status)}
-                      </span>
+                        <time dateTime={order.created_at}>
+                          {formatDateTime(order.created_at, locale)}
+                        </time>
+                      </div>
+                      <div className="mini-order-foot">
+                        <span className="pill" data-status={order.status}>
+                          {statusLabel(t, order.status)}
+                        </span>
+                        <span className="price-amount">
+                          {formatMoney(order.subtotal, locale)} {order.currency}
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>
