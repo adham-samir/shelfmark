@@ -3,6 +3,8 @@
  * isolated stack, records timings, captures deck screenshots, and reports drift.
  */
 import { mkdir, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 
@@ -267,7 +269,7 @@ try {
     if (cards !== 13) throw new Error(`expected 13 product cards, saw ${cards}`);
     await shot(page, "01-catalog");
 
-    await page.locator('.cat-item a[href*="category=phones"]').first().click();
+    await page.locator('.cat-list a[href*="category=phones"]').first().click();
     await page.waitForURL(/category=phones/);
     await settle(page);
     const phoneCards = await page.locator(".product-grid .card").count();
@@ -295,7 +297,7 @@ try {
       "#image-file",
       `${ROOT}apps/storefront/public/products/phone-blue.png`,
     );
-    await page.locator(".preview .btn-dark").click();
+    await page.locator(".preview .btn-primary").click();
     await page.waitForSelector(".product-grid .card", { timeout: 30000 });
     const first = await page.locator(".product-grid .card a").first().getAttribute("href");
     if (!first?.includes(PRODUCT)) throw new Error(`first match was ${first}`);
@@ -304,8 +306,12 @@ try {
     await page.waitForTimeout(150);
     await shot(page, "03-image-search-results");
 
-    await page.setInputFiles("#image-file", "/tmp/opencode/not-an-image.png");
-    await page.locator(".preview .btn-dark").click();
+    // A text file named .png that the upload validator must reject. Written here
+    // rather than assumed on disk, so the rehearsal runs on a clean machine.
+    const spoofed = join(tmpdir(), "not-an-image.png");
+    await writeFile(spoofed, "not a real image\n");
+    await page.setInputFiles("#image-file", spoofed);
+    await page.locator(".preview .btn-primary").click();
     await page.waitForSelector('.state[data-tone="error"]', { timeout: 30000 });
     await shot(page, "04-image-search-invalid");
   });
@@ -367,7 +373,7 @@ try {
   let confirmedOrder;
   await guard("3. normal checkout", async () => {
     await page.goto(`${UI}/products/${PRODUCT}`, { waitUntil: "load" });
-    await page.locator(".detail-actions .btn-dark").first().click();
+    await page.locator(".detail-actions .btn-primary").first().click();
     await page.waitForSelector(".add-to-cart [data-state='done']", { timeout: 30000 });
 
     await page.goto(`${UI}/cart`, { waitUntil: "load" });
@@ -382,7 +388,7 @@ try {
     await page.fill("#address", "12 Synthetic Test Street, Apt 4");
     await page.selectOption("#payment_token", "tok_sandbox_safe-1");
     await shot(page, "08-checkout");
-    await page.locator(".btn-amber").click();
+    await page.locator('form.page-split button[type="submit"]').click();
     await page.waitForURL(/\/orders\//, { timeout: 30000 });
     await settle(page);
     const orderId = page.url().split("/orders/")[1];
@@ -401,7 +407,7 @@ try {
   let reviewOrder;
   await guard("3b. high-risk checkout", async () => {
     await page.goto(`${UI}/products/${PRODUCT}`, { waitUntil: "load" });
-    await page.locator(".detail-actions .btn-dark").first().click();
+    await page.locator(".detail-actions .btn-primary").first().click();
     await page.waitForSelector(".add-to-cart [data-state='done']", { timeout: 30000 });
     await page.goto(`${UI}/checkout`, { waitUntil: "load" });
     await settle(page);
@@ -410,7 +416,7 @@ try {
     await page.fill("#city", "Cairo");
     await page.fill("#address", "12 Synthetic Test Street, Apt 4");
     await page.selectOption("#payment_token", "tok_sandbox_risk-high-1");
-    await page.locator(".btn-amber").click();
+    await page.locator('form.page-split button[type="submit"]').click();
     await page.waitForURL(/\/orders\//, { timeout: 30000 });
     await settle(page);
     reviewOrder = { id: page.url().split("/orders/")[1] };
@@ -451,7 +457,7 @@ try {
 
   await guard("3d. assessment failure", async () => {
     await page.goto(`${UI}/products/${PRODUCT}`, { waitUntil: "load" });
-    await page.locator(".detail-actions .btn-dark").first().click();
+    await page.locator(".detail-actions .btn-primary").first().click();
     await page.waitForSelector(".add-to-cart [data-state='done']", { timeout: 30000 });
     await page.goto(`${UI}/checkout`, { waitUntil: "load" });
     await settle(page);
@@ -460,7 +466,7 @@ try {
     await page.fill("#city", "Cairo");
     await page.fill("#address", "12 Synthetic Test Street, Apt 4");
     await page.selectOption("#payment_token", "tok_sandbox_risk-fail-1");
-    await page.locator(".btn-amber").click();
+    await page.locator('form.page-split button[type="submit"]').click();
     await page.waitForURL(/\/orders\//, { timeout: 30000 });
     await settle(page);
     const orderId = page.url().split("/orders/")[1];

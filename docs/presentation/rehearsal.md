@@ -1,8 +1,12 @@
 # Demo rehearsal log
 
-Date: 2026-10-30 (re-run; the original log is preserved below in the drift history)
+Date: 2026-11-01 (re-run after the "Two instruments" UI overhaul)
 Script: [`docs/demo-script.md`](../demo-script.md)
 Runner: `tests/accessibility/rehearsal.mjs` (Playwright + Chromium, drives the real UI)
+
+This run reconciles the runner with the overhauled markup (defects 16–17) and
+recaptures every deck screen from the current interface. The 2026-10-30 numbers
+and the defects that run found are preserved below in the drift history.
 
 ## Environment
 
@@ -19,35 +23,40 @@ Each attempt starts from a re-seeded stack, so seed-baseline counts (12 reorders
 accumulated. New registrations would raise the segmentation baseline, so the
 demo stays on the seeded accounts.
 
+The 2026-11-01 run used the same logical stack on a host where the Docker bridge
+network is unavailable: PostgreSQL and MongoDB ran as host-network containers,
+the API and the production storefront as host processes. The application is
+identical; only the process/network placement differs.
+
 ## Result
 
-**0 drift, 31 captured screens, 25.3 s of automated interaction** (a narrated
+**0 drift, 31 captured screens, 26.4 s of automated interaction** (a narrated
 presentation of the same script runs about 12 minutes).
 
 | Step | Seconds | Observed |
 |---|---|---|
-| 0. Demo sign-in — COM-07 | 1.4 | Customer signed in at `/login` → `/account`; operator at `/backoffice/login` → `/backoffice`; both sessions present at once |
+| 0. Demo sign-in — ID-01 | 1.3 | Customer signed in at `/login` → `/account`; operator at `/backoffice/login` → `/backoffice`; both sessions present at once |
 | 0b. Password rotation — COM-10 | 1.0 | Changed with the current password; the old value then returned 401, the new one 200. The seeded value was restored so later steps keep working |
 | 0c. Saved addresses — COM-12 | 3.0 | Created, promoted to default through the edit form, then deleted; the first address was default without being asked |
 | 1. Storefront discovery — COM-01, SF-03 | 0.9 | 13 products at page size 24; Phones + `storage 128 GB` narrowed the grid and the facets |
-| 1b. Image search — SF-03 | 0.7 | With the Phones filter, X1 Phone ranked first; a text file renamed `.png` was rejected with the reason |
+| 1b. Image search — SF-03 | 0.8 | With the Phones filter, X1 Phone ranked first; a text file renamed `.png` was rejected with the reason |
 | 1c. Voice search — SF-03 | 0.4 | Microphone denial state shown, with the text-search fallback |
 | 2. Recommendations — SF-01 | 0.4 | `strategy: hybrid`, 226 browsing events, 15 purchased items, no seen item returned |
-| 3a. Cart + safe checkout — COM-02/03/04 | 0.9 | Order confirmed, shipment created, price snapshot 8,900 EGP |
+| 3a. Cart + safe checkout — COM-02/03/04 | 1.0 | Order confirmed, shipment created, price snapshot 8,900 EGP |
 | 3b. High-risk checkout — BO-04 | 0.7 | Order in review, shipment correctly absent |
-| 3c. Risk review allow — BO-04 | 0.8 | Operator allow confirmed the order and created the shipment |
-| 3d. Assessment failure — BO-04 | 0.7 | `assessment_failed` routed to review, no completion |
+| 3c. Risk review allow — BO-04 | 0.9 | Operator allow confirmed the order and created the shipment |
+| 3d. Assessment failure — BO-04 | 0.6 | `assessment_failed` routed to review, no completion |
 | 3e. Model card — BO-04 | 0.3 | Threshold 0.699, recall 83.3%, FPR 7.8%, limitations listed |
-| 3f. Buy again — COM-13 | 0.4 | Reorder refilled the empty cart at the **current** price, not the checkout snapshot |
-| 3g. Operator lifecycle — COM-09 | 7.1 | `ready` → `in_transit` moved the order to `shipped`; a 100 EGP partial refund left the subtotal unchanged and appeared in the adjustment history with the operator's identity |
-| 4. Predictive inventory — BO-01 | 1.8 | 13 forecasts, 12 new reorders, 0 reused; the rerun created 0 |
-| 5a. Dynamic pricing run — BO-02 | 0.5 | 12 prices updated, 1 stale input, 0 blocked |
+| 3f. Buy again — COM-13 | 0.3 | Reorder refilled the empty cart at the **current** price, not the checkout snapshot |
+| 3g. Operator lifecycle — COM-09 | 7.0 | `ready` → `in_transit` moved the order to `shipped`; a 100 EGP partial refund left the subtotal unchanged and appeared in the adjustment history with the operator's identity |
+| 4. Predictive inventory — BO-01 | 2.6 | 13 forecasts, 12 new reorders, 0 reused; the rerun created 0 |
+| 5a. Dynamic pricing run — BO-02 | 1.2 | 12 prices updated, 1 stale input, 0 blocked |
 | 5b. Price propagation + snapshot — BO-02 | 0.6 | Storefront showed 10,039.93; the earlier order still showed 8,900 |
 | 5c. Observation import + bounded rerun — BO-02 | 0.7 | 10,039.93 → 12,047.91 (+19.98%, inside the ±20% cap) |
 | 6. RFM segmentation — BO-03 | 0.7 | 38 classified, 2 without history, 6 segments, CSV export matched the filtered group |
 | 7. BI dashboards — BI-01 | 1.0 | Date/category filters recomputed; both reconciliation checks matched |
-| 8. English LTR parity | 0.9 | `lang="en" dir="ltr"` with the same capabilities and both session cookies |
-| 9. Failure states | 0.4 | Unknown product returns HTTP 404; the assistant shows its provider state |
+| 8. English LTR parity | 0.7 | `lang="en" dir="ltr"` with the same capabilities and both session cookies |
+| 9. Failure states | 0.3 | Unknown product returns HTTP 404; the assistant shows its provider state |
 | 10. Evidence check | 0.0 | Inventory and model evidence persisted and readable |
 
 Browser console during the final run: exactly two errors, both intentional — the
@@ -64,6 +73,15 @@ written. Four defects in the new steps were found and fixed before the run above
 | 13 | The refund step clicked the first submit button in the lifecycle section, which belongs to the shipment transition form, so it marked the order delivered instead of refunding. | The step targets the form that contains `input[name="amount"]`. |
 | 14 | The address card and its edit form share the same `aria-label`, so the delete selector matched two sections and timed out. | The step reloads after saving (the form stays open) and then deletes from the card view. |
 | 15 | The buy-again panel reused the boxed `lifecycle-control` styling, which is meant to separate labelled fields; with no fields it rendered an empty grey band around one button. | A dedicated `lifecycle-inline` class: the button and its status line, unboxed. |
+
+The 2026-11-01 re-run found two more defects, both in the runner rather than the
+product, after the "Two instruments" UI overhaul renamed markup the runner
+targeted:
+
+| # | Finding | Resolution |
+|---|---|---|
+| 16 | The runner still clicked `.cat-item`, `.detail-actions .btn-dark`, and `.preview .btn-dark`, and submitted checkout via `.btn-amber`. The overhaul replaced the category list with `.cat-list` and the dark/amber buttons with `btn-primary`, so the first timeout cascaded through checkout, buy-again, and pricing. | Selectors updated to `.cat-list a`, `.detail-actions .btn-primary`, `.preview .btn-primary`, and the checkout form's own `form.page-split button[type="submit"]`. |
+| 17 | The spoofed-upload step read a fixture at `/tmp/opencode/not-an-image.png` that nothing created; it only failed once the earlier image-search step stopped cascading. | The runner now writes the file itself (a text file named `.png`) into the OS temp directory, so it runs on a clean machine. |
 
 ## Drift found and how it was handled
 
