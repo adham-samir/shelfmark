@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Smart-eCommerce Platform API",
+    "title": "Shelfmark Platform API",
     "version": "0.15.0",
     "description": "Platform contracts. Catalog, interaction capture, recommendations, assistant, image/voice search, cart, checkout, customer/operator demo identity and sessions with self-service password rotation, account/order history, saved addresses, owned order/shipment reads, customer-initiated cancellation, buy-again, operator order reads and lifecycle actions, BO-04 trained fraud assessment and review, BO-01 inventory forecasting/reordering, BO-02 dynamic pricing, BO-03 RFM segmentation, and BI-01 analytics are implemented."
   },

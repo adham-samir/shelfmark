@@ -1,4 +1,6 @@
-# Smart-eCommerce Management System
+# Shelfmark
+
+Shelfmark: An AI-Powered Smart E-Commerce Management System
 
 Incremental implementation of [the project plan](docs/source-specification-plan.md).
 

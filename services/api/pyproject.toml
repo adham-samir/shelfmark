@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "smart-ecommerce-api"
 version = "0.1.0"
-description = "FastAPI backend for the Smart-eCommerce Management System"
+description = "FastAPI backend for Shelfmark, an AI-powered smart e-commerce management system"
 requires-python = ">=3.12,<3.15"
 dependencies = [
   "fastapi==0.162.0",

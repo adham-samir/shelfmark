@@ -6,7 +6,7 @@ flowchart LR
     operator[Back-office user]
     worker[Background worker]
 
-    subgraph system[Smart-eCommerce Management System]
+    subgraph system[Shelfmark]
         discover((Discover and filter products))
         recommend((Receive personalized recommendations))
         assistant((Ask questions and choose products))

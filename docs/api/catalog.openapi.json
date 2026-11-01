@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Smart-eCommerce Catalog API",
+    "title": "Shelfmark Catalog API",
     "version": "0.4.0",
     "description": "Catalog reads and contextual dynamic facets implemented during Stage 3."
   },

@@ -1,6 +1,6 @@
 # Storefront (Next.js)
 
-Customer-facing Smart-eCommerce storefront: Arabic-first, RTL, with English LTR parity.
+Customer-facing Shelfmark storefront: Arabic-first, RTL, with English LTR parity.
 
 The implemented visual system is documented in [`DESIGN.md`](../../DESIGN.md), with the schema-version-2 machine-readable sidecar at [`.impeccable/design.json`](../../.impeccable/design.json).
 

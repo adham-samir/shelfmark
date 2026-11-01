@@ -17,7 +17,7 @@ Delegated and accepted: Next.js, React, and Tailwind CSS for one storefront/back
 
 ## Product Purpose
 
-Smart-eCommerce combines a customer storefront and commercial back office. It uses recorded application data to personalize discovery, assist customers, automate inventory and pricing work, identify payment risk before order completion, segment customers, and support decisions through interactive analysis.
+Shelfmark combines a customer storefront and commercial back office. It uses recorded application data to personalize discovery, assist customers, automate inventory and pricing work, identify payment risk before order completion, segment customers, and support decisions through interactive analysis.
 
 Success means the complete purchase flow and every required smart module operate on shared product, customer, order, price, inventory, and interaction records with traceable decisions and honest evaluation evidence.
 
@@ -45,7 +45,7 @@ The storefront and operational intelligence use the same authoritative commerce 
 
 ## Brand Commitments
 
-The product name is **Smart-eCommerce Management System**. Its voice is direct, useful, calm, and evidence-led in both languages. It does not make invented commercial, model-quality, or availability claims.
+The product name is **Shelfmark** (**Shelfmark: An AI-Powered Smart E-Commerce Management System** in academic and project documents). Its voice is direct, useful, calm, and evidence-led in both languages. It does not make invented commercial, model-quality, or availability claims.
 
 ## Evidence on Hand
 

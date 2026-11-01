@@ -1,4 +1,4 @@
-# Smart-eCommerce Management System — Software Requirements Specification
+# Shelfmark: An AI-Powered Smart E-Commerce Management System — Software Requirements Specification
 
 | Field | Value |
 |---|---|

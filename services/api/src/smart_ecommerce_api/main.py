@@ -198,10 +198,10 @@ def create_app(
         yield
 
     app = FastAPI(
-        title="Smart-eCommerce API",
+        title="Shelfmark API",
         version="0.15.0",
         description=(
-            "Smart-eCommerce API. The version tracks docs/api/platform.openapi.json, "
+            "Shelfmark API. The version tracks docs/api/platform.openapi.json, "
             "which a drift test keeps in step with this application."
         ),
         lifespan=lifespan,

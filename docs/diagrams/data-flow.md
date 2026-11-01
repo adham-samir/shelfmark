@@ -6,7 +6,7 @@
 flowchart LR
     customer[Customer]
     operator[Back-office user]
-    platform((Smart-eCommerce platform))
+    platform((Shelfmark platform))
     payment[Payment / risk inputs]
     shipment[Shipment provider/source]
     supplier[Supplier / reorder boundary]

@@ -1,4 +1,4 @@
-# Smart-eCommerce Management System — Codex Implementation Plan
+# Shelfmark: An AI-Powered Smart E-Commerce Management System — Codex Implementation Plan
 
 Prepared from the two supplied project-specification photos on 27 October 2026.
 
@@ -17,7 +17,7 @@ The original photos remain authoritative if a transcription or interpretation is
 
 ## 2. Source requirements — project purpose and objectives
 
-**Project name:** Smart-eCommerce Management System.
+**Project name:** Shelfmark: An AI-Powered Smart E-Commerce Management System.
 
 **Purpose:** Apply artificial intelligence and data analysis to develop an integrated platform combining management of commercial and marketing operations (**Back-Office / ERP**) with a smart, personalized customer experience (**Front-End / Storefront**).
 
@@ -436,7 +436,7 @@ These gaps do not change the requirements; resolving them makes the implementati
 
 ```text
 Read docs/source-specification-plan.md completely and use it as the implementation
-plan for the Smart-eCommerce Management System graduation project.
+plan for Shelfmark: An AI-Powered Smart E-Commerce Management System, the graduation project.
 
 Preserve every source requirement, all seven smart modules, the BI objective,
 the supplied technology alternatives, and all five roadmap stages. Distinguish

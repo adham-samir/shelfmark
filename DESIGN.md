@@ -1,5 +1,5 @@
 ---
-name: Smart-eCommerce Management System
+name: Shelfmark
 description: A bilingual evidence-led commerce workbench, rendered as two instruments: a calm storefront and a dense operations console.
 colors:
   canvas: "#f6f7f9"
@@ -144,7 +144,7 @@ components:
     height: "24px"
 ---
 
-# Design System: Smart-eCommerce Management System
+# Design System: Shelfmark
 
 ## Overview
 
