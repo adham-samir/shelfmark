@@ -6,29 +6,36 @@
 <title>Shelfmark: An AI-Powered Smart E-Commerce Management System — Final Presentation</title>
 <style>
   :root {
-    --paper: #f7f6e8;
-    --paper-deep: #efece0;
-    --surface: #fbf8ee;
-    --surface-alt: #f4f1e4;
-    --ink: #101011;
-    --graphite: #3f3f3f;
-    --muted: #62625e;
-    --rule: #c2c1bb;
-    --rule-soft: #ddd9cd;
-    --amber: #b87820;
-    --amber-strong: #9c6114;
-    --amber-soft: #f1e2c2;
-    --green: #2c7a3f;
-    --green-soft: #dcecdd;
-    --red: #a13b2e;
-    --red-soft: #f4ddd8;
+    /* Slate & Azure, matching apps/storefront/app/styles/tokens.css. The old
+       variable names are kept so the rest of the sheet is untouched; `--amber`
+       is now the azure accent, and warnings use their own `--warn`. */
+    --paper: #f6f7f9;
+    --paper-deep: #eff2f5;
+    --surface: #ffffff;
+    --surface-alt: #f4f6f8;
+    --ink: #0f172a;
+    --graphite: #334155;
+    --muted: #556070;
+    --rule: #e2e5ea;
+    --rule-soft: #e2e5ea;
+    --amber: #2563eb;
+    --amber-strong: #1d4ed8;
+    --amber-soft: #eff4ff;
+    --green: #14682f;
+    --green-soft: #e7f4ec;
+    --red: #b42318;
+    --red-soft: #fbeae8;
+    --warn: #b45309;
+    --warn-soft: #fdf3e4;
+    --rail: #16233b;
+    --rail-text: #e6eaf0;
     --slide-w: 1280px;
     --slide-h: 720px;
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; height: 100%;
-    background: #23231f;
+    background: var(--rail);
     color: var(--ink);
     font-family: "Segoe UI", Tahoma, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -95,9 +102,9 @@
     display: inline-block; padding: 2px 8px; border: 1px solid var(--rule);
     background: var(--surface-alt); font-size: 11.5px; font-weight: 600; color: var(--graphite);
   }
-  .tag.ok { border-color: var(--green); background: var(--green-soft); color: #1f5a2b; }
-  .tag.warn { border-color: var(--amber); background: var(--amber-soft); color: #6d4409; }
-  .tag.bad { border-color: var(--red); background: var(--red-soft); color: #76291f; }
+  .tag.ok { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+  .tag.warn { border-color: var(--warn); background: var(--warn-soft); color: var(--warn); }
+  .tag.bad { border-color: var(--red); background: var(--red-soft); color: var(--red); }
   .callout {
     border-inline-start: 3px solid var(--amber); background: var(--surface-alt);
     padding: 10px 14px; font-size: 14px; color: var(--graphite); margin-block-start: 10px;
@@ -118,13 +125,13 @@
   #hud {
     position: fixed; inset-block-end: 0; inset-inline: 0; height: 34px;
     display: flex; align-items: center; gap: 14px; padding: 0 16px;
-    background: rgba(16,16,17,.85); color: #e9e6d8; font-size: 12px;
+    background: rgba(22,35,59,.92); color: var(--rail-text); font-size: 12px;
   }
-  #hud .bar { flex: 1; height: 3px; background: #3a3a36; }
+  #hud .bar { flex: 1; height: 3px; background: rgba(230,234,240,.22); }
   #hud .bar i { display: block; height: 100%; background: var(--amber); }
   #notes {
     position: fixed; inset-block-end: 34px; inset-inline: 0; max-height: 34vh; overflow: auto;
-    background: #14140f; color: #e9e6d8; padding: 14px 20px; font-size: 14px; line-height: 1.6;
+    background: #16233b; color: var(--rail-text); padding: 14px 20px; font-size: 14px; line-height: 1.6;
     display: none; border-block-start: 2px solid var(--amber);
   }
   #notes.show { display: block; }
