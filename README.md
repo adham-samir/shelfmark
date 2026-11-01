@@ -26,25 +26,8 @@ synthetic and labelled as such.</sub>
 
 ## Run it — Windows (start here)
 
-You only need to install **one** program: Docker Desktop. Everything else runs
-inside Docker.
-
-### Before you start
-
-- Windows 10 or 11, 64-bit.
-- 8 GB of RAM (16 GB is more comfortable).
-- About 6 GB of free disk space.
-- An internet connection for the first run.
-
-To check your own numbers, press the **Windows key**, type `About your PC` and
-open it. Free disk space is listed under `This PC`.
-
-### A note on three words
-
-- **Terminal** (also called PowerShell): a plain text window. Paste one line,
-  press **Enter**, and it runs.
-- **Command**: a line copied from this guide. Copy it exactly.
-- **Logs**: the wall of text while it runs. This is normal, not an error.
+You need two programs: **Docker Desktop**, which runs the app, and **Git**, which
+downloads it. Everything else runs inside Docker.
 
 ### Step 1 — Install Docker Desktop
 
@@ -59,26 +42,31 @@ open it. Free disk space is listed under `This PC`.
 If Windows asks for a "WSL 2 kernel update", install it, then reopen Docker
 Desktop.
 
-### Step 2 — Get the project
+### Step 2 — Install Git (skip if you already have it)
 
-You do not need Git.
+If you already use Git, skip this step.
 
-1. Open the [project page](https://github.com/adham-samir/shelfmark) and click
-   **Code** → **Download ZIP**.
-2. Right-click the downloaded `shelfmark-main.zip` and choose **Extract All…** →
-   **Extract**.
-3. Open the extracted `shelfmark-main` folder. You should see `apps`, `infra`,
-   `services`, and `docs`.
+1. Go to <https://git-scm.com/download/win> — the download starts on its own.
+2. Open the downloaded file, click **Next** through the installer, and finish.
+   The default options are fine.
 
-### Step 3 — Open a terminal in that folder
+### Step 3 — Download the project
 
-1. Inside the `shelfmark-main` folder, click the address bar at the top.
-2. Type `powershell` and press **Enter**.
+1. Press the **Windows key**, type `powershell`, and press **Enter**.
+2. Paste this line and press **Enter**:
 
-A window opens, already pointed at the folder. That window is the terminal.
+```powershell
+git clone https://github.com/adham-samir/shelfmark.git
+```
 
-Or: hold **Shift**, right-click an empty space in the folder, and choose **Open
-PowerShell window here**.
+3. Then enter the folder:
+
+```powershell
+cd shelfmark
+```
+
+The project is saved in your user folder, for example
+`C:\Users\YourName\shelfmark`.
 
 ### Step 4 — Start the app
 
@@ -124,9 +112,8 @@ To start again later, repeat **Step 4**. It is much faster the second time.
 
 ## Run it — Linux
 
-The commands are the same as Windows. Only the install step differs, and there
-is no separate "open a terminal" step: on Linux you open a terminal in the
-project folder directly.
+The commands are the same as Windows: install Git and Docker, clone the project,
+then start it. Only the install step differs.
 
 ### Step 1 — Install Docker
 
@@ -158,9 +145,6 @@ docker compose version
 git clone https://github.com/adham-samir/shelfmark.git
 cd shelfmark
 ```
-
-(No Git? Download the ZIP from the project page and extract it, then `cd` into
-the extracted folder.)
 
 ### Step 3 — Start the app
 
@@ -198,7 +182,7 @@ Keep it private, like a password.
 
 ### Step 2 — Add the key to the app
 
-In a terminal in the `shelfmark-main` folder:
+In a terminal in the `shelfmark` folder that `git clone` created:
 
 ```powershell
 copy .env.example .env
