@@ -818,7 +818,7 @@ const summary = {
   screenshots,
   consoleErrors: [...new Set(consoleErrors)].slice(0, 20),
 };
-await writeFile("/tmp/opencode/rehearsal-result.json", JSON.stringify(summary, null, 2));
+await writeFile(join(tmpdir(), "shelfmark-rehearsal-result.json"), JSON.stringify(summary, null, 2));
 console.log(`\nTOTAL ${total.toFixed(1)}s, ${drift.length} drift, ${screenshots.length} screenshots, ${summary.consoleErrors.length} console errors`);
 if (drift.length) for (const entry of drift) console.log(` - ${entry.step}: ${entry.error}`);
 if (summary.consoleErrors.length) for (const entry of summary.consoleErrors) console.log(` ! console: ${entry}`);

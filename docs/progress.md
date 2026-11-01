@@ -1,6 +1,6 @@
 # Project Progress
 
-Last updated: 2026-10-30
+Last updated: 2026-11-01
 
 ## Current increment
 
@@ -59,6 +59,16 @@ Last updated: 2026-10-30
 | Stage 5 final presentation | Verified | `docs/presentation/deck.html` (17 slides, English speaker notes) and the exported `deck.pdf` are built from the outline, use 26 screens captured from the running system, and verify at 1440/960/700 with no overflow. |
 | Demo rehearsal | Verified | The demo script is driven end to end against a freshly seeded isolated stack built by the migration runner: 0 drift, 26.4 s of automated interaction, 31 captured screens recaptured from the current "Two instruments" UI, and only the two intentional console errors (spoofed-upload 422, unknown-product 404). It covers the customer loop (password rotation, saved addresses, buy-again) and the operator lifecycle (shipment advance, partial refund), and previously found a production-build defect in every back-office server action, a misleading recommendation empty state, and broken RTL timestamps — all fixed and re-verified. The 2026-11-01 re-run reconciled the runner with the UI overhaul (stale selectors, and a missing spoofed-upload fixture). See `docs/presentation/rehearsal.md`. |
 
+## Repository readiness — 2026-11-01
+
+| Item | Status | Evidence / note |
+|---|---|---|
+| Product name | Verified | The display name is **Shelfmark** across the product/design docs, the SRS and source plan, the diagrams, the OpenAPI titles, the assistant prompt, and the presentation; academic documents carry the descriptive line "Shelfmark: An AI-Powered Smart E-Commerce Management System". Cookies, env vars, DSNs, package names, and retired mock prompts are unchanged. |
+| Demo rehearsal recapture | Verified | The runner was repaired for the "Two instruments" markup (four stale selector groups) and made self-contained (it writes its own spoofed-upload fixture). A re-run gave 0 drift, 31 screens recaptured from the current UI, 26.4 s, and the two intentional console errors. See `docs/presentation/rehearsal.md`. |
+| Live provider key path | Ready | `infra/compose.yaml` forwards `OPENAI_API_KEY` into the API container and `.env.example` documents every variable, so supplying a key enables the assistant and voice surfaces without a code change. Live proof still needs a real key. |
+| CI | Ready | `.github/workflows/ci.yml` runs the API suite, the disposable-database schema checks, and the storefront typecheck/tests/build on push and pull request. The heavier stack-dependent gates remain manual. |
+| Published repository | Verified | `github.com/adham-samir/shelfmark` (public), tracking `main`. |
+
 ## Stage 1 completion
 
 | Item | Status | Evidence / note |
@@ -105,9 +115,10 @@ All Stage 2 work possible in the repository is complete. The only declared exter
 The customer loop (password change, saved addresses, own-order cancellation,
 buy-again), the operator order lifecycle, the migration runner, session reaping,
 structured request logging, the Origin/CSRF check on cookie-authenticated
-mutations, and response security headers are all in place. What remains is
-hardening the repository rather than the product: CI and compose hardening. There
-is no git remote, so the history lives only on this machine.
+mutations, response security headers, the CI workflow, and the `.env.example`
+key path are all in place. The repository is published at
+`github.com/adham-samir/shelfmark`, and CI runs the API, schema, and storefront
+checks on every push. What remains is the external work below.
 
 The increments below still require inputs the environment does not have:
 

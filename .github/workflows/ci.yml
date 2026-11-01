@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: API tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # Database-backed tests skip themselves when no DSN is set; the rest of the
+      # API suite (routes, services, contract drift, logging) runs here.
+      - run: uv run --project services/api --extra test --locked pytest services/api/tests -q
+
+  data-foundation:
+    name: Database schema tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # These checks start their own disposable PostgreSQL/MongoDB containers on
+      # this runner's Docker daemon; nothing is published or reused.
+      - run: >
+          uv run --with-requirements tests/data_foundation/requirements.txt
+          python -m unittest discover -s tests/data_foundation -v
+
+  storefront:
+    name: Storefront build and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/storefront
+    env:
+      SMART_ECOMMERCE_API_URL: http://127.0.0.1:8000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/storefront/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

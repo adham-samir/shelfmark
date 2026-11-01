@@ -24,6 +24,26 @@ Selections are recorded in [the decision register](docs/decisions.md). Developme
 - [Final presentation](docs/presentation/README.md): 17-slide self-contained HTML deck with speaker notes, exported PDF, 31 system screenshots, and the [demo rehearsal log](docs/presentation/rehearsal.md).
 - [Progress and remaining decisions](docs/progress.md).
 
+## Run the stack locally
+
+Prerequisites: Docker with a running daemon, and `uv` for host processes.
+
+```bash
+cp .env.example .env            # optional; set OPENAI_API_KEY here to enable the assistant
+docker compose -f infra/compose.yaml up --build
+```
+
+That starts PostgreSQL, MongoDB, the catalog seed, the migration/seed runner, and the API on `:8000`. Build and start the storefront separately:
+
+```bash
+cd apps/storefront
+npm ci
+npm run build
+SMART_ECOMMERCE_API_URL=http://127.0.0.1:8000 npm start   # :3000
+```
+
+Exporting `OPENAI_API_KEY` (or putting it in `.env`) turns on the assistant and voice-search surfaces; without it they return a typed `503` and every other capability works. See [`.env.example`](.env.example) for the full variable list.
+
 ## Verify this increment
 
 Prerequisites: Docker with its daemon running, and `uv`. The data checks start isolated PostgreSQL and MongoDB containers, publish no host ports, and stop only those containers afterward. No existing database is used.
@@ -63,3 +83,5 @@ STOREFRONT_BASE_URL=http://127.0.0.1:3000 \
 ```
 
 Run the integrated local slice with `docker compose -f infra/compose.yaml up --build`; see the [API service guide](services/api/README.md) and [storefront guide](apps/storefront/README.md). Database image tags are pinned to `postgres:18.6` and `mongo:8.0.34`; runtime dependencies are locked in `services/api/uv.lock`. Verification evidence is recorded in [progress](docs/progress.md).
+
+[CI](.github/workflows/ci.yml) runs the API suite, the database schema checks, and the storefront typecheck/tests/build on every push and pull request. The heavier stack-dependent gates — integration, security, load, accessibility, and the demo rehearsal — need the running compose stack plus a browser, so they stay manual; their commands are above and in [`docs/test-report.md`](docs/test-report.md).
