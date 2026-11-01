@@ -14,8 +14,8 @@ jobs:
     name: API tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
       # Database-backed tests skip themselves when no DSN is set; the rest of the
@@ -25,14 +25,9 @@ jobs:
   data-foundation:
     name: Database schema tests
     runs-on: ubuntu-latest
-    # Advisory: the hosted runner's kernel (6.19+) is one MongoDB 8.0.34 refuses
-    # to start on (SERVER-121912), so the schema suite cannot run here. It passes
-    # on a normal Docker host and is listed in the README; the job stays visible
-    # without blocking the build on that kernel incompatibility.
-    continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
       # These checks start their own disposable PostgreSQL/MongoDB containers on
@@ -50,8 +45,8 @@ jobs:
     env:
       SMART_ECOMMERCE_API_URL: http://127.0.0.1:8000
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           # The storefront runs its Node test runner directly against a .ts file,
           # which needs a current Node (dev uses 26); 22 cannot load it.

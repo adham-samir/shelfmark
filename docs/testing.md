@@ -107,11 +107,11 @@ npm run capture                                                  # 136-page scre
 
 ## Continuous integration
 
-[CI](../.github/workflows/ci.yml) runs the API suite and the storefront
-typecheck/tests/build on every push and pull request. The data-foundation job is
-advisory on hosted runners because their kernel (6.19+) is one the pinned MongoDB
-8.0.34 refuses to start on
-([SERVER-121912](https://jira.mongodb.org/browse/SERVER-121912)); it passes on a
-normal Docker host. The stack-dependent gates above stay manual.
+[CI](../.github/workflows/ci.yml) runs the API suite, the database schema checks,
+and the storefront typecheck/tests/build on every push and pull request. The
+schema checks start the pinned MongoDB 8.2 image, which starts on the modern
+kernels (6.19+) where 8.0.x refuses to
+([SERVER-121912](https://jira.mongodb.org/browse/SERVER-121912)). The
+stack-dependent gates above stay manual.
 
 Results for a recorded run are in [`test-report.md`](test-report.md).

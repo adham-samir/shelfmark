@@ -13,8 +13,8 @@ environment. Nothing in this document claims a cloud deployment has happened.
 |---|---|---|
 | `postgres` | `postgres:18.6` | Holds the schema only; nothing is mounted into `docker-entrypoint-initdb.d`. |
 | `migrate` | same API image | One-shot: `python -m smart_ecommerce_api.migrate --seed`. Applies every numbered migration once, then the synthetic seed. The API waits for it to complete. |
-| `mongo` | `mongo:8.0.34` | Validator and indexes applied by `catalog-init`. |
-| `catalog-init` | `mongo:8.0.34` | One-shot: `setup.js` + `seed.synthetic.js`. |
+| `mongo` | `mongo:8.2` | Validator and indexes applied by `catalog-init`. |
+| `catalog-init` | `mongo:8.2` | One-shot: `setup.js` + `seed.synthetic.js`. |
 | `api` | `services/api/Dockerfile` | FastAPI + uvicorn on port 8000, runs as UID 65532. |
 | `storefront` | `apps/storefront` | Run `next build` then `next start`; deployed separately or as a second container. |
 | Jobs | same API image | `inventory-job`, `pricing-job`, `segmentation-job`, and `session-reaper` under the `jobs` profile. |

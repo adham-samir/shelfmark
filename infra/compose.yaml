@@ -14,7 +14,7 @@ services:
       retries: 20
 
   mongo:
-    image: mongo:8.0.34
+    image: mongo:8.2
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping: 1}).ok ? 0 : 1)"]
       interval: 2s
@@ -22,7 +22,7 @@ services:
       retries: 20
 
   catalog-init:
-    image: mongo:8.0.34
+    image: mongo:8.2
     depends_on:
       mongo:
         condition: service_healthy

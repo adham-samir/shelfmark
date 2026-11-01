@@ -35,7 +35,7 @@ class DatabaseFoundationTests(unittest.TestCase):
         cls.mongo = f"smart-ecommerce-schema-mongo-{task_id}"
         for name, image, env in [
             (cls.postgres, "postgres:18.6", ["-e", "POSTGRES_PASSWORD=ephemeral-schema-test", "-e", "PGPASSWORD=ephemeral-schema-test"]),
-            (cls.mongo, "mongo:8.0.34", []),
+            (cls.mongo, "mongo:8.2", []),
         ]:
             print(f"\nStarting isolated schema checks with {image}...", flush=True)
             # Register before starting so a failure still attempts only this task's cleanup.
