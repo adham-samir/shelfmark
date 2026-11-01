@@ -26,63 +26,76 @@ synthetic and labelled as such.</sub>
 
 ## Run it — Windows (start here)
 
-You only need to install **one** thing: Docker Desktop. Everything else runs
+You only need to install **one** program: Docker Desktop. Everything else runs
 inside Docker.
 
-### What you need
+### Before you start
 
 - Windows 10 or 11, 64-bit.
-- 8 GB of RAM (16 GB is comfortable) and about 6 GB of free disk space.
+- 8 GB of RAM (16 GB is more comfortable).
+- About 6 GB of free disk space.
 - An internet connection for the first run.
+
+To check your own numbers, press the **Windows key**, type `About your PC` and
+open it. Free disk space is listed under `This PC`.
+
+### A note on three words
+
+- **Terminal** (also called PowerShell): a plain text window. Paste one line,
+  press **Enter**, and it runs.
+- **Command**: a line copied from this guide. Copy it exactly.
+- **Logs**: the wall of text while it runs. This is normal, not an error.
 
 ### Step 1 — Install Docker Desktop
 
 1. Go to <https://www.docker.com/products/docker-desktop/> and click **Download
    for Windows**.
-2. Open the downloaded file (`Docker Desktop Installer.exe`) and click **OK /
-   Install**. Leave the **"Use WSL 2 instead of Hyper-V"** box checked.
-3. If it asks to restart, restart the computer.
-4. Launch **Docker Desktop** from the Start menu. Wait until the little whale
-   icon in the taskbar stops animating — it says **"Engine running"** when ready.
-   You can leave Docker Desktop open in the background.
+2. Open `Docker Desktop Installer.exe`, click **Install**, and leave **"Use WSL 2
+   instead of Hyper-V"** ticked.
+3. Restart the computer if it asks.
+4. Open **Docker Desktop** from the Start menu and wait until it says **"Engine
+   running"**.
 
-> If Windows asks you to install a "WSL 2 kernel update", click the link it
-> offers, install that, then reopen Docker Desktop.
+If Windows asks for a "WSL 2 kernel update", install it, then reopen Docker
+Desktop.
 
 ### Step 2 — Get the project
 
-You do **not** need Git. On the [project page](https://github.com/adham-samir/shelfmark):
+You do not need Git.
 
-1. Click the green **Code** button → **Download ZIP**.
-2. Right-click the downloaded `shelfmark-main.zip` → **Extract All…** → **Extract**.
-3. Open the extracted `shelfmark-main` folder. You should see folders named
-   `apps`, `infra`, `services`, and `docs`.
+1. Open the [project page](https://github.com/adham-samir/shelfmark) and click
+   **Code** → **Download ZIP**.
+2. Right-click the downloaded `shelfmark-main.zip` and choose **Extract All…** →
+   **Extract**.
+3. Open the extracted `shelfmark-main` folder. You should see `apps`, `infra`,
+   `services`, and `docs`.
 
 ### Step 3 — Open a terminal in that folder
 
-In the `shelfmark-main` folder window, click the address bar at the top (where
-the path is), type `powershell`, and press **Enter**. A blue/black window opens,
-already pointed at this folder. That window is the **terminal**.
+1. Inside the `shelfmark-main` folder, click the address bar at the top.
+2. Type `powershell` and press **Enter**.
 
-> Alternative: hold **Shift**, right-click any empty space inside the folder, and
-> choose **Open PowerShell window here**.
+A window opens, already pointed at the folder. That window is the terminal.
+
+Or: hold **Shift**, right-click an empty space in the folder, and choose **Open
+PowerShell window here**.
 
 ### Step 4 — Start the app
 
-In that terminal window, copy this line, paste it, and press **Enter**:
+Paste this line and press **Enter**:
 
 ```powershell
 docker compose -f infra/compose.yaml up --build
 ```
 
-- The **first run takes several minutes** while it downloads and builds things
-  (roughly 2 GB, once). It will scroll a lot of text — that is normal.
-- When it settles and you can see a line containing `ready`, it is running.
-- **Leave this window open** while you use the app.
+- The first run takes several minutes and downloads about 2 GB. This happens once.
+- Text scrolls past quickly. That is normal.
+- When you see a line containing `ready`, the app is running.
+- Leave this window open while you use the app.
 
 ### Step 5 — Open the shop
 
-Open your browser and go to <http://localhost:3000>.
+Go to <http://localhost:3000>.
 
 ### Step 6 — Sign in
 
@@ -98,22 +111,22 @@ The customer signs in at **/login**; the operator back office is at
 
 ### Step 7 — Stop the app
 
-- Go back to the terminal window and press **Ctrl + C**, or
-- Open a new terminal in the same folder and run:
+Press **Ctrl + C** in the terminal, or open a terminal in the same folder and
+run:
 
 ```powershell
 docker compose -f infra/compose.yaml down
 ```
 
-To start it again later, repeat **Step 4** (it will be much faster the second
-time). You do not need to repeat Steps 1–3.
+To start again later, repeat **Step 4**. It is much faster the second time.
 
 ---
 
 ## Run it — Linux
 
-The commands are identical to Windows from Step 2 onward. Only the install step
-differs.
+The commands are the same as Windows. Only the install step differs, and there
+is no separate "open a terminal" step: on Linux you open a terminal in the
+project folder directly.
 
 ### Step 1 — Install Docker
 
@@ -170,32 +183,53 @@ docker compose -f infra/compose.yaml down
 
 ## Turn on the AI assistant (optional)
 
-The assistant and voice-search pages work but show a friendly "provider
-unavailable" message until you give the app a key. Everything else works without
-one.
+Everything works without this. Only the assistant and voice search show a
+"provider unavailable" message.
 
-The example settings already point at OpenRouter and a cheap DeepSeek model, so
-you only need to add your own key:
+The app uses OpenRouter with a cheap DeepSeek model, so trying it costs pennies.
 
-1. In the project folder, make your own settings file from the example.
-   - **Windows (PowerShell):** `copy .env.example .env`
-   - **Linux:** `cp .env.example .env`
-2. Open `.env` in a text editor (Notepad is fine) and paste your key:
+### Step 1 — Get a key
 
-   ```text
-   OPENAI_API_KEY=sk-or-v1-your-key-here
-   ```
+1. Go to <https://openrouter.ai/keys> and create an account.
+2. Add a few dollars of credit.
+3. Click **Create Key** and copy the key. It starts with `sk-or-v1-`.
 
-   The variable keeps the OpenAI SDK's name whatever gateway sits behind it. To
-   use OpenAI instead, clear `SMART_ECOMMERCE_OPENAI_BASE_URL` and set OpenAI
-   model ids; any other OpenAI-compatible gateway works the same way.
+Keep it private, like a password.
 
-3. Save the file, then restart the app:
+### Step 2 — Add the key to the app
 
-   ```bash
-   docker compose -f infra/compose.yaml down
-   docker compose -f infra/compose.yaml up
-   ```
+In a terminal in the `shelfmark-main` folder:
+
+```powershell
+copy .env.example .env
+notepad .env
+```
+
+On Linux, use `cp .env.example .env` and open it with `nano .env`.
+
+Find `OPENAI_API_KEY=` and paste your key straight after the `=`, with no spaces.
+Leave the three lines below it unchanged. Save with **Ctrl + S**, then close
+Notepad.
+
+```text
+OPENAI_API_KEY=sk-or-v1-your-key-here
+```
+
+To use OpenAI instead, clear the base-URL line and set OpenAI model names. The
+comments inside `.env` explain how.
+
+### Step 3 — Restart the app
+
+```powershell
+docker compose -f infra/compose.yaml down
+docker compose -f infra/compose.yaml up
+```
+
+### Step 4 — Try it
+
+Open <http://localhost:3000/assistant> and ask a question, for example "I want a
+phone with a good camera". Ask a follow-up to see it remember the conversation,
+or use **Ask about an order** to attach one of your orders.
 
 > `.env` is ignored by Git, so your key is never uploaded. Never share it.
 
