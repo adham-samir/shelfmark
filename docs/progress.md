@@ -66,7 +66,7 @@ Last updated: 2026-11-01
 | Product name | Verified | The display name is **Shelfmark** across the product/design docs, the SRS and source plan, the diagrams, the OpenAPI titles, the assistant prompt, and the presentation; academic documents carry the descriptive line "Shelfmark: An AI-Powered Smart E-Commerce Management System". Cookies, env vars, DSNs, package names, and retired mock prompts are unchanged. |
 | Demo rehearsal recapture | Verified | The runner was repaired for the "Two instruments" markup (four stale selector groups) and made self-contained (it writes its own spoofed-upload fixture). A re-run gave 0 drift, 31 screens recaptured from the current UI, 26.4 s, and the two intentional console errors. See `docs/presentation/rehearsal.md`. |
 | Live provider key path | Ready | `infra/compose.yaml` forwards `OPENAI_API_KEY` into the API container and `.env.example` documents every variable, so supplying a key enables the assistant and voice surfaces without a code change. Live proof still needs a real key. |
-| CI | Ready | `.github/workflows/ci.yml` runs the API suite, the disposable-database schema checks, and the storefront typecheck/tests/build on push and pull request. The heavier stack-dependent gates remain manual. |
+| CI | Ready | `.github/workflows/ci.yml` runs the API suite and the storefront typecheck/tests/build on push and pull request. The disposable-database schema job is advisory on hosted runners because their kernel (6.19+) is one the pinned MongoDB 8.0.34 refuses to start on (SERVER-121912); it passes on a normal Docker host. The heavier stack-dependent gates remain manual. |
 | Published repository | Verified | `github.com/adham-samir/shelfmark` (public), tracking `main`. |
 
 ## Stage 1 completion

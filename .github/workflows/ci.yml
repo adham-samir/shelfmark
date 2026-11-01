@@ -25,10 +25,10 @@ jobs:
   data-foundation:
     name: Database schema tests
     runs-on: ubuntu-latest
-    # Advisory: these checks start the pinned MongoDB image as a container, which
-    # hosted runners sometimes kill at startup. They pass on a normal Docker host
-    # and are listed in the README; this job keeps the result visible without
-    # blocking the build on a runner limitation.
+    # Advisory: the hosted runner's kernel (6.19+) is one MongoDB 8.0.34 refuses
+    # to start on (SERVER-121912), so the schema suite cannot run here. It passes
+    # on a normal Docker host and is listed in the README; the job stays visible
+    # without blocking the build on that kernel incompatibility.
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
