@@ -74,6 +74,17 @@ services:
     ports:
       - "8000:8000"
 
+  storefront:
+    build:
+      context: ../apps/storefront
+    environment:
+      # Server-side calls to the API go through the compose network.
+      SMART_ECOMMERCE_API_URL: http://api:8000
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
   inventory-job:
     build:
       context: ../services/api
