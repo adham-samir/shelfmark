@@ -18,7 +18,7 @@ exception**, **Simulated**, **Blocked**.
 | OBJ-03 / BI-01 | Interactive consumer-behavior and financial-performance analysis uses real application records. | **Passed on synthetic records** | `/backoffice/analytics` recomputes on date/category filters and reconciles against `order_items`. |
 | SF-01 | Collaborative and content-based recommendations use purchase and browsing history. | **Passed** | Trained hybrid artifact (nDCG@10 1.0 vs popularity 0.690465), live ranked run with browsing and purchase basis, seen-item exclusion, popularity cold start. The four-product artifact is fully seen by the seeded customer, so the storefront rail shows the exhausted state instead of a fallback. |
 | SF-02 | Inquiry response, suitable-product help, shipment tracking, and order-access isolation pass. | **Passed** | Proven live through OpenRouter with `deepseek/deepseek-v4.1-flash`: grounded product answers, return/warranty policy, own-order and shipment lookup, conversation memory, and an explicitly attached order. Injected-provider tests cover missing information, upstream failure, and cross-customer denial; a foreign or unknown order id never leaks another customer's record. |
-| SF-03 | Image search, voice search, and dynamic filtering pass individually and together. | **Passed for image search and facets; Simulated for voice** | PyTorch retrieval top-1 1.0 / recall@3 1.0 on the synthetic set; contextual facets and combined filters pass; transcription adapter verified with injected results only. |
+| SF-03 | Image search, voice search, and dynamic filtering pass individually and together. | **Passed** | PyTorch retrieval top-1 1.0 / recall@3 1.0 on the synthetic set; contextual facets and combined filters pass; live speech transcription returns the spoken sentence, and the browser's parameterised media type (`audio/webm;codecs=opus` and its Firefox/Safari equivalents) is accepted after normalisation — before which every real recording was rejected. |
 | BO-01 | Future-demand prediction, automatic reorder, duplicate prevention, and adequate-stock scenarios pass. | **Passed on labeled synthetic history** | 3.35% holdout MAPE; 13 forecasts, 12 reorders on the first live run, zero duplicates on rerun; adequate-stock negative case; supplier failure and recovery. |
 | BO-02 | All named pricing factors influence the defined calculation and automatic price application works. | **Passed on synthetic inputs** | Factor-controlled tests for demand, supply, competitor cost, and season; ±20% cap; cost+5% floor; stale-input block; storefront price propagation; order snapshot unchanged. |
 | BO-03 | Correct RFM values/segments and targeted group selection are demonstrated. | **Passed on synthetic order history** | 38 classified / 2 insufficient; all 125 score combinations mapped; quintile ties; segment filter and CSV export row counts match. |
@@ -175,7 +175,7 @@ rather than silently passing.
 |---|---|---|---|---|
 | SF-01 hybrid recommendation | Synthetic interactions | nDCG@10 vs popularity | 1.0 vs 0.690465 (+44.83%) | Synthetic interactions; no real behaviour. |
 | SF-03 image retrieval | Synthetic swatches | Top-1 / recall@3 | 1.0 / 1.0 | Deterministic perturbations only. |
-| SF-03 voice | Injected transcriptions | Behavioural only | n/a | No real speech sample has been run through the live transcription endpoint. |
+| SF-03 voice | Live transcription (`openai/whisper-large-v3`) | Spoken phrase → transcript | Matched | Synthesised speech; proves the path, not accent or noise robustness. |
 | BO-01 demand forecast | Synthetic chronology | Non-zero-demand MAPE | 3.35% | Synthetic seasonality; no real demand. |
 | BO-04 fraud | Synthetic generator | Recall / FPR | 0.833 / 0.078 | Labels come from the generator, not real payments. |
 | SF-02 assistant | Live provider (OpenRouter + `deepseek/deepseek-v4.1-flash`) | Grounding cases | Passed | Live answers verified for product, policy, own-order and attached-order questions; tone and memory reviewed by hand, not scored. |
@@ -183,10 +183,11 @@ rather than silently passing.
 
 ## 6. Declared gaps
 
-1. **Live provider coverage** — the assistant is proven live through OpenRouter
-   with `deepseek/deepseek-v4.1-flash`. Voice transcription is verified only with
-   an injected provider, because no real speech sample has been sent through the
-   live transcription endpoint.
+1. **Voice search result quality** — the assistant and voice transcription are
+   both proven live, but a spoken sentence can transcribe correctly and still
+   return no products. The catalog requires every query term to match, so filler
+   words ("I", "with") exclude every record. Typed search shares the limitation,
+   so it needs a retrieval change rather than a voice-specific fix.
 2. **Figma deliverable** — no Figma access; the implementable screen/interaction
    specification stands in, as the plan permits.
 3. **Synthetic data only** — every model and dashboard is evaluated on synthetic

@@ -572,7 +572,7 @@
     <div class="cols">
       <div>
         <ul>
-          <li><strong>AI provider proof is partial.</strong> The assistant is proven live through OpenRouter with <code>deepseek/deepseek-v4.1-flash</code> — grounded answers, own-order lookup, conversation memory. Voice transcription is still verified with an injected provider only: no real speech sample has been run through it.</li>
+          <li><strong>AI answers are live; search quality is not.</strong> The assistant and voice transcription run against OpenRouter (<code>deepseek/deepseek-v4.1-flash</code>, <code>whisper-large-v3</code>). Voice transcribes a spoken sentence correctly, but the catalog needs every query term to match, so a full sentence can still return no products — a retrieval limitation, not a model one.</li>
           <li><strong>Synthetic data only.</strong> Every model, dashboard, and evaluation uses synthetic or sandbox records. Nothing here is a commercial claim.</li>
           <li><strong>No cloud deployment.</strong> Docker packaging and the deployment runbook are verified; the AWS placement needs account access and has not been executed.</li>
         </ul>

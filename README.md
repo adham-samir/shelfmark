@@ -319,10 +319,10 @@ Stages 1–4 are complete and documented; Stage 5 packaging, deployment guidance
 the user manual, the demo script, and the presentation are delivered. The
 remaining work needs outside access and is stated honestly rather than implied:
 
-- The assistant is proven live through OpenRouter with
-  `deepseek/deepseek-v4.1-flash` — grounded answers, own-order lookup, and
-  conversation memory. Voice transcription is still exercised with an injected
-  provider only; no real speech sample has been run through it.
+- The assistant and voice transcription are proven live through OpenRouter with
+  `deepseek/deepseek-v4.1-flash` and `openai/whisper-large-v3` — grounded
+  answers, own-order lookup, conversation memory, and real speech transcribed
+  from every browser's recording format.
 - No cloud deployment — AWS placement needs an account.
 - Accessibility is verified by automated axe-core checks; no manual
   screen-reader pass has been run.

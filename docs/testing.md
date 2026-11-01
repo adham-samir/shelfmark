@@ -50,6 +50,17 @@ uv run --project services/api --extra test pytest tests/security tests/load -v
 `tests/integration` reads `SMART_ECOMMERCE_TEST_BASE_URL` (default
 `http://127.0.0.1:8000`).
 
+The integration suite writes orders, price changes, reorders and segments, so it
+expects a **freshly seeded stack** per run: re-seed with
+`docker compose -f infra/compose.yaml down -v && docker compose -f infra/compose.yaml up -d`
+between attempts, or reused state makes the pricing and checkout counts fail.
+
+It runs whether or not an AI provider key is configured. With one, the assistant
+answers and voice transcription reaches the provider; without one, those two
+surfaces return the typed `dependency_unavailable` envelope. Either is accepted —
+the strict missing-key contract is covered by the API unit tests, which never
+have a key.
+
 ## Storefront
 
 ```bash
