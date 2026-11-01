@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      # No floating major tag past v7 exists for this action, so pin the release.
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       # Database-backed tests skip themselves when no DSN is set; the rest of the
@@ -27,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       # These checks start their own disposable PostgreSQL/MongoDB containers on
