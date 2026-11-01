@@ -19,7 +19,7 @@ uv run --project services/api python services/api/ml/recommendation/train.py \
   --evaluation services/api/artifacts/recommendation.evaluation.json
 ```
 
-SF-02 grounds an OpenAI Responses API adapter in project-authored bilingual FAQ content, the current composed catalog, and shipment records scoped to the authenticated customer. Set `OPENAI_API_KEY` to exercise the real provider; without it, assistant requests intentionally return a structured `503 dependency_unavailable`. `SMART_ECOMMERCE_ASSISTANT_MODEL` defaults to `gpt-6-luna` and remains configurable.
+SF-02 grounds an OpenAI Responses API adapter in project-authored bilingual FAQ content, the current composed catalog, and shipment records scoped to the authenticated customer. Set `OPENAI_API_KEY` to exercise the real provider; without it, assistant requests intentionally return a structured `503 dependency_unavailable`. `SMART_ECOMMERCE_ASSISTANT_MODEL` defaults to `gpt-6-luna` and remains configurable. Set `SMART_ECOMMERCE_OPENAI_BASE_URL` to route through an OpenAI-compatible gateway instead of OpenAI (for example `https://openrouter.ai/api/v1` with `SMART_ECOMMERCE_ASSISTANT_MODEL=deepseek/deepseek-v4.1-flash`).
 
 SF-03 adds contextual catalog facets, repeatable `filter=key:value` filters, validated JPEG/PNG/WebP retrieval through a PyTorch feature baseline, and recorded-audio transcription through OpenAI `gpt-transcribe`. The tracked image evaluation is synthetic and proves pipeline behavior only. Reproduce it with:
 

@@ -2692,6 +2692,15 @@
               }
             ],
             "title": "Order Id"
+          },
+          "history": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "$ref": "#/components/schemas/AssistantTurn"
+            },
+            "title": "History",
+            "default": []
           }
         },
         "additionalProperties": false,
@@ -2700,6 +2709,31 @@
           "message"
         ],
         "title": "AssistantRequest"
+      },
+      "AssistantTurn": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Content"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "AssistantTurn"
       },
       "AssistantResponse": {
         "properties": {

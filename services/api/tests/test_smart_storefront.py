@@ -13,11 +13,19 @@ from smart_ecommerce_api.auth import Principal
 from smart_ecommerce_api.assistant import (
     AssistantRequest,
     AssistantService,
+    AssistantTurn,
     FaqKnowledge,
     OpenAITextGenerator,
 )
 from smart_ecommerce_api.catalog import CatalogService, OperationalProduct
-from smart_ecommerce_api.commerce_models import Shipment, ShipmentEvent
+from smart_ecommerce_api.commerce_models import (
+    Order,
+    OrderItem,
+    OrderList,
+    OrderSummary,
+    Shipment,
+    ShipmentEvent,
+)
 from smart_ecommerce_api.errors import (
     DependencyUnavailable,
     InvalidInput,
@@ -39,6 +47,8 @@ CUSTOMER_ID = UUID("20000000-0000-4000-8000-000000000001")
 OTHER_CUSTOMER_ID = UUID("20000000-0000-4000-8000-000000000002")
 OWN_ORDER_ID = UUID("70000000-0000-4000-8000-000000000001")
 OTHER_ORDER_ID = UUID("70000000-0000-4000-8000-000000000002")
+# The customer's own order that has no shipment row yet (e.g. still confirmed).
+OWN_ORDER_NO_SHIPMENT_ID = UUID("70000000-0000-4000-8000-000000000003")
 PRODUCT_IDS = [
     UUID(f"10000000-0000-4000-8000-{index:012d}") for index in range(1, 5)
 ]
@@ -115,6 +125,49 @@ class Descriptive:
 
 
 class FakeCommerce:
+    def get_order(self, customer_id, order_id):
+        if customer_id != CUSTOMER_ID or order_id not in (
+            OWN_ORDER_ID,
+            OWN_ORDER_NO_SHIPMENT_ID,
+        ):
+            raise ResourceNotFound("Order not found.")
+        shipped = order_id == OWN_ORDER_ID
+        return Order(
+            order_id=order_id,
+            status="shipped" if shipped else "confirmed",
+            currency="EGP",
+            subtotal="8900.000000",
+            created_at=NOW,
+            items=[
+                OrderItem(
+                    product_id=PRODUCT_IDS[0],
+                    product_name="X1 Synthetic Phone",
+                    quantity=2,
+                    unit_price="4450.000000",
+                    line_total="8900.000000",
+                )
+            ],
+        )
+
+    def list_orders(self, customer_id, *, limit=20, offset=0):
+        if customer_id != CUSTOMER_ID:
+            return OrderList(items=[], total=0, limit=limit, offset=offset)
+        return OrderList(
+            items=[
+                OrderSummary(
+                    order_id=OWN_ORDER_ID,
+                    status="shipped",
+                    currency="EGP",
+                    subtotal="8900.000000",
+                    item_count=2,
+                    created_at=NOW,
+                )
+            ],
+            total=1,
+            limit=limit,
+            offset=offset,
+        )
+
     def get_shipment(self, customer_id, order_id):
         if customer_id != CUSTOMER_ID or order_id != OWN_ORDER_ID:
             raise ResourceNotFound("Shipment not found.")
@@ -237,9 +290,88 @@ def test_assistant_grounds_catalog_faq_and_owned_shipment() -> None:
     assert result.answer == "Grounded fixture answer"
     assert {source.kind for source in result.sources} == {"faq", "product", "shipment"}
     prompt = generator.calls[0][1]
-    assert prompt["context"]["shipment"]["status"] == "in_transit"
+    attached = prompt["context"]["attached_order"]
+    assert attached["order_id"] == str(OWN_ORDER_ID)
+    assert attached["status"] == "shipped"
+    assert attached["shipment"]["status"] == "in_transit"
+    assert attached["items"][0]["product_name"] == "X1 Synthetic Phone"
     assert prompt["context"]["products"][0]["name"] == "X1 Synthetic Phone"
-    assert "only the supplied JSON facts" in generator.calls[0][0]
+    assert prompt["context"]["orders"][0]["order_id"] == str(OWN_ORDER_ID)
+    assert prompt["context"]["orders"][0]["shipment"]["status"] == "in_transit"
+    assert "Nour" in generator.calls[0][0]
+
+
+def test_assistant_grounds_the_customers_own_order_list() -> None:
+    generator = RecordingGenerator()
+    AssistantService(
+        catalog(),
+        FakeCommerce(),
+        FaqKnowledge(str(ROOT / "data/assistant_faq.json")),
+        generator,
+    ).answer(CUSTOMER_ID, AssistantRequest(message="What orders do I have?", locale="en"))
+
+    context = generator.calls[0][1]["context"]
+    assert [order["order_id"] for order in context["orders"]] == [str(OWN_ORDER_ID)]
+    assert context["orders"][0]["status"] == "shipped"
+    assert context["orders"][0]["shipment"]["status"] == "in_transit"
+    # No explicit order id was posted, so nothing is treated as attached.
+    assert context["attached_order"] is None
+
+    other = RecordingGenerator()
+    AssistantService(
+        catalog(),
+        FakeCommerce(),
+        FaqKnowledge(str(ROOT / "data/assistant_faq.json")),
+        other,
+    ).answer(OTHER_CUSTOMER_ID, AssistantRequest(message="What orders do I have?"))
+    assert other.calls[0][1]["context"]["orders"] == []
+    assert str(OWN_ORDER_ID) not in json.dumps(other.calls[0][1])
+
+
+def test_assistant_threads_the_conversation_history() -> None:
+    generator = RecordingGenerator()
+    AssistantService(
+        catalog(),
+        FakeCommerce(),
+        FaqKnowledge(str(ROOT / "data/assistant_faq.json")),
+        generator,
+    ).answer(
+        CUSTOMER_ID,
+        AssistantRequest(
+            message="and something cheaper?",
+            locale="en",
+            history=[
+                AssistantTurn(role="user", content="a phone with a good camera"),
+                AssistantTurn(role="assistant", content="Here are three options."),
+            ],
+        ),
+    )
+
+    payload = generator.calls[0][1]
+    assert [turn["role"] for turn in payload["history"]] == ["user", "assistant"]
+    assert payload["history"][0]["content"] == "a phone with a good camera"
+    assert payload["question"] == "and something cheaper?"
+
+
+def test_assistant_localises_faq_source_labels() -> None:
+    def faq_label(locale: str) -> str:
+        result = AssistantService(
+            catalog(),
+            FakeCommerce(),
+            FaqKnowledge(str(ROOT / "data/assistant_faq.json")),
+            RecordingGenerator(),
+        ).answer(CUSTOMER_ID, AssistantRequest(message="returns?", locale=locale))
+        return next(
+            source.label
+            for source in result.sources
+            if source.kind == "faq" and source.reference == "returns"
+        )
+
+    english = faq_label("en")
+    arabic = faq_label("ar")
+    assert english != arabic
+    # The Arabic chip must not fall back to the English question text.
+    assert any("\u0600" <= character <= "\u06ff" for character in arabic)
 
 
 def test_assistant_does_not_expose_another_customers_shipment() -> None:
@@ -255,10 +387,37 @@ def test_assistant_does_not_expose_another_customers_shipment() -> None:
         AssistantRequest(message="Track this", order_id=OTHER_ORDER_ID),
     )
     assert all(source.kind != "shipment" for source in result.sources)
-    assert generator.calls[0][1]["context"]["shipment"] == {
+    assert generator.calls[0][1]["context"]["attached_order"] == {
         "status": "not_found_or_not_owned"
     }
-    assert str(OTHER_CUSTOMER_ID) not in json.dumps(generator.calls[0][1])
+    payload = json.dumps(generator.calls[0][1])
+    assert str(OTHER_CUSTOMER_ID) not in payload
+    assert str(OTHER_ORDER_ID) not in payload
+
+
+def test_assistant_answers_for_an_attached_order_that_has_no_shipment() -> None:
+    generator = RecordingGenerator()
+    result = AssistantService(
+        catalog(),
+        FakeCommerce(),
+        FaqKnowledge(str(ROOT / "data/assistant_faq.json")),
+        generator,
+    ).answer(
+        CUSTOMER_ID,
+        AssistantRequest(
+            message="What is this order?",
+            locale="en",
+            order_id=OWN_ORDER_NO_SHIPMENT_ID,
+        ),
+    )
+
+    attached = generator.calls[0][1]["context"]["attached_order"]
+    assert attached["order_id"] == str(OWN_ORDER_NO_SHIPMENT_ID)
+    assert attached["status"] == "confirmed"
+    # No shipment row yet is reported as null, not as an ownership failure.
+    assert attached["shipment"] is None
+    assert attached["items"][0]["quantity"] == 2
+    assert all(source.kind != "shipment" for source in result.sources)
 
 
 def test_openai_adapters_fail_explicitly_without_a_key() -> None:

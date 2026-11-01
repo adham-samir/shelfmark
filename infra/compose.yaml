@@ -51,6 +51,15 @@ services:
   api:
     build:
       context: ../services/api
+    # Load the repo-root `.env` (git-ignored) into the API container so the
+    # documented `docker compose -f infra/compose.yaml up` workflow picks up
+    # OPENAI_API_KEY and friends. Recent Compose resolves the project directory
+    # to `infra/` and therefore no longer auto-loads a root `.env`; an inline
+    # `${VAR:-}` reference would only see the shell. `required: false` keeps the
+    # stack working when no `.env` exists at all.
+    env_file:
+      - path: ../.env
+        required: false
     environment:
       SMART_ECOMMERCE_POSTGRES_DSN: postgresql://smart_ecommerce:smart_ecommerce@postgres:5432/smart_ecommerce
       SMART_ECOMMERCE_MONGO_URI: mongodb://mongo:27017/?directConnection=true
@@ -61,11 +70,10 @@ services:
       SMART_ECOMMERCE_ASSISTANT_KNOWLEDGE: /app/data/assistant_faq.json
       SMART_ECOMMERCE_PRICING_SEASONS: /app/data/pricing_seasons.json
       SMART_ECOMMERCE_FRAUD_ARTIFACT: /app/artifacts/fraud.joblib
-      # Optional: supplied from the shell or a local .env; empty keeps the
-      # assistant and voice surfaces in their typed provider-missing state.
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      SMART_ECOMMERCE_ASSISTANT_MODEL: gpt-6-luna
-      SMART_ECOMMERCE_TRANSCRIPTION_MODEL: gpt-transcribe
+      # AI provider settings come from the root `.env` via env_file above
+      # (OPENAI_API_KEY, SMART_ECOMMERCE_OPENAI_BASE_URL, and the model ids).
+      # Without a key the assistant and voice surfaces stay in their typed
+      # provider-missing state; the code defaults cover the model names.
     depends_on:
       migrate:
         condition: service_completed_successfully

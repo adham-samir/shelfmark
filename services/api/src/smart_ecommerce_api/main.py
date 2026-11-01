@@ -266,13 +266,21 @@ def create_app(
             catalog_service,
             commerce_service,
             FaqKnowledge(settings.assistant_knowledge),
-            OpenAITextGenerator(settings.openai_api_key, settings.assistant_model),
+            OpenAITextGenerator(
+                settings.openai_api_key,
+                settings.assistant_model,
+                settings.openai_base_url,
+            ),
         )
     if search_service is None:
         search_service = SearchService(
             catalog_service,
             PyTorchImageRetriever(settings.image_search_artifact),
-            OpenAITranscriber(settings.openai_api_key, settings.transcription_model),
+            OpenAITranscriber(
+                settings.openai_api_key,
+                settings.transcription_model,
+                settings.openai_base_url,
+            ),
             settings.maximum_upload_bytes,
             SearchEvidenceStore(
                 settings.postgres_dsn,

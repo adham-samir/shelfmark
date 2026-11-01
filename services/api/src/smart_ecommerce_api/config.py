@@ -16,6 +16,7 @@ class Settings:
     pricing_seasons: str
     fraud_artifact: str
     openai_api_key: str | None
+    openai_base_url: str | None
     assistant_model: str
     transcription_model: str
     maximum_upload_bytes: int
@@ -58,6 +59,7 @@ class Settings:
                 "services/api/artifacts/fraud.joblib",
             ),
             openai_api_key=os.getenv("OPENAI_API_KEY") or None,
+            openai_base_url=os.getenv("SMART_ECOMMERCE_OPENAI_BASE_URL") or None,
             assistant_model=os.getenv(
                 "SMART_ECOMMERCE_ASSISTANT_MODEL", "gpt-6-luna"
             ),

@@ -74,9 +74,19 @@ class Transcriber(Protocol):
 
 
 class OpenAITranscriber:
-    def __init__(self, api_key: str | None, model: str) -> None:
+    """OpenAI-compatible speech-to-text adapter.
+
+    ``base_url`` lets an OpenAI-compatible gateway (for example OpenRouter at
+    ``https://openrouter.ai/api/v1``) stand in for OpenAI; ``None`` keeps the
+    default OpenAI endpoint.
+    """
+
+    def __init__(
+        self, api_key: str | None, model: str, base_url: str | None = None
+    ) -> None:
         self._api_key = api_key
         self._model = model
+        self._base_url = base_url
 
     @property
     def model(self) -> str:
@@ -95,7 +105,9 @@ class OpenAITranscriber:
                 "Voice search is unavailable because its API key is not configured."
             )
         try:
-            result = OpenAI(api_key=self._api_key).audio.transcriptions.create(
+            result = OpenAI(
+                api_key=self._api_key, base_url=self._base_url
+            ).audio.transcriptions.create(
                 model=self._model,
                 file=(filename, content, content_type),
                 language=language,

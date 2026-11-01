@@ -47,7 +47,8 @@ tier) and keep the API worker count in mind: each worker opens its own pool.
 | `SMART_ECOMMERCE_ASSISTANT_KNOWLEDGE` | FAQ knowledge JSON | Yes |
 | `SMART_ECOMMERCE_PRICING_SEASONS` | Season calendar JSON | Yes |
 | `OPENAI_API_KEY` | Assistant + transcription provider | Optional; without it both surfaces return a typed 503 |
-| `SMART_ECOMMERCE_ASSISTANT_MODEL` / `SMART_ECOMMERCE_TRANSCRIPTION_MODEL` | Provider models | Optional |
+| `SMART_ECOMMERCE_OPENAI_BASE_URL` | OpenAI-compatible gateway base URL (e.g. `https://openrouter.ai/api/v1`) | Optional; unset uses OpenAI |
+| `SMART_ECOMMERCE_ASSISTANT_MODEL` / `SMART_ECOMMERCE_TRANSCRIPTION_MODEL` | Provider models (gateway model ids when a base URL is set) | Optional |
 | `SMART_ECOMMERCE_MAXIMUM_UPLOAD_BYTES` | Upload cap (default 5 MiB) | Optional |
 | `SMART_ECOMMERCE_POSTGRES_POOL_SIZE` | Bounded PostgreSQL connections per process (default 48) | Optional |
 | `SMART_ECOMMERCE_WORKER_THREADS` | AnyIO worker threads for synchronous endpoints (default 100, the DEC-014 session baseline) | Optional |

@@ -1,27 +1,48 @@
 {
-  "dataset_id": "stage3-assistant-faq-v1",
+  "dataset_id": "stage3-assistant-faq-v2",
   "provenance": "project-authored synthetic demonstration content",
   "entries": [
     {
       "key": "payment",
-      "question_en": "Which payment methods are available?",
-      "answer_en": "The demonstration checkout accepts sandbox payment tokens only; it does not process real cards.",
-      "question_ar": "ما طرق الدفع المتاحة؟",
-      "answer_ar": "نسخة العرض تقبل رموز دفع تجريبية فقط ولا تعالج بطاقات حقيقية."
+      "question_en": "Which payment methods can I use?",
+      "answer_en": "This demo checkout only accepts sandbox payment tokens, so no real card is ever charged.",
+      "question_ar": "أدفع إزاي؟",
+      "answer_ar": "الدفع في النسخة التجريبية برموز تجريبية بس، ومفيش أي بطاقة حقيقية بتتخصم."
     },
     {
       "key": "shipping",
-      "question_en": "How can I track my shipment?",
-      "answer_en": "Sign in and provide your order reference. Shipment information is returned only when the order belongs to your account.",
-      "question_ar": "كيف أتتبع الشحنة؟",
-      "answer_ar": "سجّل الدخول وقدّم مرجع الطلب. تظهر معلومات الشحنة فقط إذا كان الطلب تابعاً لحسابك."
+      "question_en": "How do I track my order?",
+      "answer_en": "Open your orders page and pick the order to see its latest shipping status. I can also read it out if you give me the order number.",
+      "question_ar": "أتابع طلبي إزاي؟",
+      "answer_ar": "افتح صفحة طلباتك واختار الطلب وهتشوف آخر حالة للشحنة. ولو بعتّلي رقم الطلب أقدر أقولك حالته على طول."
     },
     {
       "key": "returns",
       "question_en": "What is the return policy?",
-      "answer_en": "A return policy has not been configured for this demonstration, so support must confirm it separately.",
-      "question_ar": "ما سياسة الاسترجاع؟",
-      "answer_ar": "لم تُضبط سياسة استرجاع لنسخة العرض، لذلك يجب تأكيدها مع الدعم بشكل منفصل."
+      "answer_en": "You can return anything within 14 days of delivery, as long as it is unused and in its original box. Start the return from the order page in your account, and the refund is confirmed once we check the item.",
+      "question_ar": "سياسة الاسترجاع إيه؟",
+      "answer_ar": "تقدر ترجّع أي حاجة خلال 14 يوم من الاستلام، بشرط إنها ما اتستعملتش وعلبتها الأصلية معاك. ابدأ الإرجاع من صفحة الطلب في حسابك، والفلوس بترجع بعد ما نفحص المنتج."
+    },
+    {
+      "key": "warranty",
+      "question_en": "Is there a warranty?",
+      "answer_en": "Every device carries a 12-month warranty against manufacturing defects. Accidental damage and normal wear are not covered.",
+      "question_ar": "في ضمان؟",
+      "answer_ar": "كل الأجهزة عليها ضمان 12 شهر ضد عيوب الصناعة. أما التلف بسبب سوء الاستخدام أو الاستهلاك الطبيعي فمش داخل في الضمان."
+    },
+    {
+      "key": "delivery_time",
+      "question_en": "How long does delivery take?",
+      "answer_en": "Orders normally arrive in 2-5 working days anywhere in Egypt, and you can follow every step from your orders page.",
+      "question_ar": "التوصيل بياخد قد إيه؟",
+      "answer_ar": "الطلب بيوصل عادةً في 2-5 أيام عمل في أي مكان في مصر، وتقدر تتابع كل خطوة من صفحة طلباتك."
+    },
+    {
+      "key": "cancel_order",
+      "question_en": "Can I cancel my order?",
+      "answer_en": "You can cancel from the order page as long as the order has not shipped yet. Once it ships, contact support and we will help sort it out.",
+      "question_ar": "أقدر ألغي طلبي؟",
+      "answer_ar": "تقدر تلغي الطلب من صفحة الطلب طول ما ما اتبعتش. ولو اتبعت، كلّم الدعم واحنا نساعدك."
     }
   ]
 }
