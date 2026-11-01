@@ -113,8 +113,9 @@ The increments below still require inputs the environment does not have:
 
 1. **Live provider proof** — set `OPENAI_API_KEY` and re-run the assistant and voice checks, including a prompt-injection attempt, then replace the injected-provider exception with live evidence.
 2. **Cloud placement** — supply an AWS account, region, domain, and budget, then apply the planned ECS/RDS/Atlas/S3/Secrets Manager placement and run the documented cloud smoke test.
-3. **Manual accessibility** — run a screen-reader and reduced-motion pass with an assistive-technology user; the automated axe gate already passes.
+3. **Manual accessibility** — run a screen-reader and reduced-motion pass with an assistive-technology user; the automated axe gate already passes. The 13-check script is in `docs/ui-ux/manual-review.md`.
 4. **Speaker pass** — the deck ships with English speaker notes; a timed read-through with the actual presenter is still outstanding.
+5. **Arabic native review** — 43 strings added during the UI overhaul have not been read by a native speaker. They are listed with their English reference in `docs/ui-ux/manual-review.md`.
 
 Until those exist, keep the final demo on the local Docker stack and state the exceptions exactly as `docs/test-report.md` records them.
 

@@ -191,7 +191,9 @@ rather than silently passing.
    or sandbox data and must not be presented as production quality.
 4. **AWS deployment** — no credentials; Stage 5 cloud placement is unproven.
 5. **Manual accessibility** — WCAG 2.2 AA is verified by automated axe-core
-   checks and a keyboard smoke test only; no screen-reader session was run.
+   checks and a keyboard smoke test only; no screen-reader session was run. The
+   script for that session is `docs/ui-ux/manual-review.md`, which also lists the
+   43 new Arabic strings awaiting a native speaker.
 6. **WebKit** — the cross-engine gate runs on Chromium and Firefox. WebKit is
    wired through the same `BROWSER` switch but cannot launch here: three of its
    system libraries need root to install. The stylesheet carries the

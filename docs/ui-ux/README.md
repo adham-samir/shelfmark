@@ -4,6 +4,7 @@ The interface baseline targets an Egyptian consumer-electronics store with equal
 
 - [Screen and state specification](screen-spec.md)
 - [Customer and back-office flows](flows.md)
+- [Manual review before sign-off](manual-review.md) — the assistive-technology walkthrough and the new Arabic strings still needing a native speaker
 - Shipped design system: [`DESIGN.md`](../../DESIGN.md)
 - Retired composition study: `.impeccable/mocks/comp-a.png` (historical; it describes the pre-overhaul warm-paper palette and is not a current specification)
 
