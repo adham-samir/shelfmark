@@ -260,6 +260,10 @@ Run the app in the background and develop against it:
 docker compose -f infra/compose.yaml up --build -d
 ```
 
+Or use the shortcuts in the [`Makefile`](Makefile): `make up`, `make up-d`,
+`make down`, `make reset`, `make logs`, `make test`, `make gates` (run `make`
+for the list).
+
 The full test/verification commands — API suites, database checks, integration,
 security and load, the accessibility gate, and the demo rehearsal — are in
 [`docs/testing.md`](docs/testing.md). CI runs the API suite and the storefront
