@@ -40,7 +40,7 @@ class DatabaseFoundationTests(unittest.TestCase):
             print(f"\nStarting isolated schema checks with {image}...", flush=True)
             # Register before starting so a failure still attempts only this task's cleanup.
             cls.containers.append(name)
-            run("docker", "run", "--detach", "--rm", "--network", "none", "--name", name,
+            run("docker", "run", "--detach", "--network", "none", "--name", name,
                 "--mount", f"type=bind,source={ROOT},target=/workspace,readonly",
                 "--workdir", "/workspace", *env, image, timeout=300)
 
@@ -71,7 +71,9 @@ class DatabaseFoundationTests(unittest.TestCase):
     @classmethod
     def stop_containers(cls):
         for name in cls.containers:
-            run("docker", "stop", "--time", "1", name, check=False, timeout=30)
+            # Force-remove so a crashed container's log is still capturable before
+            # cleanup, and nothing lingers between runs.
+            run("docker", "rm", "--force", name, check=False, timeout=30)
 
     @classmethod
     def sql(cls, query, check=True):
