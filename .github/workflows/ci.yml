@@ -48,7 +48,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # The storefront runs its Node test runner directly against a .ts file,
+          # which needs a current Node (dev uses 26); 22 cannot load it.
+          node-version: "lts/*"
           cache: npm
           cache-dependency-path: apps/storefront/package-lock.json
       - run: npm ci

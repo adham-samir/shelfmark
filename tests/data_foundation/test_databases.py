@@ -48,13 +48,18 @@ class DatabaseFoundationTests(unittest.TestCase):
             (cls.postgres, ["pg_isready", "-h", "127.0.0.1", "-U", "postgres"]),
             (cls.mongo, ["mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping: 1}).ok ? 0 : 1)"]),
         ]:
-            deadline = time.monotonic() + 60
+            # A cold container on a small CI runner can take longer than a local
+            # start, so allow three minutes before giving up.
+            deadline = time.monotonic() + 180
             while time.monotonic() < deadline:
                 if run("docker", "exec", name, *command, check=False, timeout=10).returncode == 0:
                     break
                 time.sleep(0.5)
             else:
-                raise RuntimeError(f"Database readiness failed: {name}")
+                logs = run("docker", "logs", "--tail", "20", name, check=False, timeout=20)
+                raise RuntimeError(
+                    f"Database readiness failed: {name}\n{logs.stdout}\n{logs.stderr}"
+                )
 
         for migration in sorted((ROOT / "database/relational/migrations").glob("*.sql")):
             cls.sql(migration.read_text())
