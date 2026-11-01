@@ -64,6 +64,93 @@
   background: var(--canvas);
   color: var(--ink-3);
   font-size: var(--text-2xs);
+  font-family: inherit;
+  line-height: inherit;
+  text-decoration: none;
+}
+
+/* Product and order sources navigate; FAQ sources ask their question. */
+a.source-chip,
+button.source-chip {
+  cursor: pointer;
+}
+
+a.source-chip:hover,
+button.source-chip:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+
+button.source-chip:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* The order picker sits between the log and the composer: attach an existing
+   order instead of pasting an identifier the customer cannot see in full. */
+.order-attach {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-block-start: 1px solid var(--border);
+}
+
+.order-attach-head {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary-active);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: start;
+  cursor: pointer;
+}
+
+.order-attach-all {
+  justify-self: start;
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+}
+
+/* Compact rows: the picker only ever shows a handful of orders. */
+.order-list-compact .order-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+}
+
+.order-list-compact .order-row-meta {
+  gap: var(--space-2);
+}
+
+.chat-attachments {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  justify-self: start;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--primary-soft-border);
+  border-radius: var(--radius-sm);
+  background: var(--primary-soft);
+  color: var(--primary-active);
+  font-size: var(--text-2xs);
+}
+
+.attachment-chip button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .chat-compose {

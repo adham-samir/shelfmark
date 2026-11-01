@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState } from "react";
-import type { AssistantSource, Locale } from "@/lib/types";
-import { translator } from "@/lib/i18n";
+import type { AssistantSource, Locale, OrderSummary } from "@/lib/types";
+import { statusLabel, translator } from "@/lib/i18n";
+import { formatDateTime, formatMoney } from "@/lib/format";
 
 interface ChatMessage {
   id: string;
@@ -14,23 +16,45 @@ interface ChatMessage {
   errorHint?: string;
 }
 
-export function AssistantChat({ locale }: { locale: Locale }) {
+/** One-tap questions offered while an order is attached. */
+const ORDER_QUESTIONS = [
+  "assistant.orderAskStatus",
+  "assistant.orderAskItems",
+  "assistant.orderAskCancel",
+] as const;
+
+export function AssistantChat({
+  locale,
+  orders,
+}: {
+  locale: Locale;
+  orders: OrderSummary[];
+}) {
   const t = translator(locale);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
-  const [orderId, setOrderId] = useState("");
+  const [attached, setAttached] = useState<OrderSummary | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const logRef = useRef<HTMLDivElement>(null);
 
   const send = async (text: string) => {
     const message = text.trim();
     if (!message || busy) return;
+    const orderId = attached?.order_id;
     setBusy(true);
     setDraft("");
     setMessages((current) => [
       ...current,
       { id: crypto.randomUUID(), role: "user", text: message },
     ]);
+    // Prior turns give the reply its thread; error bubbles are not real answers
+    // and are left out so they never become context.
+    const history = messages
+      .filter((item) => !item.errorCode)
+      .slice(-6)
+      .map((item) => ({ role: item.role, content: item.text.slice(0, 2_000) }));
+
     try {
       const response = await fetch("/api/assistant", {
         method: "POST",
@@ -38,7 +62,8 @@ export function AssistantChat({ locale }: { locale: Locale }) {
         body: JSON.stringify({
           message,
           locale,
-          ...(orderId.trim() ? { order_id: orderId.trim() } : {}),
+          ...(orderId ? { order_id: orderId } : {}),
+          ...(history.length ? { history } : {}),
         }),
       });
       const payload = (await response.json().catch(() => null)) as
@@ -90,6 +115,8 @@ export function AssistantChat({ locale }: { locale: Locale }) {
       ]);
     } finally {
       setBusy(false);
+      // An attachment belongs to the message it was sent with.
+      setAttached(null);
       requestAnimationFrame(() => {
         logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: "smooth" });
       });
@@ -127,43 +154,142 @@ export function AssistantChat({ locale }: { locale: Locale }) {
             ) : null}
             <p style={{ margin: 0 }}>{message.text}</p>
             {message.sources?.length ? (
-              <span className="sources">
+              <div className="sources">
                 <span className="visually-hidden">{t("assistant.sources")}: </span>
-                {message.sources.map((source) => (
-                  <span className="source-chip" key={`${source.kind}:${source.reference}`}>
-                    {source.kind === "faq"
+                {message.sources.map((source) => {
+                  const kind =
+                    source.kind === "faq"
                       ? t("assistant.sourceFaq")
                       : source.kind === "product"
                         ? t("assistant.sourceProduct")
-                        : t("assistant.sourceShipment")}
-                    : {source.label}
-                  </span>
-                ))}
-              </span>
+                        : t("assistant.sourceShipment");
+                  const text = `${kind}: ${source.label}`;
+                  const key = `${source.kind}:${source.reference}`;
+
+                  if (source.kind === "product") {
+                    return (
+                      <Link
+                        className="source-chip"
+                        href={`/products/${source.reference}`}
+                        key={key}
+                      >
+                        {text}
+                      </Link>
+                    );
+                  }
+                  if (source.kind === "shipment") {
+                    return (
+                      <Link
+                        className="source-chip"
+                        href={`/orders/${source.reference}`}
+                        key={key}
+                      >
+                        {text}
+                      </Link>
+                    );
+                  }
+                  return (
+                    <button
+                      type="button"
+                      className="source-chip"
+                      key={key}
+                      onClick={() => void send(source.label)}
+                      disabled={busy}
+                    >
+                      {text}
+                    </button>
+                  );
+                })}
+              </div>
             ) : null}
-            {message.model ? <span className="meta">{message.model}</span> : null}
           </div>
         ))}
       </div>
 
-      <div className="chat-compose">
-        <div className="form-row">
-          <label className="field-label" htmlFor="assistant-order">
-            {t("assistant.orderId")}
-          </label>
-          <input
-            id="assistant-order"
-            className="input"
-            value={orderId}
-            onChange={(event) => setOrderId(event.target.value)}
-            placeholder="00000000-0000-4000-8000-000000000000"
-            dir="ltr"
-            aria-describedby="assistant-order-hint"
-          />
-          <p className="field-hint" id="assistant-order-hint">
-            {t("assistant.orderIdHint")}
-          </p>
+      {orders.length ? (
+        <div className="order-attach">
+          <button
+            type="button"
+            className="order-attach-head"
+            aria-expanded={panelOpen}
+            onClick={() => setPanelOpen((open) => !open)}
+          >
+            {t("assistant.orderPanel")}
+          </button>
+          {panelOpen ? (
+            <ul className="order-list order-list-compact">
+              {orders.map((order) => (
+                <li className="order-row" key={order.order_id}>
+                  <div className="order-row-id">
+                    <code dir="ltr" title={order.order_id}>
+                      {order.order_id.slice(-8)}
+                    </code>
+                    <p>
+                      {t("orders.itemCount", { count: order.item_count })}
+                      {" · "}
+                      <time dateTime={order.created_at}>
+                        {formatDateTime(order.created_at, locale)}
+                      </time>
+                    </p>
+                  </div>
+                  <div className="order-row-meta">
+                    <span className="pill" data-status={order.status}>
+                      {statusLabel(t, order.status)}
+                    </span>
+                    <span className="price-amount">
+                      {formatMoney(order.subtotal, locale)} {order.currency}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      onClick={() => {
+                        setAttached(order);
+                        setPanelOpen(false);
+                      }}
+                    >
+                      {t("assistant.orderAttach")}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <Link className="order-attach-all" href="/account/orders">
+            {t("assistant.orderViewAll")}
+          </Link>
         </div>
+      ) : (
+        <p className="field-hint order-attach-all">{t("assistant.orderEmpty")}</p>
+      )}
+
+      <div className="chat-compose">
+        {attached ? (
+          <div className="chat-attachments">
+            <span className="attachment-chip">
+              {t("assistant.orderAttached", { id: attached.order_id.slice(-8) })}
+              <button
+                type="button"
+                onClick={() => setAttached(null)}
+                aria-label={t("assistant.orderDetach")}
+                title={t("assistant.orderDetach")}
+              >
+                ×
+              </button>
+            </span>
+            <div className="chat-suggestions">
+              {ORDER_QUESTIONS.map((key) => (
+                <button
+                  type="button"
+                  key={key}
+                  onClick={() => void send(t(key))}
+                  disabled={busy}
+                >
+                  {t(key)}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
         <div className="row">
           <label className="visually-hidden" htmlFor="assistant-message">
             {t("assistant.placeholder")}

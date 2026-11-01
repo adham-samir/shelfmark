@@ -1,18 +1,30 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import type { Locale } from "@/lib/types";
+import type { Locale, OrderSummary } from "@/lib/types";
+import { api } from "@/lib/api";
 import { getLocale } from "@/lib/locale";
 import { translator } from "@/lib/i18n";
 import { currentAccount } from "@/lib/session";
 import { AssistantChat } from "@/components/assistant-chat";
 import { EmptyState, Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "المساعد" };
+export const metadata: Metadata = { title: "نور" };
 
 export default async function AssistantPage() {
   const locale: Locale = await getLocale();
   const t = translator(locale);
   const account = await currentAccount("customer");
+
+  // The last few orders power the attach picker. A failure here must not take
+  // the whole assistant down, so it degrades to an empty picker.
+  let recentOrders: OrderSummary[] = [];
+  if (account) {
+    try {
+      recentOrders = (await api.orders({ limit: 3 })).items;
+    } catch {
+      recentOrders = [];
+    }
+  }
 
   return (
     <main className="page page-narrow" id="main">
@@ -27,7 +39,7 @@ export default async function AssistantPage() {
         <Notice tone="info">{t("assistant.disclaimer")}</Notice>
         {account ? (
           <div className="panel">
-            <AssistantChat locale={locale} />
+            <AssistantChat locale={locale} orders={recentOrders} />
           </div>
         ) : (
           <div className="stack-4">

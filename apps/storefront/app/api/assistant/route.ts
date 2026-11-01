@@ -4,6 +4,23 @@ import { forbiddenOrigin, sameOrigin } from "@/lib/origin";
 
 export const dynamic = "force-dynamic";
 
+/** Keep the last few turns, dropping anything malformed rather than failing. */
+function readHistory(value: unknown): Array<{ role: "user" | "assistant"; content: string }> {
+  if (!Array.isArray(value)) return [];
+  return value
+    .slice(-8)
+    .flatMap((turn) => {
+      if (typeof turn !== "object" || turn === null) return [];
+      const entry = turn as Record<string, unknown>;
+      const role = entry.role;
+      if (role !== "user" && role !== "assistant") return [];
+      if (typeof entry.content !== "string") return [];
+      const content = entry.content.trim();
+      if (!content) return [];
+      return [{ role, content: content.slice(0, 4_000) }];
+    });
+}
+
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return forbiddenOrigin();
   const payload = await readJson(request);
@@ -15,12 +32,14 @@ export async function POST(request: Request) {
   if (orderId !== undefined && orderId !== null && orderId !== "" && !isUuid(orderId)) {
     return badRequest("invalid_input", "order_id must be a UUID.");
   }
+  const history = readHistory(payload.history);
 
   try {
     const answer = await api.assistant({
       message,
       locale: asLocale(payload.locale),
       ...(isUuid(orderId) ? { order_id: orderId } : {}),
+      ...(history.length ? { history } : {}),
     });
     return Response.json(answer);
   } catch (error) {

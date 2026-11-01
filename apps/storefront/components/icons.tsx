@@ -320,6 +320,7 @@ export function IconTag(props: IconProps) {
 export const ATTRIBUTE_ICONS: Record<string, ComponentType<IconProps>> = {
   brand: IconTag,
   screen: IconScreen,
+  camera: IconCamera,
   storage: IconStorage,
   memory: IconMemory,
   connectivity: IconConnectivity,

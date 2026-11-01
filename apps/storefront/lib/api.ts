@@ -277,6 +277,7 @@ export const api = {
     message: string;
     locale: "ar" | "en";
     order_id?: string;
+    history?: Array<{ role: "user" | "assistant"; content: string }>;
   }): Promise<AssistantResponse> {
     return apiRequest<AssistantResponse>("/v1/assistant/messages", {
       method: "POST",

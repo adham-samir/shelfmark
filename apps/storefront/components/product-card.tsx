@@ -9,11 +9,15 @@ import { AddToCartButton } from "./add-to-cart";
 
 const ATTRIBUTE_ORDER = [
   "screen",
+  "camera",
   "storage",
   "memory",
   "connectivity",
   "battery",
   "feature",
+  "os",
+  "gpu",
+  "weight",
   "brand",
 ];
 
