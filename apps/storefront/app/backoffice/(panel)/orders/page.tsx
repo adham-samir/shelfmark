@@ -8,7 +8,7 @@ import type { Locale, OperatorOrderList, OrderState } from "@/lib/types";
 import { EmptyState, ErrorState } from "@/components/states";
 
 export const metadata: Metadata = {
-  title: "Store orders — Smart-eCommerce",
+  title: "Store orders",
   description:
     "Read-only operator view of every customer order with status and customer context.",
 };

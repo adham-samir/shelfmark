@@ -10,7 +10,7 @@ import { EmptyState, ErrorState, Notice } from "@/components/states";
 import { QuantityControl } from "@/components/quantity-control";
 import { requireCustomer } from "@/lib/session";
 
-export const metadata: Metadata = { title: "السلة — Smart-eCommerce" };
+export const metadata: Metadata = { title: "السلة" };
 
 export default async function CartPage() {
   const locale: Locale = await getLocale();

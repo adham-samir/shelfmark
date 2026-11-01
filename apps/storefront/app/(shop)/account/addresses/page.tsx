@@ -8,7 +8,7 @@ import { requireCustomer } from "@/lib/session";
 import { AddressCard, AddressForm } from "@/components/address-book";
 import { EmptyState } from "@/components/states";
 
-export const metadata: Metadata = { title: "عناويني — Smart-eCommerce" };
+export const metadata: Metadata = { title: "عناويني" };
 
 export default async function AddressesPage() {
   const locale: Locale = await getLocale();

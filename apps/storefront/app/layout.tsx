@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Alexandria } from "next/font/google";
 import "./globals.css";
 import { direction, getLocale } from "@/lib/locale";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE_TEMPLATE } from "@/lib/site";
 
 const alexandria = Alexandria({
   subsets: ["arabic", "latin"],
@@ -11,9 +12,11 @@ const alexandria = Alexandria({
 });
 
 export const metadata: Metadata = {
-  title: "Smart-eCommerce Management System",
-  description:
-    "Synthetic bilingual smart-commerce demonstration: customer storefront and operator back office.",
+  title: {
+    default: SITE_NAME,
+    template: SITE_TITLE_TEMPLATE,
+  },
+  description: SITE_DESCRIPTION,
 };
 
 export default async function RootLayout({

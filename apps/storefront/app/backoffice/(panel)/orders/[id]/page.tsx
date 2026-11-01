@@ -14,7 +14,7 @@ import {
 } from "@/components/order-lifecycle-controls";
 
 export const metadata: Metadata = {
-  title: "Order detail — Smart-eCommerce",
+  title: "Order detail",
   description: "Operator view of a customer order, shipping, and shipment.",
 };
 

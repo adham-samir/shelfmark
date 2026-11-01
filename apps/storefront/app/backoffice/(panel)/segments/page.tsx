@@ -9,7 +9,7 @@ import { SegmentationRunControl } from "@/components/segmentation-run-control";
 import { EmptyState, ErrorState } from "@/components/states";
 
 export const metadata: Metadata = {
-  title: "Customer segmentation — Smart-eCommerce",
+  title: "Customer segmentation",
   description:
     "Synthetic BO-03 RFM snapshots, quintile scores, six selectable segments, and CSV export.",
 };

@@ -5,7 +5,7 @@ import { getLocale } from "@/lib/locale";
 import { translator } from "@/lib/i18n";
 import { requireCustomer } from "@/lib/session";
 
-export const metadata: Metadata = { title: "حسابي — Smart-eCommerce" };
+export const metadata: Metadata = { title: "حسابي" };
 
 export default async function AccountLayout({
   children,

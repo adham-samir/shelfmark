@@ -9,7 +9,7 @@ import { RiskDecisionForm } from "@/components/risk-decision-form";
 import { EmptyState, ErrorState } from "@/components/states";
 
 export const metadata: Metadata = {
-  title: "Payment risk review — Smart-eCommerce",
+  title: "Payment risk review",
   description:
     "Synthetic BO-04 fraud assessment, scored review queue, and audited operator decisions.",
 };

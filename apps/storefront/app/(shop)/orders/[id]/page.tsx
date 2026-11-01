@@ -20,10 +20,10 @@ export async function generateMetadata({
   const { id } = await params;
   try {
     await getOrder(id);
-    return { title: "الطلب — Smart-eCommerce" };
+    return { title: "الطلب" };
   } catch (error) {
     if (error instanceof ApiError && error.code === "not_found") notFound();
-    return { title: "الطلب — Smart-eCommerce" };
+    return { title: "الطلب" };
   }
 }
 

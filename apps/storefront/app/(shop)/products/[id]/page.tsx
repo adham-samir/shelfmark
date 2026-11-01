@@ -28,10 +28,10 @@ export async function generateMetadata({
   const { id } = await params;
   try {
     const product = await getProduct(id);
-    return { title: `${product.name} — Smart-eCommerce` };
+    return { title: product.name };
   } catch (error) {
     if (error instanceof ApiError && error.code === "not_found") notFound();
-    return { title: "المنتج — Smart-eCommerce" };
+    return { title: "المنتج" };
   }
 }
 

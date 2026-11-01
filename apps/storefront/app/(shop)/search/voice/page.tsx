@@ -6,7 +6,7 @@ import { translator } from "@/lib/i18n";
 import { VoiceSearchPanel } from "@/components/voice-search-panel";
 import { Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "البحث بالصوت — Smart-eCommerce" };
+export const metadata: Metadata = { title: "البحث بالصوت" };
 
 export default async function VoiceSearchPage() {
   const locale: Locale = await getLocale();

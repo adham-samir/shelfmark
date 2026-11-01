@@ -6,7 +6,7 @@ import { translator } from "@/lib/i18n";
 import { ImageSearchPanel } from "@/components/image-search-panel";
 import { Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "البحث بالصورة — Smart-eCommerce" };
+export const metadata: Metadata = { title: "البحث بالصورة" };
 
 export default async function ImageSearchPage() {
   const locale: Locale = await getLocale();

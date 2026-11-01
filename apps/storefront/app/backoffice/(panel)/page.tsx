@@ -13,7 +13,7 @@ import { translator } from "@/lib/i18n";
 import { formatDate } from "@/lib/format";
 import { Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "لوحة الإدارة — Smart-eCommerce" };
+export const metadata: Metadata = { title: "لوحة الإدارة" };
 
 export default async function BackofficeHomePage() {
   const locale: Locale = await getLocale();

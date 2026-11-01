@@ -8,9 +8,16 @@ import { signOut } from "@/lib/auth-actions";
 import { switchLocale } from "@/lib/actions";
 import { IconCart, IconShield } from "@/components/icons";
 import { OperatorNav, type NavItem } from "@/components/operator-nav";
+import { SITE_TITLE_TEMPLATE } from "@/lib/site";
 
+/* A layout that sets a plain `title` replaces the parent's title object, so the
+   root template stops reaching the pages below it. Re-declaring the template
+   here keeps "— Shelfmark" on every operator page. */
 export const metadata: Metadata = {
-  title: "لوحة الإدارة — Smart-eCommerce",
+  title: {
+    default: "لوحة الإدارة",
+    template: SITE_TITLE_TEMPLATE,
+  },
   robots: { index: false, follow: false },
 };
 
@@ -56,11 +63,11 @@ export default async function BackofficePanelLayout({
         <aside className="bo-rail" data-surface="rail" aria-label={t("admin.navLabel")}>
           <Link className="bo-rail-brand" href="/backoffice">
             <span className="mark" aria-hidden="true">
-              SE
+              S
             </span>
             <span className="name">
-              <strong>{t("admin.title")}</strong>
-              <span>{t("brand.name")}</span>
+              <strong>{t("brand.name")}</strong>
+              <span>{t("brand.ops")}</span>
             </span>
           </Link>
 

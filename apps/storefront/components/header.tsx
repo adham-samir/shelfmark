@@ -30,7 +30,6 @@ export function Header({
       <div className="header-inner">
         <Link className="brand" href="/">
           <strong>{t("brand.name")}</strong>
-          <span>{t("brand.sub")}</span>
         </Link>
 
         <form className="header-search" action="/" method="get" role="search">

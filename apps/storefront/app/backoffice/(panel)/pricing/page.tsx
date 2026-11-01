@@ -10,7 +10,7 @@ import { PricingRunControl } from "@/components/pricing-run-control";
 import { EmptyState, ErrorState } from "@/components/states";
 
 export const metadata: Metadata = {
-  title: "Dynamic pricing — Smart-eCommerce",
+  title: "Dynamic pricing",
   description:
     "Synthetic BO-02 pricing inputs, bounded automatic price changes, and the DEC-009 audit trail.",
 };

@@ -16,7 +16,7 @@ import { EmptyState, Notice } from "@/components/states";
 import { CompareSync } from "@/components/compare-sync";
 import { AddToCartButton } from "@/components/add-to-cart";
 
-export const metadata: Metadata = { title: "المقارنة — Smart-eCommerce" };
+export const metadata: Metadata = { title: "المقارنة" };
 
 const ROW_ORDER = ["brand", "screen", "storage", "memory", "connectivity", "battery", "feature"];
 

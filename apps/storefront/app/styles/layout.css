@@ -117,9 +117,7 @@
 
 .brand {
   display: flex;
-  flex-direction: column;
   flex: none;
-  gap: 1px;
   line-height: 1.15;
 }
 
@@ -127,13 +125,6 @@
   font-size: var(--text-md);
   font-weight: var(--weight-bold);
   letter-spacing: -0.02em;
-}
-
-.brand span {
-  color: var(--ink-3);
-  font-size: var(--text-2xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 /* Search sits in the optical centre and shrinks before anything else does. */
@@ -333,9 +324,6 @@
     flex: 1 1 auto;
     min-width: 0;
   }
-  .brand span {
-    display: none;
-  }
   .brand strong {
     overflow: hidden;
     font-size: var(--text-base);
@@ -506,7 +494,7 @@
   border-radius: var(--radius);
   background: var(--primary);
   color: var(--primary-on);
-  font-size: var(--text-sm);
+  font-size: var(--text-md);
   font-weight: var(--weight-bold);
 }
 
@@ -522,11 +510,20 @@
   font-weight: var(--weight-semibold);
 }
 
-.bo-rail-brand span {
+/* The sub-label is a micro-label, but the brand name above it is not: an
+   unscoped `span` rule used to uppercase the wordmark and add tracking to the
+   monogram as well. */
+.bo-rail-brand .name span {
   color: var(--rail-text-muted);
   font-size: var(--text-2xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* Arabic does not take tracking: it pulls the joins apart. */
+.bo-rail-brand .name span:lang(ar) {
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .bo-nav {

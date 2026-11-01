@@ -8,7 +8,7 @@ import { formatDateTime, formatMoney } from "@/lib/format";
 import { requireCustomer } from "@/lib/session";
 import { EmptyState, Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "طلباتي — Smart-eCommerce" };
+export const metadata: Metadata = { title: "طلباتي" };
 
 const PAGE_SIZE = 20;
 

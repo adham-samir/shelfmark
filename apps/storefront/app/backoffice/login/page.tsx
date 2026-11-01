@@ -7,7 +7,7 @@ import { translator } from "@/lib/i18n";
 import { currentAccount, safeNext } from "@/lib/session";
 import { AuthForm } from "@/components/auth-form";
 
-export const metadata: Metadata = { title: "دخول لوحة الإدارة — Smart-eCommerce" };
+export const metadata: Metadata = { title: "دخول لوحة الإدارة" };
 
 export default async function BackofficeLoginPage({
   searchParams,

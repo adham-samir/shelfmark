@@ -5,9 +5,9 @@ import type { Locale } from "./types";
  * capability, direction, dates and number presentation (docs/ui-ux).
  */
 const ar = {
-  "brand.name": "Smart-eCommerce",
-  "brand.sub": "Management System",
-  "brand.home": "Smart-eCommerce — الصفحة الرئيسية",
+  "brand.name": "Shelfmark",
+  "brand.ops": "العمليات",
+  "brand.home": "Shelfmark — الصفحة الرئيسية",
   "nav.skip": "تخطَّ إلى المحتوى",
   "nav.catalog": "الكتالوج",
   "nav.home": "الرئيسية",
@@ -873,9 +873,9 @@ const ar = {
 } as const;
 
 const en: Record<keyof typeof ar, string> = {
-  "brand.name": "Smart-eCommerce",
-  "brand.sub": "Management System",
-  "brand.home": "Smart-eCommerce — home",
+  "brand.name": "Shelfmark",
+  "brand.ops": "Operations",
+  "brand.home": "Shelfmark — home",
   "nav.skip": "Skip to content",
   "nav.catalog": "Catalog",
   "nav.home": "Home",

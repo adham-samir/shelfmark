@@ -6,7 +6,7 @@ import { translator } from "@/lib/i18n";
 import { currentAccount, safeNext } from "@/lib/session";
 import { AuthForm } from "@/components/auth-form";
 
-export const metadata: Metadata = { title: "إنشاء حساب — Smart-eCommerce" };
+export const metadata: Metadata = { title: "إنشاء حساب" };
 
 export default async function RegisterPage({
   searchParams,

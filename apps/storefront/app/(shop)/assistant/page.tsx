@@ -7,7 +7,7 @@ import { currentAccount } from "@/lib/session";
 import { AssistantChat } from "@/components/assistant-chat";
 import { EmptyState, Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "المساعد — Smart-eCommerce" };
+export const metadata: Metadata = { title: "المساعد" };
 
 export default async function AssistantPage() {
   const locale: Locale = await getLocale();

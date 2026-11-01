@@ -11,7 +11,7 @@ import { AccountForm } from "@/components/account-form";
 import { PasswordForm } from "@/components/password-form";
 import { EmptyState, Notice } from "@/components/states";
 
-export const metadata: Metadata = { title: "حسابي — Smart-eCommerce" };
+export const metadata: Metadata = { title: "حسابي" };
 
 export default async function AccountPage() {
   const locale: Locale = await getLocale();

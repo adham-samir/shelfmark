@@ -8,7 +8,7 @@ import type { AnalyticsResponse, Locale } from "@/lib/types";
 import { EmptyState, ErrorState } from "@/components/states";
 
 export const metadata: Metadata = {
-  title: "Analytics — Smart-eCommerce",
+  title: "Analytics",
   description:
     "BI-01 consumer-behaviour and financial dashboards with date/category filters and source reconciliation.",
 };

@@ -10,7 +10,7 @@ import { InventoryAdjustControl } from "@/components/inventory-adjust-control";
 import { EmptyState, ErrorState } from "@/components/states";
 
 export const metadata: Metadata = {
-  title: "Inventory planning — Smart-eCommerce",
+  title: "Inventory planning",
   description: "Synthetic BO-01 demand forecasting and automatic reorder operations.",
 };
 

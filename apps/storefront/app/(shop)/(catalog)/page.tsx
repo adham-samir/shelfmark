@@ -14,7 +14,7 @@ import { EmptyState, ErrorState } from "@/components/states";
 import { IconArrowBack } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "الكتالوج — Smart-eCommerce",
+  title: "الكتالوج",
 };
 
 type RawParams = Record<string, string | string[] | undefined>;

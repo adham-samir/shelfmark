@@ -8,7 +8,7 @@ import { EmptyState, ErrorState, Notice } from "@/components/states";
 import { CheckoutForm } from "@/components/checkout-form";
 import { requireCustomer } from "@/lib/session";
 
-export const metadata: Metadata = { title: "الدفع — Smart-eCommerce" };
+export const metadata: Metadata = { title: "الدفع" };
 
 export default async function CheckoutPage() {
   const locale: Locale = await getLocale();
