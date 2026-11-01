@@ -128,6 +128,17 @@ if (operatorOrders.ok) {
 
 await mkdir(OUT_DIR, { recursive: true });
 
+/* A cross-engine run does not need all 136 pages. `CAPTURE_ONLY` takes a
+   comma-separated list of route names so a second engine can shoot the
+   representative surfaces without re-capturing every route. */
+const ONLY = process.env.CAPTURE_ONLY?.split(",")
+  .map((name) => name.trim())
+  .filter(Boolean);
+const select = (list) =>
+  ONLY ? list.filter(([name]) => ONLY.includes(name)) : list;
+const selectedRoutes = select(routes);
+const selectedGuestRoutes = select(guestRoutes);
+
 const browser = await launchBrowser();
 
 const summary = {
@@ -216,7 +227,7 @@ for (const [locale] of LOCALES) {
       { name: "smart_ecommerce_locale", value: locale, url: BASE_URL },
     ]);
 
-    for (const [name, path] of routes) {
+    for (const [name, path] of selectedRoutes) {
       const entry = await capture(context, name, path, locale, viewportName);
       record(entry);
       console.log(
@@ -235,7 +246,7 @@ for (const [locale] of LOCALES) {
       await guest.addCookies([
         { name: "smart_ecommerce_locale", value: locale, url: BASE_URL },
       ]);
-      for (const [name, path] of guestRoutes) {
+      for (const [name, path] of selectedGuestRoutes) {
         const entry = await capture(guest, name, path, locale, viewportName);
         record(entry);
         console.log(

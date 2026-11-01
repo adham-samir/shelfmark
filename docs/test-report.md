@@ -109,6 +109,33 @@ committed order instead of racing the cart transition.
 
 This is the demonstration workload, not a production capacity claim.
 
+### Rendering performance
+
+Server p95 says nothing about what an operator waits for. `tests/ui/vitals.mjs`
+loads the eight heaviest routes — catalog, product detail, compare, cart,
+checkout, the operator order queue, analytics, and inventory — in Arabic and
+English at 1440 and 390 px, and collects LCP, CLS, and total blocking time with
+`PerformanceObserver` inside the page. The app carries no instrumentation and
+the API contract is untouched.
+
+Measured against the production build (`next start`), 32 measurements per
+engine, budgets are the Core Web Vitals "good" thresholds:
+
+| Engine | LCP max | LCP median | CLS max | TBT max | Over budget |
+|---|---|---|---|---|---|
+| Chromium | 632 ms | 188 ms | 0.0033 | 42 ms | 0 of 32 |
+| Firefox | 638 ms | 175 ms | 0 | n/a | 0 of 32 |
+
+The worst case is the catalog at 1440 px in Arabic on both engines. Analytics and
+inventory — the two pages that aggregate a date range and a forecast — are next
+at 450–520 ms; the transactional routes (compare, cart, checkout, order queue)
+are the lightest. CLS is effectively zero because the motion layer only animates
+`transform` and `opacity`, so no entry animation moves layout.
+
+Firefox does not implement the `longtask` entry type. The harness reports TBT as
+`n/a` there rather than `0`, because an absent measurement printed as zero would
+read as a perfect score.
+
 ## 4. Accessibility (WCAG 2.2 AA)
 
 `tests/accessibility/check.mjs` runs axe-core 4.14.0 with the
@@ -135,6 +162,13 @@ A keyboard smoke check passes: the first Tab reaches the skip link with a
 visible focus ring. Automated checks do not replace manual assistive-technology
 testing; no screen-reader pass has been run.
 
+The same gate runs on a second engine: `BROWSER=firefox` re-checks all 46 pages
+through Playwright's patched Firefox and reports the same zero violations, so
+the pass is not an artifact of one rendering engine. `BROWSER=webkit` is wired
+but cannot launch on this host because three WebKit system libraries
+(`libicu`, `libxml2`, `libflite1`) need root to install; it fails at launch
+rather than silently passing.
+
 ## 5. AI evaluation
 
 | Model | Dataset | Metric | Result | Limitation |
@@ -158,6 +192,11 @@ testing; no screen-reader pass has been run.
 4. **AWS deployment** — no credentials; Stage 5 cloud placement is unproven.
 5. **Manual accessibility** — WCAG 2.2 AA is verified by automated axe-core
    checks and a keyboard smoke test only; no screen-reader session was run.
+6. **WebKit** — the cross-engine gate runs on Chromium and Firefox. WebKit is
+   wired through the same `BROWSER` switch but cannot launch here: three of its
+   system libraries need root to install. The stylesheet carries the
+   `-webkit-backdrop-filter` prefix the engine requires, but that is a
+   precaution, not a verified result.
 
 ## Reproducing the evidence
 
@@ -186,6 +225,13 @@ SMART_ECOMMERCE_TEST_BASE_URL=http://127.0.0.1:8000 \
 cd tests/accessibility && npm ci
 STOREFRONT_BASE_URL=http://127.0.0.1:3000 \
   SMART_ECOMMERCE_API_URL=http://127.0.0.1:8000 npm run check
+BROWSER=firefox STOREFRONT_BASE_URL=http://127.0.0.1:3000 \
+  SMART_ECOMMERCE_API_URL=http://127.0.0.1:8000 npm run check
+
+# Rendering performance gate (LCP, CLS, TBT on the eight heaviest routes)
+cd tests/ui
+STOREFRONT_BASE_URL=http://127.0.0.1:3000 \
+  SMART_ECOMMERCE_API_URL=http://127.0.0.1:8000 npm run vitals
 
 # Demo rehearsal against a freshly seeded stack, then the deck layout check
 DEMO_UI=http://127.0.0.1:3000 DEMO_API=http://127.0.0.1:8000 npm run rehearse

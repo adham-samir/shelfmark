@@ -69,8 +69,9 @@ try {
   }).observe({ type: "layout-shift", buffered: true });
   window.__vitals.supported.cls = true;
 } catch {}
-/* `longtask` is Chromium-only. Firefox never fires it, so an observed zero
-   there would read as a perfect score rather than an absent measurement. */
+/* The longtask entry type is Chromium-only. Firefox never fires it, so an
+   observed zero there would read as a perfect score rather than an absent
+   measurement. */
 try {
   new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {

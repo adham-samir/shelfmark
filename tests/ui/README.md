@@ -77,6 +77,19 @@ WebKit additionally needs host libraries (`libicu`, `libxml2`, `libflite1`) that
 require root to install; without them `BROWSER=webkit` fails at launch rather
 than silently passing.
 
+A full capture is 136 pages, which is more than a second engine needs for a
+rendering check. `CAPTURE_ONLY` takes a comma-separated list of route names:
+
+```bash
+BROWSER=firefox CAPTURE_LABEL=final \
+  CAPTURE_ONLY="catalog,product,cart,backoffice-orders,backoffice-analytics" \
+  STOREFRONT_BASE_URL=http://127.0.0.1:3000 \
+  SMART_ECOMMERCE_API_URL=http://127.0.0.1:8000 npm run capture
+```
+
+Output goes to `shots/<label>-<engine>/`, so it never overwrites the Chromium
+run.
+
 ## The blocking gate
 
 `tests/accessibility/check.mjs` remains the gate that can fail a release. It
