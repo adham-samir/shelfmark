@@ -471,6 +471,61 @@ def test_voice_search_uses_transcript_and_catalog_filters() -> None:
     assert result.items[0].product_id == PRODUCT_IDS[2]
 
 
+def test_voice_search_accepts_the_codec_browsers_add_to_recordings() -> None:
+    transcriber = FakeTranscriber("wireless headphones")
+    service = SearchService(
+        catalog(),
+        PyTorchImageRetriever(str(ROOT / "artifacts/image_search.json")),
+        transcriber,
+        1024 * 1024,
+    )
+
+    # Chrome, Firefox and Safari all append the codec to what they record. An
+    # exact media-type comparison rejected every real recording, so this is the
+    # regression guard for the whole browser-agnostic upload path.
+    for content_type in [
+        "audio/webm;codecs=opus",
+        "audio/ogg; codecs=opus",
+        "audio/mp4;codecs=mp4a.40.2",
+        "Audio/WEBM",
+    ]:
+        transcriber.calls.clear()
+        result = service.voice_search(
+            filename="query.webm",
+            content_type=content_type,
+            content=b"recorded bytes",
+            language="en",
+            category=None,
+            filters={},
+            limit=20,
+        )
+        assert result.transcript == "wireless headphones"
+        # The provider is handed the bare type, not the browser's raw one.
+        assert transcriber.calls[0]["content_type"] == content_type.split(";")[0].strip().lower()
+
+    with pytest.raises(UnsupportedMedia):
+        service.voice_search(
+            filename="query.aiff",
+            content_type="audio/aiff",
+            content=b"recorded bytes",
+            language="en",
+            category=None,
+            filters={},
+            limit=20,
+        )
+
+
+def test_image_search_tolerates_a_parameterised_media_type() -> None:
+    result = search_service().image_search(
+        content=png((40, 100, 220)),
+        content_type="image/png; charset=binary",
+        category=None,
+        filters={},
+        limit=3,
+    )
+    assert result.items[0].product.product_id == PRODUCT_IDS[0]
+
+
 def test_dynamic_facets_reflect_search_context() -> None:
     facets = catalog().facets(query="phone", category=None, filters={})
     assert facets.total == 2
@@ -550,6 +605,14 @@ def test_http_routes_expose_assistant_search_filters_and_error_envelopes() -> No
     )
     assert voice.status_code == 200, voice.text
     assert voice.json()["items"][0]["product_id"] == str(PRODUCT_IDS[2])
+
+    # Exactly what a browser recording sends, codec parameter and all.
+    codec_voice = api.post(
+        "/v1/search/voice?locale=en&category=headphones",
+        files={"audio": ("recorded.webm", b"synthetic audio", "audio/webm;codecs=opus")},
+    )
+    assert codec_voice.status_code == 200, codec_voice.text
+    assert codec_voice.json()["items"][0]["product_id"] == str(PRODUCT_IDS[2])
 
     invalid = api.post(
         "/v1/search/image",

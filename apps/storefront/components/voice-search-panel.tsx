@@ -17,7 +17,21 @@ type Phase =
   | "denied"
   | "empty"
   | "provider_missing"
+  | "rejected"
   | "failed";
+
+/** Filename extensions that match the media type the browser actually produced. */
+const AUDIO_EXTENSIONS: Record<string, string> = {
+  "audio/webm": "webm",
+  "audio/ogg": "ogg",
+  "audio/mp4": "m4a",
+  "audio/x-m4a": "m4a",
+  "audio/m4a": "m4a",
+  "audio/mpeg": "mp3",
+  "audio/wav": "wav",
+  "audio/x-wav": "wav",
+  "audio/flac": "flac",
+};
 
 export function VoiceSearchPanel({ locale }: { locale: Locale }) {
   const t = translator(locale);
@@ -52,8 +66,13 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
 
   const upload = async (blob: Blob) => {
     setPhase("processing");
+    // Browsers report a codec alongside the type ("audio/webm;codecs=opus").
+    // Send the bare type, and name the file after it, so Safari's mp4 recording
+    // is not mislabelled as a webm one.
+    const type = (blob.type || "audio/webm").split(";")[0].trim() || "audio/webm";
+    const extension = AUDIO_EXTENSIONS[type] ?? "webm";
     const form = new FormData();
-    form.append("audio", new File([blob], "recording.webm", { type: blob.type || "audio/webm" }));
+    form.append("audio", new File([blob], `recording.${extension}`, { type }));
     form.append("locale", locale);
     try {
       const response = await fetch("/api/search/voice", { method: "POST", body: form });
@@ -69,6 +88,7 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
         setDetail(message);
         if (/api key is not configured/i.test(message)) setPhase("provider_missing");
         else if (payload?.error?.code === "empty_transcript") setPhase("empty");
+        else if (payload?.error?.code === "unsupported_media") setPhase("rejected");
         else setPhase("failed");
         return;
       }
@@ -156,6 +176,21 @@ export function VoiceSearchPanel({ locale }: { locale: Locale }) {
             <p>{t("voice.unsupportedHint")}</p>
             <div className="actions">
               <Link className="btn" href="/">
+                {t("voice.textFallback")}
+              </Link>
+            </div>
+          </div>
+        ) : null}
+
+        {phase === "rejected" ? (
+          <div className="state stack-4" data-tone="error" role="alert">
+            <h2>{t("voice.rejected")}</h2>
+            <p>{t("voice.rejectedHint")}</p>
+            <div className="actions">
+              <button type="button" className="btn" onClick={reset}>
+                {t("common.retry")}
+              </button>
+              <Link className="btn btn-quiet" href="/">
                 {t("voice.textFallback")}
               </Link>
             </div>

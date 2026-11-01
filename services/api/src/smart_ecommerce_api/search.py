@@ -42,6 +42,18 @@ AUDIO_MEDIA_TYPES = {
 }
 
 
+def normalise_media_type(value: str) -> str:
+    """Reduce an upload's media type to the bare type.
+
+    Browsers append the codec to what they record — ``audio/webm;codecs=opus``
+    in Chrome, ``audio/ogg; codecs=opus`` in Firefox, ``audio/mp4;codecs=...``
+    in Safari — so an exact comparison against the allow-list rejected every
+    real recording before it reached the provider.
+    """
+
+    return value.split(";", 1)[0].strip().lower()
+
+
 class RankedProduct(StrictModel):
     product: Product
     score: Annotated[float, Field(ge=-1, le=1)]
@@ -255,7 +267,7 @@ class SearchService:
         limit: int,
     ) -> ImageSearchResponse:
         self._validate_size(content)
-        expected_format = IMAGE_MEDIA_TYPES.get(content_type)
+        expected_format = IMAGE_MEDIA_TYPES.get(normalise_media_type(content_type))
         if expected_format is None:
             raise UnsupportedMedia("Upload a JPEG, PNG, or WebP image.")
         try:
@@ -297,6 +309,7 @@ class SearchService:
         limit: int,
     ) -> VoiceSearchResponse:
         self._validate_size(content)
+        content_type = normalise_media_type(content_type)
         if content_type not in AUDIO_MEDIA_TYPES:
             raise UnsupportedMedia("Upload a supported recorded-audio file.")
         transcript = self._transcriber.transcribe(

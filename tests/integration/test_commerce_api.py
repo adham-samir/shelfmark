@@ -30,6 +30,23 @@ def assert_error(response: httpx.Response, status: int, code: str) -> None:
     assert response.json()["error"]["code"] == code
 
 
+def assert_provider_optional(response: httpx.Response) -> None:
+    """Assert an AI surface behaved honestly, with or without a provider key.
+
+    These checks are black-box against whatever stack is running, and the README
+    recommends configuring a key, so an answer is just as correct as the typed
+    ``dependency_unavailable`` envelope. The strict "no key means a typed 503"
+    contract is covered by the API unit tests, which never have a key.
+    """
+
+    if response.status_code == 503:
+        assert response.json()["error"]["code"] == "dependency_unavailable"
+    else:
+        # With a key configured the provider either answered, or rejected the
+        # placeholder audio as speech it could not recognise.
+        assert response.status_code in {200, 422}, response.text
+
+
 def png(rgb: tuple[int, int, int]) -> bytes:
     output = BytesIO()
     Image.new("RGB", (64, 64), rgb).save(output, format="PNG")
@@ -114,15 +131,31 @@ def test_customer_checkout_risk_review_and_isolation() -> None:
         assert image_search.json()["items"][0]["product"]["product_id"] == PRODUCT_ONE
         assert image_search.json()["model_version"] == "pytorch-color-retrieval-v1"
 
-        assert_error(
+        assert_provider_optional(
             api.post(
                 "/v1/search/voice?locale=en",
                 files={"audio": ("query.wav", b"synthetic audio", "audio/wav")},
-            ),
-            503,
-            "dependency_unavailable",
+            )
         )
-        assert_error(
+        # A real browser recording carries the codec inside its media type. It
+        # must be accepted for transcription — before the fix every recording
+        # returned 415 here, whatever browser recorded it. Whether the provider
+        # then succeeds depends on the key and the audio, so only the media-type
+        # gate is asserted.
+        codec_voice = api.post(
+            "/v1/search/voice?locale=en",
+            files={
+                "audio": (
+                    "recorded.webm",
+                    b"synthetic audio",
+                    "audio/webm;codecs=opus",
+                )
+            },
+        )
+        assert codec_voice.status_code != 415, codec_voice.text
+        if codec_voice.status_code >= 400:
+            assert codec_voice.json()["error"]["code"] != "unsupported_media"
+        assert_provider_optional(
             api.post(
                 "/v1/assistant/messages",
                 headers=customer,
@@ -131,9 +164,7 @@ def test_customer_checkout_risk_review_and_isolation() -> None:
                     "locale": "en",
                     "order_id": order_id,
                 },
-            ),
-            503,
-            "dependency_unavailable",
+            )
         )
 
         api.put(
